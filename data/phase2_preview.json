@@ -1,0 +1,55 @@
+{
+  "root": "n1",
+  "nodes": {
+    "n1": {
+      "text": "Problem Statement",
+      "speaker": "you"
+    },
+    "n2": {
+      "text": "Recognises problem, but doesn't specify which one or says all of them",
+      "speaker": "prospect"
+    },
+    "n261": {
+      "text": "We already have a solution/provider in place for that",
+      "speaker": "prospect"
+    },
+    "n499": {
+      "text": "No, it's not relevant",
+      "speaker": "prospect"
+    },
+    "n804": {
+      "text": "They are relevant, but we don't have budget at the moment to do anything",
+      "speaker": "prospect"
+    },
+    "n1307": {
+      "text": "They are relevant, but we've already set strategy for the next year",
+      "speaker": "prospect"
+    },
+    "n1309": {
+      "text": "They are relevant, but we don't have any capacity to take on new projects",
+      "speaker": "prospect"
+    },
+    "n1350": {
+      "text": "Sorry, where are you calling from?",
+      "speaker": "prospect"
+    }
+  },
+  "edges": {
+    "n1": [
+      "n2",
+      "n261",
+      "n499",
+      "n804",
+      "n1307",
+      "n1309",
+      "n1350"
+    ],
+    "n2": [],
+    "n261": [],
+    "n499": [],
+    "n804": [],
+    "n1307": [],
+    "n1309": [],
+    "n1350": []
+  }
+}

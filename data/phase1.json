@@ -1,0 +1,191 @@
+{
+  "root": "n1",
+  "nodes": {
+    "n1": { "text": "Prospect Picks Up", "speaker": "action" },
+    "n2": { "text": "Permission Based Opener", "speaker": "you" },
+    "n3": {
+      "text": "Go for it (or something like I've got a few minutes/you can have X seconds)",
+      "speaker": "prospect"
+    },
+    "n4": { "text": "Deliver Problem Statement", "speaker": "action" },
+    "n5": { "text": "I'm busy", "speaker": "prospect" },
+    "n6": {
+      "text": "Totally understand, well how about this.. if you give me 30 seconds and you aren't interested in any of what I have to say, you won't hear from me again - sound fair?",
+      "speaker": "you"
+    },
+    "n7": { "text": "No", "speaker": "prospect" },
+    "n8": { "text": "End Call", "speaker": "action" },
+    "n9": { "text": "Yes", "speaker": "prospect" },
+    "n10": { "text": "Deliver Problem Statement", "speaker": "action" },
+    "n11": { "text": "Call me another time please", "speaker": "prospect" },
+    "n12": {
+      "text": "Well how about this.. if you give me 30 seconds and you aren't interested in any of what I have to say, you won't hear from me again - sound fair?",
+      "speaker": "you"
+    },
+    "n13": { "text": "Okay, go on", "speaker": "prospect" },
+    "n14": { "text": "Deliver Problem Statement", "speaker": "action" },
+    "n15": { "text": "Sorry, I don't have time, bye", "speaker": "prospect" },
+    "n16": { "text": "End Call", "speaker": "action" },
+    "n17": { "text": "Send me an email", "speaker": "prospect" },
+    "n18": {
+      "text": "Happy to send an email - can I just take 15 seconds to explain why I've called, so I don't waste your time with an email if it's not relevant?",
+      "speaker": "you"
+    },
+    "n19": { "text": "Yes", "speaker": "prospect" },
+    "n20": { "text": "Deliver Problem Statement", "speaker": "action" },
+    "n21": { "text": "No, just send me some more information", "speaker": "prospect" },
+    "n22": { "text": "End Call", "speaker": "action" },
+    "n23": { "text": "Who is this?", "speaker": "prospect" },
+    "n24": {
+      "text": "My name is X, and I'm calling from ABC Company - have you heard of us?",
+      "speaker": "you"
+    },
+    "n25": { "text": "Yes", "speaker": "prospect" },
+    "n26": {
+      "text": "Fair enough, well look, how about this... do you mind if I take 30 seconds to explain why I've called, and then if it's not relevant, we can leave it there?",
+      "speaker": "you"
+    },
+    "n27": {
+      "text": "I already know what you do, and we aren't interested at the moment.",
+      "speaker": "prospect"
+    },
+    "n28": {
+      "text": "Thanks for letting me know - final question before I let you go, when you say not interested, what do you mean exactly?",
+      "speaker": "you"
+    },
+    "n29": { "text": "We already have something in place", "speaker": "prospect" },
+    "n30": {
+      "text": "That's great to hear, is that an in-house solution or a vendor?",
+      "speaker": "you"
+    },
+    "n31": { "text": "Whatever they say - either option", "speaker": "prospect" },
+    "n32": {
+      "text": "Great to hear - well do you mind if I take 15 seconds to explain what we're hearing from X and Y (their competitors) and if it sounds interesting, I can follow up with an email with some relevant information?",
+      "speaker": "you"
+    },
+    "n33": { "text": "This is not a priority", "speaker": "prospect" },
+    "n34": {
+      "text": "Fair enough - well do you mind if I take 15 seconds to explain what we're hearing from X and Y (their competitors) and if it sounds interesting, I can follow up with an email with some relevant information?",
+      "speaker": "you"
+    },
+    "n35": { "text": "Go for it", "speaker": "prospect" },
+    "n36": { "text": "Deliver Problem Statement", "speaker": "action" },
+    "n37": {
+      "text": "No, it's just not a good use of my time (or some other excuse)",
+      "speaker": "prospect"
+    },
+    "n38": { "text": "End Call", "speaker": "action" },
+    "n39": { "text": "Go for it", "speaker": "prospect" },
+    "n40": { "text": "Deliver Problem Statement", "speaker": "action" },
+    "n41": { "text": "No", "speaker": "prospect" },
+    "n42": {
+      "text": "No worries.. well look, how about this... if you give me 30 seconds and it's not relevant, you won't hear from me again - sound okay?",
+      "speaker": "you"
+    },
+    "n43": { "text": "Go for it", "speaker": "prospect" },
+    "n44": { "text": "Deliver Problem Statement", "speaker": "action" },
+    "n45": { "text": "No", "speaker": "prospect" },
+    "n46": { "text": "End Call", "speaker": "action" },
+    "n47": { "text": "How did you get this number?", "speaker": "prospect" },
+    "n48": {
+      "text": "We use a database provider called X, that usually provides us with business lines.. this is a business line right?",
+      "speaker": "you"
+    },
+    "n49": { "text": "Yes", "speaker": "prospect" },
+    "n50": {
+      "text": "Okay, well do you mind if I take 20 seconds to explain why I've called, and then if it's not relevant, you won't hear from me again - sound fair?",
+      "speaker": "you"
+    },
+    "n51": { "text": "No", "speaker": "prospect" },
+    "n52": { "text": "End Call", "speaker": "action" },
+    "n53": { "text": "Sure", "speaker": "prospect" },
+    "n54": { "text": "Deliver Problem Statement", "speaker": "action" },
+    "n55": { "text": "No, it's a personal line", "speaker": "prospect" },
+    "n56": {
+      "text": "Well, thank you for letting me know - I can report that as it must be frustrating, but while I've got you, do you mind if I take 20 seconds to explain why I've called and then if it's not relevant, you won't hear from me again - is that okay?",
+      "speaker": "you"
+    },
+    "n57": { "text": "Yes", "speaker": "prospect" },
+    "n58": { "text": "Deliver Problem Statement", "speaker": "action" },
+    "n59": { "text": "No", "speaker": "prospect" },
+    "n60": { "text": "End Call", "speaker": "action" },
+    "n61": { "text": "Tell me what it's about and then I can decide", "speaker": "prospect" },
+    "n62": {
+      "text": "Well, if I told you that we're helping the likes of A and B (their competitors) with X (what your solution does), can I take the next 15 seconds to explain why they came to us, and if it sounds relevant we can continue the conversation over email? If not, we can just leave the conversation there?",
+      "speaker": "you"
+    },
+    "n63": { "text": "Okay, go on", "speaker": "prospect" },
+    "n64": { "text": "Deliver Problem Statement", "speaker": "action" },
+    "n65": { "text": "No, this isn't relevant", "speaker": "prospect" },
+    "n66": { "text": "End Call", "speaker": "action" }
+  },
+  "edges": {
+    "n1": ["n2"],
+    "n2": ["n3", "n5", "n11", "n17", "n23", "n47", "n61"],
+    "n3": ["n4"],
+    "n4": [],
+    "n5": ["n6"],
+    "n6": ["n7", "n9"],
+    "n7": ["n8"],
+    "n8": [],
+    "n9": ["n10"],
+    "n10": [],
+    "n11": ["n12"],
+    "n12": ["n13", "n15"],
+    "n13": ["n14"],
+    "n14": [],
+    "n15": ["n16"],
+    "n16": [],
+    "n17": ["n18"],
+    "n18": ["n19", "n21"],
+    "n19": ["n20"],
+    "n20": [],
+    "n21": ["n22"],
+    "n22": [],
+    "n23": ["n24"],
+    "n24": ["n25", "n41"],
+    "n25": ["n26"],
+    "n26": ["n27", "n39"],
+    "n27": ["n28"],
+    "n28": ["n29", "n33"],
+    "n29": ["n30"],
+    "n30": ["n31"],
+    "n31": ["n32"],
+    "n32": [],
+    "n33": ["n34"],
+    "n34": ["n35", "n37"],
+    "n35": ["n36"],
+    "n36": [],
+    "n37": ["n38"],
+    "n38": [],
+    "n39": ["n40"],
+    "n40": [],
+    "n41": ["n42"],
+    "n42": ["n43", "n45"],
+    "n43": ["n44"],
+    "n44": [],
+    "n45": ["n46"],
+    "n46": [],
+    "n47": ["n48"],
+    "n48": ["n49", "n55"],
+    "n49": ["n50"],
+    "n50": ["n51", "n53"],
+    "n51": ["n52"],
+    "n52": [],
+    "n53": ["n54"],
+    "n54": [],
+    "n55": ["n56"],
+    "n56": ["n57", "n59"],
+    "n57": ["n58"],
+    "n58": [],
+    "n59": ["n60"],
+    "n60": [],
+    "n61": ["n62"],
+    "n62": ["n63", "n65"],
+    "n63": ["n64"],
+    "n64": [],
+    "n65": ["n66"],
+    "n66": []
+  },
+  "meta": { "indent_unit": 2 }
+}

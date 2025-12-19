@@ -1,0 +1,2402 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>TRIX Cold Call Trainer — Freemium</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --beige: #d3c3aa;
+      --beige-2: #efe5d4;
+      --sand: #f6efe1;
+      --navy: #091c2d;
+      --navy-soft: #102238;
+      --navy-2: #0b2237;
+      --ink: #0b1220;
+
+      --border: rgba(9, 28, 45, 0.18);
+      --border-2: rgba(9, 28, 45, 0.12);
+
+      --muted: rgba(9, 28, 45, 0.62);
+      --muted-2: rgba(9, 28, 45, 0.45);
+
+      --radius-xl: 26px;
+      --radius: 18px;
+      --radius-sm: 14px;
+
+      --shadow-lg: 0 26px 80px rgba(6, 17, 26, 0.30);
+      --shadow: 0 14px 40px rgba(9, 28, 45, 0.14);
+      --shadow-soft: 0 10px 26px rgba(9, 28, 45, 0.10);
+
+      --glow: 0 0 0 1px rgba(245,239,228,0.35), 0 0 0 6px rgba(209,178,135,0.20);
+      --glow-2: 0 0 0 1px rgba(245,239,228,0.42), 0 0 0 10px rgba(209,178,135,0.16);
+
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+      color-scheme: light;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 18px;
+      background:
+        radial-gradient(1200px 520px at 50% -10%, rgba(255,255,255,0.8), rgba(255,255,255,0) 60%),
+        radial-gradient(900px 520px at 0% 20%, rgba(255, 235, 206, 0.85), rgba(255,255,255,0) 62%),
+        radial-gradient(900px 520px at 100% 35%, rgba(204, 226, 255, 0.30), rgba(255,255,255,0) 55%),
+        linear-gradient(180deg, #f6efe1 0%, #d0c0a6 40%, #b19c7a 100%);
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* subtle noise overlay */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.08;
+      mix-blend-mode: multiply;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E");
+      background-size: 240px 240px;
+    }
+
+    /* ambient moving sheen */
+    body::after {
+      content: "";
+      position: fixed;
+      inset: -30%;
+      pointer-events: none;
+      background: radial-gradient(circle at 20% 30%, rgba(255,255,255,0.35), rgba(255,255,255,0) 42%),
+                  radial-gradient(circle at 75% 60%, rgba(255,255,255,0.22), rgba(255,255,255,0) 45%);
+      filter: blur(18px);
+      animation: drift 14s ease-in-out infinite alternate;
+      opacity: 0.65;
+    }
+
+    @keyframes drift {
+      0%   { transform: translate3d(-2%, -1%, 0) rotate(-2deg); }
+      100% { transform: translate3d(2%, 1%, 0) rotate(2deg); }
+    }
+
+    .app {
+      width: min(1320px, 100%);
+      min-height: calc(100vh - 36px);
+      border-radius: var(--radius-xl);
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow-lg);
+      background: rgba(245, 239, 228, 0.86);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255,255,255,0.55);
+    }
+
+    /* gradient border frame */
+    .app::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: var(--radius-xl);
+      padding: 1px;
+      background: linear-gradient(135deg,
+        rgba(9,28,45,0.35),
+        rgba(209,178,135,0.55),
+        rgba(9,28,45,0.28)
+      );
+      -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+      opacity: 0.55;
+    }
+
+    /* HEADER */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      align-items: flex-start; /* was center: prevents the right side being vertically centered against the opt-in */
+      justify-content: space-between;
+      gap: 14px;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+      background:
+        linear-gradient(180deg, rgba(243, 235, 220, 0.92), rgba(243, 235, 220, 0.78));
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    .left-header {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      min-width: 240px;
+      flex: 1;
+      max-width: 760px;
+    }
+
+    .title-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .title {
+      font-size: 1.05rem;
+      font-weight: 720;
+      letter-spacing: 0.2px;
+      color: var(--navy);
+    }
+
+    .badge {
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 6px 10px;
+      border-radius: 999px;
+      color: var(--navy);
+      background: rgba(255,255,255,0.7);
+      border: 1px solid rgba(9, 28, 45, 0.18);
+      box-shadow: 0 8px 18px rgba(9,28,45,0.08);
+    }
+
+    .badge.premium {
+      background: linear-gradient(135deg, rgba(209,178,135,0.55), rgba(255,255,255,0.65));
+      border-color: rgba(9,28,45,0.22);
+    }
+
+    .subtitle {
+      font-size: 0.82rem;
+      color: var(--muted);
+      max-width: 520px;
+      line-height: 1.35;
+    }
+
+    .tabs {
+      display: inline-flex;
+      gap: 6px;
+      padding: 4px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.66);
+      border: 1px solid rgba(9, 28, 45, 0.18);
+      box-shadow: 0 10px 30px rgba(9, 28, 45, 0.08);
+      width: fit-content;
+    }
+
+    .tab {
+      font-size: 0.82rem;
+      padding: 6px 12px;
+      border-radius: 999px;
+      cursor: pointer;
+      color: var(--muted);
+      user-select: none;
+      white-space: nowrap;
+      position: relative;
+      transition: transform .12s ease, background .12s ease, color .12s ease;
+    }
+    .tab:hover {
+      transform: translateY(-1px);
+      background: rgba(9,28,45,0.06);
+    }
+    .tab.active {
+      background: var(--navy);
+      color: #fefdf9;
+      box-shadow: 0 10px 24px rgba(9,28,45,0.18);
+    }
+
+    .right-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+      align-self: flex-start; /* keep logo + shortcuts pinned to the top */
+      padding-top: 2px;
+      z-index: 50;
+      pointer-events: auto;
+    }
+
+    .logo {
+      height: 42px;
+      width: 140px;
+      object-fit: contain;
+      filter: drop-shadow(0 10px 18px rgba(9,28,45,0.14));
+      cursor: pointer; /* logo is the briefcase trigger */
+      position: relative;
+      z-index: 60;
+      pointer-events: auto;
+    }
+
+    .logo.pinned {
+      outline: 2px solid rgba(209,178,135,0.55);
+      outline-offset: 2px;
+      border-radius: 12px;
+    }
+
+    /* FEEDBACK (briefcase) slide-out panel */
+    .right-header {
+      position: relative; /* anchor for the slide-out panel */
+    }
+
+
+    .feedback-panel {
+      position: absolute;
+      top: 0;
+      right: 150px; /* sits just left of the briefcase */
+      width: min(360px, 72vw);
+      border-radius: 18px;
+      border: 1px solid rgba(9, 28, 45, 0.14);
+      background:
+        radial-gradient(700px 220px at 10% 0%, rgba(209,178,135,0.32), rgba(255,255,255,0) 55%),
+        radial-gradient(600px 200px at 100% 40%, rgba(9,28,45,0.08), rgba(255,255,255,0) 62%),
+        linear-gradient(180deg, rgba(255,255,255,0.74), rgba(255,255,255,0.56));
+      box-shadow: 0 18px 42px rgba(9,28,45,0.14);
+      padding: 12px 12px 12px;
+      transform: translateX(18px);
+      opacity: 0;
+      pointer-events: none;
+      transition: transform .22s ease, opacity .22s ease;
+      overflow: hidden;
+      z-index: 55;
+    }
+
+    .feedback-panel.open {
+      transform: translateX(0);
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* Hover fallback: if JS doesn’t fire, hovering the right header still reveals the panel */
+    #right-header:hover .feedback-panel {
+      transform: translateX(0);
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* Strong hover trigger: hovering the briefcase/logo itself reveals the panel */
+    #trix-logo {
+      cursor: pointer;
+      pointer-events: auto;
+    }
+
+    /* Panel is placed directly after the logo in DOM; use adjacent sibling selector */
+    #trix-logo:hover + #feedback-panel,
+    #feedback-panel:hover {
+      transform: translateX(0);
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* Ensure it sits above other header elements */
+    #feedback-panel {
+      z-index: 9999;
+    }
+
+    .feedback-panel::before {
+      content: "";
+      position: absolute;
+      inset: -2px;
+      background:
+        radial-gradient(520px 220px at 20% -10%, rgba(255,255,255,0.65), rgba(255,255,255,0) 60%),
+        radial-gradient(520px 220px at 95% 30%, rgba(209,178,135,0.28), rgba(255,255,255,0) 62%);
+      opacity: 0.85;
+      pointer-events: none;
+    }
+
+    .feedback-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      position: relative;
+      z-index: 1;
+      margin-bottom: 8px;
+    }
+
+    .feedback-title {
+      margin: 0;
+      font-size: 0.82rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(9,28,45,0.62);
+    }
+
+    .feedback-mini {
+      font-size: 0.74rem;
+      color: rgba(9,28,45,0.55);
+      white-space: nowrap;
+    }
+
+    .feedback-q {
+      margin: 0 0 10px;
+      font-size: 0.92rem;
+      font-weight: 780;
+      color: var(--navy);
+      line-height: 1.25;
+      position: relative;
+      z-index: 1;
+    }
+
+    .feedback-options {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .feedback-opt {
+      border-radius: 14px;
+      padding: 10px 10px;
+      border: 1px solid rgba(9, 28, 45, 0.14);
+      background: rgba(255,255,255,0.62);
+      box-shadow: 0 12px 22px rgba(9,28,45,0.08);
+      cursor: pointer;
+      text-align: left;
+      transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .feedback-opt:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 18px 30px rgba(9,28,45,0.12);
+      border-color: rgba(9, 28, 45, 0.36);
+    }
+
+    .feedback-opt .lbl {
+      font-size: 0.88rem;
+      color: #0b1220;
+      line-height: 1.25;
+    }
+
+    .feedback-opt .tag {
+      font-size: 0.70rem;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+      padding: 6px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(9,28,45,0.16);
+      background: rgba(255,255,255,0.70);
+      color: rgba(9,28,45,0.62);
+      white-space: nowrap;
+    }
+
+    .feedback-detail {
+      display: none;
+      margin-top: 10px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .feedback-detail.show {
+      display: block;
+      animation: viewIn .18s ease-out both;
+    }
+
+    .feedback-sub {
+      margin: 0 0 8px;
+      font-size: 0.82rem;
+      color: rgba(9,28,45,0.68);
+      line-height: 1.25;
+    }
+
+    .feedback-textarea {
+      width: 100%;
+      min-height: 88px;
+      resize: vertical;
+      border-radius: 14px;
+      border: 1px solid rgba(9,28,45,0.14);
+      background: rgba(255,255,255,0.70);
+      padding: 10px 10px;
+      font-size: 0.88rem;
+      outline: none;
+      box-shadow: 0 12px 22px rgba(9,28,45,0.08);
+      color: #0b1220;
+      line-height: 1.35;
+    }
+
+    .feedback-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .feedback-back {
+      font-size: 0.84rem;
+      border-radius: 999px;
+      border: 1px solid rgba(9, 28, 45, 0.20);
+      background: rgba(255, 255, 255, 0.62);
+      color: #0b1220;
+      padding: 7px 12px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 10px 20px rgba(9,28,45,0.08);
+      transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
+      white-space: nowrap;
+    }
+
+    .feedback-back:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 16px 28px rgba(9,28,45,0.12);
+      background: rgba(255, 255, 255, 0.78);
+    }
+
+    .feedback-submit {
+      font-size: 0.84rem;
+      font-weight: 760;
+      border-radius: 999px;
+      border: 1px solid rgba(9, 28, 45, 0.24);
+      background: linear-gradient(135deg, rgba(9,28,45,0.96), rgba(16,34,56,0.96));
+      color: #fefdf9;
+      padding: 8px 12px;
+      cursor: pointer;
+      box-shadow: 0 12px 22px rgba(9,28,45,0.16);
+      transition: transform .12s ease, box-shadow .12s ease, opacity .12s ease;
+      white-space: nowrap;
+      line-height: 1;
+    }
+
+    .feedback-submit:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 20px 38px rgba(9,28,45,0.22);
+    }
+
+    .feedback-submit:disabled {
+      opacity: 0.55;
+      cursor: default;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .feedback-success {
+      display: none;
+      margin-top: 10px;
+      padding: 9px 10px;
+      border-radius: 14px;
+      border: 1px solid rgba(9,28,45,0.14);
+      background: rgba(255,255,255,0.66);
+      color: rgba(9,28,45,0.78);
+      box-shadow: 0 12px 22px rgba(9,28,45,0.08);
+      font-size: 0.86rem;
+      line-height: 1.25;
+      position: relative;
+      z-index: 1;
+    }
+
+    .subtitle .feedback-hint {
+      display: inline-block;
+      margin-top: 6px;
+      font-size: 0.78rem;
+      color: rgba(9,28,45,0.62);
+    }
+
+    .subtitle .feedback-hint strong {
+      color: rgba(9,28,45,0.78);
+    }
+
+    @media (max-width: 1060px) {
+      .feedback-panel {
+        right: 0;
+        top: 52px;
+        width: min(420px, 92vw);
+      }
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(9,28,45,0.18);
+      background: rgba(255,255,255,0.66);
+      color: var(--navy);
+      font-size: 0.82rem;
+      box-shadow: 0 10px 24px rgba(9,28,45,0.08);
+    }
+
+    .chip .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 99px;
+      background: rgba(9, 28, 45, 0.75);
+      box-shadow: 0 0 0 3px rgba(209,178,135,0.22);
+    }
+
+    /* PRACTICE OPT-IN (slick CTA card) */
+    .optin-box {
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 16px;
+      border: 1px solid rgba(9, 28, 45, 0.14);
+      background:
+        radial-gradient(800px 180px at 10% 0%, rgba(209,178,135,0.32), rgba(255,255,255,0) 55%),
+        radial-gradient(700px 160px at 100% 40%, rgba(9,28,45,0.08), rgba(255,255,255,0) 62%),
+        linear-gradient(180deg, rgba(255,255,255,0.72), rgba(255,255,255,0.52));
+      box-shadow: 0 12px 26px rgba(9,28,45,0.10);
+      max-width: 680px;
+      width: 100%;
+      position: relative;
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .optin-box::before {
+      content: "";
+      position: absolute;
+      inset: -2px;
+      background:
+        radial-gradient(520px 220px at 20% -10%, rgba(255,255,255,0.65), rgba(255,255,255,0) 60%),
+        radial-gradient(520px 220px at 95% 30%, rgba(209,178,135,0.28), rgba(255,255,255,0) 62%);
+      opacity: 0.85;
+      pointer-events: none;
+    }
+
+    .optin-left {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      min-width: 220px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .optin-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      width: fit-content;
+      padding: 5px 9px;
+      border-radius: 999px;
+      border: 1px solid rgba(9,28,45,0.14);
+      background: rgba(255,255,255,0.58);
+      box-shadow: 0 8px 18px rgba(9,28,45,0.07);
+      font-size: 0.70rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(9,28,45,0.68);
+      line-height: 1;
+    }
+
+    .optin-kicker .spark {
+      width: 10px;
+      height: 10px;
+      border-radius: 99px;
+      background: rgba(9,28,45,0.78);
+      box-shadow: 0 0 0 4px rgba(209,178,135,0.22);
+    }
+
+    .optin-title {
+      font-size: 0.88rem;
+      font-weight: 820;
+      color: var(--navy);
+      margin: 0;
+      letter-spacing: 0.2px;
+      line-height: 1.15;
+    }
+
+    .optin-copy {
+      margin: 0;
+      font-size: 0.78rem;
+      color: rgba(9,28,45,0.68);
+      line-height: 1.25;
+      max-width: 560px;
+    }
+
+    .optin-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      align-items: flex-end;
+      justify-content: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .optin-row {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .optin-check {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.80rem;
+      color: rgba(9,28,45,0.78);
+      user-select: none;
+      padding: 7px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(9,28,45,0.12);
+      background: rgba(255,255,255,0.58);
+      box-shadow: 0 8px 18px rgba(9,28,45,0.07);
+      white-space: nowrap;
+      line-height: 1;
+    }
+
+    .optin-check input {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--navy);
+    }
+
+    .optin-btn {
+      font-size: 0.84rem;
+      font-weight: 760;
+      border-radius: 999px;
+      border: 1px solid rgba(9, 28, 45, 0.24);
+      background: linear-gradient(135deg, rgba(9,28,45,0.96), rgba(16,34,56,0.96));
+      color: #fefdf9;
+      padding: 8px 12px;
+      cursor: pointer;
+      box-shadow: 0 12px 22px rgba(9,28,45,0.16);
+      transition: transform .12s ease, box-shadow .12s ease, opacity .12s ease;
+      white-space: nowrap;
+      line-height: 1;
+    }
+
+    .optin-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 20px 38px rgba(9,28,45,0.22);
+    }
+
+    .optin-btn:active {
+      transform: translateY(0px);
+    }
+
+    .optin-btn:disabled {
+      opacity: 0.55;
+      cursor: default;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .optin-foot {
+      margin: 0;
+      font-size: 0.70rem;
+      color: rgba(9,28,45,0.50);
+      text-align: right;
+      line-height: 1.1;
+    }
+
+    .optin-success {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(9,28,45,0.18);
+      background: rgba(255,255,255,0.66);
+      color: var(--navy);
+      font-size: 0.84rem;
+      box-shadow: 0 12px 26px rgba(9,28,45,0.10);
+      white-space: nowrap;
+    }
+    .optin-success:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 18px 32px rgba(9,28,45,0.14);
+    }
+
+    @media (max-width: 860px) {
+      .optin-box { grid-template-columns: 1fr; gap: 8px; }
+      .optin-actions { align-items: flex-start; }
+      .optin-foot { text-align: left; }
+      .optin-row { justify-content: flex-start; }
+      .optin-check { white-space: normal; }
+    }
+
+    /* PHASE TOOLBAR (above the 3 panels) */
+    .phase-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+      margin: 10px 0 12px;
+    }
+
+    .phase-toolbar .shortcut-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(9,28,45,0.18);
+      background: rgba(255,255,255,0.66);
+      color: var(--navy);
+      font-size: 0.80rem;
+      box-shadow: 0 10px 24px rgba(9, 28, 45, 0.08);
+      white-space: nowrap;
+    }
+
+    .phase-toolbar .shortcut-chip .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 99px;
+      background: rgba(9, 28, 45, 0.75);
+      box-shadow: 0 0 0 3px rgba(209,178,135,0.22);
+    }
+
+    .phase-toolbar .toolbar-btn {
+      font-size: 0.84rem;
+      border-radius: 999px;
+      border: 1px solid rgba(9, 28, 45, 0.20);
+      background: rgba(255, 255, 255, 0.62);
+      color: #0b1220;
+      padding: 7px 12px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 10px 20px rgba(9,28,45,0.08);
+      transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
+      white-space: nowrap;
+    }
+
+    .phase-toolbar .toolbar-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 16px 28px rgba(9,28,45,0.12);
+      background: rgba(255, 255, 255, 0.78);
+    }
+
+    .phase-toolbar .toolbar-btn:disabled {
+      opacity: 0.45;
+      cursor: default;
+      transform: none;
+      box-shadow: none;
+    }
+
+    @media (max-width: 860px) {
+      .phase-toolbar {
+        justify-content: flex-start;
+        flex-wrap: wrap;
+      }
+      .phase-toolbar .shortcut-chip { white-space: normal; }
+    }
+
+    /* MAIN LAYOUT */
+    .views {
+      padding: 14px 16px 18px;
+    }
+
+    .view {
+      display: none;
+      height: 100%;
+      animation: viewIn .18s ease-out both;
+    }
+    .view.active {
+      display: block;
+    }
+
+    @keyframes viewIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1.35fr 1.1fr 1.1fr;
+      gap: 12px;
+      align-items: stretch;
+      min-height: 520px;
+    }
+
+    .panel {
+      background:
+        linear-gradient(180deg, rgba(253, 247, 237, 0.92), rgba(253, 247, 237, 0.86));
+      border-radius: var(--radius);
+      border: 1px solid rgba(9, 28, 45, 0.09);
+      box-shadow: var(--shadow);
+      padding: 12px 12px 12px;
+      display: flex;
+      flex-direction: column;
+      min-height: 270px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* glossy highlight */
+    .panel::before {
+      content:"";
+      position:absolute;
+      inset:-1px;
+      background: radial-gradient(1000px 420px at 30% 0%, rgba(255,255,255,0.65), rgba(255,255,255,0) 55%);
+      opacity: 0.55;
+      pointer-events:none;
+    }
+
+    .panel.focus {
+      box-shadow: var(--shadow), var(--glow);
+    }
+
+    .panel-title {
+      font-size: 0.76rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--muted);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .panel-title .meta {
+      font-size: 0.74rem;
+      letter-spacing: 0.08em;
+      text-transform: none;
+      color: var(--muted-2);
+    }
+
+    .speaker-pill {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(9, 28, 45, 0.22);
+      color: var(--navy);
+      align-self: flex-start;
+      background: rgba(255, 255, 255, 0.72);
+      position: relative;
+      z-index: 1;
+    }
+
+    .speaker-pill.you {
+      background: linear-gradient(135deg, rgba(209,178,135,0.40), rgba(255,255,255,0.78));
+      border-color: rgba(9,28,45,0.22);
+    }
+
+    .speaker-pill.prospect {
+      background: rgba(255,255,255,0.78);
+    }
+
+    .speaker-pill.action {
+      background: rgba(9,28,45,0.06);
+      border-style: dashed;
+    }
+
+    .current-line {
+      font-size: 1.12rem;
+      line-height: 1.55;
+      color: #0b1220;
+      margin: 12px 0 10px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .current-line.pulse {
+      animation: pulse .22s ease-out both;
+    }
+    @keyframes pulse {
+      from { transform: translateY(4px); opacity: .55; }
+      to   { transform: translateY(0); opacity: 1; }
+    }
+
+    .helper {
+      font-size: 0.86rem;
+      color: rgba(9,28,45,0.68);
+      background: rgba(209, 178, 135, 0.22);
+      border: 1px solid rgba(9,28,45,0.10);
+      border-radius: 14px;
+      padding: 10px 10px;
+      margin-top: 8px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .controls-row {
+      margin-top: auto;
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      padding-top: 12px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .small-btn {
+      font-size: 0.84rem;
+      border-radius: 999px;
+      border: 1px solid rgba(9, 28, 45, 0.20);
+      background: rgba(255, 255, 255, 0.62);
+      color: #0b1220;
+      padding: 7px 12px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 10px 20px rgba(9,28,45,0.08);
+      transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
+    }
+
+    .small-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 16px 28px rgba(9,28,45,0.12);
+      background: rgba(255, 255, 255, 0.78);
+    }
+
+    .small-btn:disabled {
+      opacity: 0.45;
+      cursor: default;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .hint {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-top: 10px;
+      line-height: 1.35;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* OPTIONS */
+    .options-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 6px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .search {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.66);
+      border: 1px solid rgba(9,28,45,0.14);
+      box-shadow: 0 10px 22px rgba(9,28,45,0.07);
+    }
+
+    .search input {
+      border: 0;
+      outline: none;
+      background: transparent;
+      width: 100%;
+      font-size: 0.88rem;
+      color: var(--navy);
+    }
+
+    .search .k {
+      font-size: 0.74rem;
+      color: rgba(9,28,45,0.55);
+      border: 1px solid rgba(9,28,45,0.18);
+      padding: 3px 7px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.6);
+    }
+
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 6px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .option-btn {
+      border-radius: 16px;
+      padding: 11px 12px;
+      border: 1px solid rgba(9, 28, 45, 0.16);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,255,255,0.72));
+      font-size: 0.92rem;
+      text-align: left;
+      cursor: pointer;
+      transition: transform 0.12s ease-out, box-shadow 0.12s ease-out, border-color 0.12s ease-out;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      box-shadow: 0 14px 26px rgba(9,28,45,0.08);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .option-btn::before {
+      content:"";
+      position:absolute;
+      inset:0;
+      background: radial-gradient(600px 180px at 0% 0%, rgba(209,178,135,0.35), rgba(255,255,255,0) 60%);
+      opacity: .55;
+      pointer-events:none;
+    }
+
+    .option-btn:hover {
+      border-color: rgba(9, 28, 45, 0.42);
+      box-shadow: 0 20px 36px rgba(9, 28, 45, 0.14);
+      transform: translateY(-2px);
+    }
+
+    .option-btn.selected {
+      border-color: rgba(9, 28, 45, 0.55);
+      box-shadow: 0 20px 36px rgba(9, 28, 45, 0.14), var(--glow-2);
+    }
+
+    .option-btn.locked {
+      cursor: not-allowed;
+      opacity: 0.92;
+    }
+    .option-btn.locked:hover {
+      transform: none;
+      box-shadow: 0 14px 26px rgba(9,28,45,0.08);
+      border-color: rgba(9, 28, 45, 0.16);
+    }
+
+    .option-label {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: rgba(9,28,45,0.55);
+      margin-bottom: 4px;
+    }
+
+    .option-text {
+      font-size: 0.94rem;
+      color: #0b1220;
+      line-height: 1.35;
+    }
+
+    .option-right {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      justify-content: flex-end;
+      color: rgba(9,28,45,0.60);
+    }
+
+    .option-pill {
+      font-size: 0.72rem;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+      padding: 6px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(9,28,45,0.18);
+      background: rgba(255,255,255,0.68);
+    }
+
+    .option-arrow {
+      font-size: 1.2rem;
+      opacity: 0.65;
+      transform: translateY(-1px);
+    }
+
+    .history-empty {
+      font-size: 0.88rem;
+      color: var(--muted);
+      margin-top: 6px;
+      line-height: 1.45;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* HISTORY: timeline */
+    .history-list {
+      margin-top: 6px;
+      flex: 1;
+      overflow-y: auto;
+      padding-right: 6px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .history-list::-webkit-scrollbar {
+      width: 10px;
+    }
+    .history-list::-webkit-scrollbar-thumb {
+      background: rgba(9,28,45,0.18);
+      border-radius: 999px;
+      border: 3px solid rgba(253,247,237,0.6);
+    }
+
+    .timeline {
+      position: relative;
+      padding-left: 14px;
+    }
+    .timeline::before {
+      content:"";
+      position:absolute;
+      left: 5px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: linear-gradient(180deg, rgba(9,28,45,0.0), rgba(9,28,45,0.22), rgba(9,28,45,0.0));
+      opacity: 0.6;
+    }
+
+    .history-item {
+      display: grid;
+      grid-template-columns: 14px 1fr;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 99px;
+      margin-top: 6px;
+      border: 2px solid rgba(9,28,45,0.22);
+      background: rgba(255,255,255,0.72);
+      box-shadow: 0 10px 18px rgba(9,28,45,0.10);
+    }
+
+    .dot.you { background: rgba(209,178,135,0.65); border-color: rgba(9,28,45,0.28); }
+    .dot.prospect { background: rgba(255,255,255,0.82); }
+    .dot.action { background: rgba(9,28,45,0.08); border-style: dashed; }
+
+    .history-label {
+      font-size: 0.70rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: rgba(9,28,45,0.55);
+      margin-bottom: 4px;
+    }
+
+    .bubble {
+      border-radius: 14px;
+      padding: 9px 10px;
+      background: rgba(255,255,255,0.70);
+      border: 1px solid rgba(9, 28, 45, 0.10);
+      box-shadow: 0 14px 22px rgba(9,28,45,0.07);
+      line-height: 1.35;
+    }
+
+    .bubble.you {
+      background: rgba(241, 226, 201, 0.72);
+      border-color: rgba(9, 28, 45, 0.22);
+    }
+
+    .bubble.prospect {
+      background: rgba(255,253,248,0.78);
+    }
+
+    .bubble.action {
+      font-style: italic;
+      color: rgba(9,28,45,0.68);
+      border-style: dashed;
+      background: rgba(9,28,45,0.05);
+    }
+
+    /* MODAL */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(9,28,45,0.40);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      z-index: 999;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+    .modal-backdrop.show { display: flex; }
+
+    .modal {
+      width: min(540px, 100%);
+      border-radius: 22px;
+      background: rgba(253,247,237,0.92);
+      border: 1px solid rgba(255,255,255,0.55);
+      box-shadow: 0 30px 90px rgba(6,17,26,0.42);
+      overflow: hidden;
+      position: relative;
+    }
+    .modal::before {
+      content:"";
+      position:absolute;
+      inset:-1px;
+      background: radial-gradient(800px 260px at 20% 0%, rgba(209,178,135,0.40), rgba(255,255,255,0) 60%);
+      opacity: 0.65;
+      pointer-events:none;
+    }
+
+    .modal-head {
+      padding: 16px 16px 10px;
+      border-bottom: 1px solid rgba(9,28,45,0.10);
+      position: relative;
+      z-index: 1;
+    }
+    .modal-title {
+      margin: 0;
+      font-size: 1.05rem;
+      color: var(--navy);
+      letter-spacing: 0.2px;
+    }
+    .modal-body {
+      padding: 12px 16px 16px;
+      color: rgba(9,28,45,0.78);
+      line-height: 1.45;
+      position: relative;
+      z-index: 1;
+    }
+    .modal-actions {
+      padding: 0 16px 16px;
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      position: relative;
+      z-index: 1;
+    }
+    .btn {
+      border-radius: 999px;
+      padding: 9px 12px;
+      border: 1px solid rgba(9,28,45,0.20);
+      background: rgba(255,255,255,0.72);
+      cursor: pointer;
+      font-size: 0.9rem;
+      color: var(--navy);
+      box-shadow: 0 14px 26px rgba(9,28,45,0.10);
+      transition: transform .12s ease, box-shadow .12s ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 18px 32px rgba(9,28,45,0.14);
+    }
+    .btn.primary {
+      background: var(--navy);
+      color: #fefdf9;
+      border-color: rgba(9,28,45,0.55);
+    }
+
+    .kbdbar {
+      margin-top: 8px;
+      font-size: 0.76rem;
+      color: rgba(9,28,45,0.55);
+    }
+    .kbdbar code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 0.74rem;
+      background: rgba(255,255,255,0.65);
+      border: 1px solid rgba(9,28,45,0.14);
+      padding: 2px 6px;
+      border-radius: 8px;
+      margin: 0 2px;
+    }
+
+    @media (max-width: 1060px) {
+      .grid { grid-template-columns: 1fr; min-height: unset; }
+      .right-header .chip { display:none; }
+    }
+/* STRIPE EMBEDDED CHECKOUT MODAL */
+.checkout-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(9,28,45,0.40);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  z-index: 1000;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+.checkout-backdrop.show { display: flex; }
+
+.checkout-modal {
+  width: min(920px, 100%);
+  max-height: min(86vh, 860px);
+  border-radius: 22px;
+  background: rgba(253,247,237,0.94);
+  border: 1px solid rgba(255,255,255,0.55);
+  box-shadow: 0 30px 90px rgba(6,17,26,0.42);
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+.checkout-modal::before {
+  content:"";
+  position:absolute;
+  inset:-1px;
+  background: radial-gradient(800px 260px at 20% 0%, rgba(209,178,135,0.40), rgba(255,255,255,0) 60%);
+  opacity: 0.65;
+  pointer-events:none;
+}
+.checkout-head {
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(9,28,45,0.10);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  position: relative;
+  z-index: 1;
+}
+.checkout-title {
+  margin: 0;
+  font-size: 1.05rem;
+  color: var(--navy);
+  letter-spacing: 0.2px;
+  font-weight: 720;
+}
+.checkout-close {
+  border-radius: 999px;
+  padding: 8px 10px;
+  border: 1px solid rgba(9,28,45,0.20);
+  background: rgba(255,255,255,0.72);
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: var(--navy);
+  box-shadow: 0 14px 26px rgba(9,28,45,0.10);
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+.checkout-close:hover { transform: translateY(-1px); box-shadow: 0 18px 32px rgba(9,28,45,0.14); }
+
+.checkout-body {
+  padding: 12px 16px 16px;
+  position: relative;
+  z-index: 1;
+  overflow: auto;
+}
+
+#stripe-embedded-checkout {
+  min-height: 520px;
+}
+  </style>
+  <script src="https://js.stripe.com/v3/"></script>
+</head>
+<body>
+  <div class="app">
+    <div class="topbar">
+      <div class="left-header">
+        <div class="title-row">
+          <div class="title">TRIX Cold Call Trainer</div>
+          <div class="badge "id="account-badge">Free preview</div>
+        </div>
+        <div class="subtitle">
+          Have your GPT in your ears, this on screen. Click what the prospect said,
+          and it reveals exactly what you say next.
+          <span class="feedback-hint">Want free <strong>personalised coaching tips</strong>? Click the <strong>briefcase</strong> top right.</span>
+        </div>
+        <div class="tabs" role="tablist" aria-label="Phases">
+          <div class="tab active" data-tab="phase1" role="tab" aria-selected="true">Phase 1 — Permission</div>
+          <div class="tab" data-tab="phase2" role="tab" aria-selected="false">Phase 2 — Problem</div>
+        </div>
+        <div class="optin-box" id="practice-optin">
+          <div class="optin-left">
+            <div class="optin-kicker"><span class="spark"></span> Free practice bundle</div>
+            <p class="optin-title">Get the Prospect GPT (audio mode) + weekly cold call tips</p>
+            <p class="optin-copy">The GPT will act like your prospect. Put it on audio mode, and practice a real cold call with this trainer.</p>
+          </div>
+
+          <div class="optin-actions">
+            <div class="optin-row">
+              <label class="optin-check">
+                <input id="marketing-optin" type="checkbox" />
+                Yes — email me the GPT + tips
+              </label>
+              <button class="optin-btn" id="optin-btn" type="button">Send me access →</button>
+            </div>
+            <div class="optin-foot">By opting in, you agree to receive emails from TRIX. Unsubscribe anytime.</div>
+          </div>
+        </div>
+
+        <div class="optin-success" id="optin-success" style="display:none; margin-top:10px;">✅ Sent — check your email</div>
+      </div>
+
+      <div class="right-header" id="right-header">
+        <img src="SALESTRIX.png" alt="TRIX logo" class="logo" id="trix-logo" style="cursor:pointer" />
+        <div class="feedback-panel" id="feedback-panel" aria-label="Feedback panel">
+          <div class="feedback-head">
+            <p class="feedback-title">Coaching tips</p>
+            <div class="feedback-mini" id="feedback-mini">Hover to peek · click to pin</div>
+          </div>
+
+          <p class="feedback-q">Which part of the cold call do you find hardest?</p>
+
+          <div class="feedback-options" id="feedback-options">
+            <button class="feedback-opt" type="button" data-value="opener">
+              <span class="lbl">The opener (getting 30 seconds)</span>
+              <span class="tag">A</span>
+            </button>
+            <button class="feedback-opt" type="button" data-value="uncovering_pain">
+              <span class="lbl">Uncovering a pain</span>
+              <span class="tag">B</span>
+            </button>
+            <button class="feedback-opt" type="button" data-value="qualifying_pain">
+              <span class="lbl">Qualifying the pain</span>
+              <span class="tag">C</span>
+            </button>
+            <button class="feedback-opt" type="button" data-value="asking_meeting">
+              <span class="lbl">Asking for the meeting (and getting it)</span>
+              <span class="tag">D</span>
+            </button>
+          </div>
+
+          <div class="feedback-detail" id="feedback-detail">
+            <p class="feedback-sub" id="feedback-sub">Share a bit more context and I’ll tailor tips to you (optional).</p>
+            <textarea class="feedback-textarea" id="feedback-text" placeholder="What happened on your last call? What did they say? Where did you get stuck?"></textarea>
+            <div class="feedback-actions">
+              <button class="feedback-back" id="feedback-back" type="button">← Change option</button>
+              <button class="feedback-submit" id="feedback-submit" type="button">Submit →</button>
+            </div>
+            <div class="feedback-success" id="feedback-success">✅ Got it. I’ll tailor future tips to this.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="views">
+      <!-- Phase 1 -->
+      <div class="view active" id="view-phase1">
+        <div class="phase-toolbar">
+          <div class="shortcut-chip" title="Keyboard shortcuts">
+            <span class="dot"></span>
+            <span><strong>Shortcuts:</strong> <span style="color: rgba(9,28,45,0.65)">↑↓</span> select · <span style="color: rgba(9,28,45,0.65)">Enter</span> choose · <span style="color: rgba(9,28,45,0.65)">B</span> back · <span style="color: rgba(9,28,45,0.65)">R</span> restart</span>
+          </div>
+          <button class="toolbar-btn" id="p1-back-top" type="button" title="Shortcut: B">← Back</button>
+          <button class="toolbar-btn" id="p1-restart-top" type="button" title="Shortcut: R">⟲ Restart</button>
+        </div>
+        <div class="grid">
+          <div class="panel focus">
+            <div class="panel-title">
+              <span>You say (read this)</span>
+              <span class="meta" id="p1-meta"></span>
+            </div>
+            <div class="speaker-pill you" id="p1-speaker-pill">You</div>
+            <div class="current-line" id="p1-current-text"></div>
+            <div class="helper">
+              Phase 1 = earn the right. Your job is to keep them on the line, not pitch.
+            </div>
+            <div class="controls-row">
+              <button class="small-btn" id="p1-back-btn" title="Shortcut: B">← Back</button>
+              <button class="small-btn" id="p1-restart-btn" title="Shortcut: R">⟲ Restart</button>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-title">
+              <span>Prospect said… (click one)</span>
+              <span class="meta" id="p1-options-meta"></span>
+            </div>
+
+            <div class="options-top">
+              <div class="search" title="Filter options">
+                <span style="opacity:.7">⌕</span>
+                <input id="p1-search" type="text" placeholder="Filter responses…" autocomplete="off" />
+                <span class="k">/</span>
+              </div>
+            </div>
+
+            <div class="options" id="p1-options"></div>
+            <div class="hint">
+              When you hear the prospect’s line on the mock call, click the closest match.
+              <div class="kbdbar">Tip: press <code>/</code> to jump to search.</div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-title">
+              <span>Conversation path</span>
+              <span class="meta" id="p1-history-meta"></span>
+            </div>
+            <div class="history-list" id="p1-history"><div class="timeline"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Phase 2 -->
+      <div class="view" id="view-phase2">
+        <div class="phase-toolbar">
+          <div class="shortcut-chip" title="Keyboard shortcuts">
+            <span class="dot"></span>
+            <span><strong>Shortcuts:</strong> <span style="color: rgba(9,28,45,0.65)">↑↓</span> select · <span style="color: rgba(9,28,45,0.65)">Enter</span> choose · <span style="color: rgba(9,28,45,0.65)">B</span> back · <span style="color: rgba(9,28,45,0.65)">R</span> restart</span>
+          </div>
+          <button class="toolbar-btn" id="p2-back-top" type="button" title="Shortcut: B">← Back</button>
+          <button class="toolbar-btn" id="p2-restart-top" type="button" title="Shortcut: R">⟲ Restart</button>
+        </div>
+        <div class="grid">
+          <div class="panel focus">
+            <div class="panel-title">
+              <span>You say (problem statement)</span>
+              <span class="meta" id="p2-meta"></span>
+            </div>
+            <div class="speaker-pill you" id="p2-speaker-pill">You</div>
+            <div class="current-line" id="p2-current-text">Loading Phase 2 script…</div>
+            <div class="helper">
+              Phase 2 = find out if they actually have a problem, how big it is, and whether they care.
+              <br><strong style="color: rgba(9,28,45,0.72)">Free plan:</strong> Phase 2 clicks are locked until you upgrade.</br>
+            </div>
+            <div class="controls-row">
+              <button class="small-btn" id="p2-back-btn" disabled title="Shortcut: B">← Back</button>
+              <button class="small-btn" id="p2-restart-btn" disabled title="Shortcut: R">⟲ Restart</button>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-title">
+              <span>Prospect said… (click one)</span>
+              <span class="meta" id="p2-options-meta"></span>
+            </div>
+
+            <div class="options-top">
+              <div class="search" title="Filter options">
+                <span style="opacity:.7">⌕</span>
+                <input id="p2-search" type="text" placeholder="Filter responses…" autocomplete="off" />
+                <span class="k">/</span>
+              </div>
+            </div>
+
+            <div class="options" id="p2-options">
+              <div class="history-empty">
+                Phase 2 unlocks after you upgrade. Once you're premium, the Phase 2 tree loads automatically.
+              </div>
+            </div>
+            <div class="hint">
+              Same idea: click what they say, we reveal how you drill down.
+              <div class="kbdbar">Tip: press <code>/</code> to jump to search.</div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-title">
+              <span>Conversation path</span>
+              <span class="meta" id="p2-history-meta"></span>
+            </div>
+            <div class="history-list" id="p2-history"><div class="timeline"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- modal -->
+  <div class="modal-backdrop" id="modal">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div class="modal-head">
+        <h3 class="modal-title" id="modal-title">Modal</h3>
+      </div>
+      <div class="modal-body" id="modal-body"></div>
+      <div class="modal-actions" id="modal-actions"></div>
+    </div>
+  </div>
+
+
+<!-- Stripe embedded checkout modal -->
+<div class="checkout-backdrop" id="checkout-modal">
+  <div class="checkout-modal" role="dialog" aria-modal="true" aria-labelledby="checkout-title">
+    <div class="checkout-head">
+      <h3 class="checkout-title" id="checkout-title">Unlock Premium</h3>
+      <button class="checkout-close" id="checkout-close-btn" type="button">✕</button>
+    </div>
+    <div class="checkout-body">
+      <div id="stripe-embedded-checkout"></div>
+    </div>
+  </div>
+</div>
+<script>
+  // ========= CONFIG =========
+  let IS_PREMIUM = false;
+
+  // ========= STATE =========
+  const graphs = {
+    phase1: null, // loaded from phase1.json
+    phase2: null  // loaded from phase2.json
+  };
+  let activePhase = "phase1";
+  let selectedIndex = { phase1: 0, phase2: 0 };
+
+  // ========= UTIL =========
+  const $ = (id) => document.getElementById(id);
+
+// ========= FEEDBACK PANEL (briefcase) =========
+
+  // ========= FEEDBACK PANEL (briefcase) =========
+  const feedback = {
+    pinned: false,
+    open: false,
+    selected: "",
+  };
+
+  function openFeedbackPanel() {
+    const panel = document.getElementById("feedback-panel");
+    if (!panel) return;
+    panel.classList.add("open");
+    feedback.open = true;
+  }
+
+  function closeFeedbackPanel() {
+    if (feedback.pinned) return;
+    const panel = document.getElementById("feedback-panel");
+    if (!panel) return;
+    panel.classList.remove("open");
+    feedback.open = false;
+  }
+
+  function setFeedbackPinned(isPinned) {
+    feedback.pinned = !!isPinned;
+    const toggle = document.getElementById("trix-logo");
+    const mini = document.getElementById("feedback-mini");
+    if (toggle) toggle.classList.toggle("pinned", feedback.pinned);
+    if (mini) mini.textContent = feedback.pinned ? "Pinned open" : "Hover to peek · click to pin";
+    if (feedback.pinned) openFeedbackPanel();
+  }
+
+  function resetFeedbackFlow() {
+    feedback.selected = "";
+    const detail = document.getElementById("feedback-detail");
+    const opts = document.getElementById("feedback-options");
+    const text = document.getElementById("feedback-text");
+    const success = document.getElementById("feedback-success");
+    const submit = document.getElementById("feedback-submit");
+
+    if (detail) detail.classList.remove("show");
+    if (opts) opts.style.display = "flex";
+    if (text) text.value = "";
+    if (success) success.style.display = "none";
+    if (submit) submit.disabled = false;
+  }
+
+  async function submitFeedback() {
+    const submit = document.getElementById("feedback-submit");
+    const success = document.getElementById("feedback-success");
+    const text = document.getElementById("feedback-text");
+
+    if (!feedback.selected) return;
+
+    if (submit) {
+      submit.disabled = true;
+      submit.textContent = "Sending…";
+    }
+
+    try {
+      const feedbackUrl = new URL("/api/feedback", window.location.href).toString();
+      const res = await fetch(feedbackUrl, {
+        method: "POST",
+        credentials: "same-origin",
+        cache: "no-store",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        body: JSON.stringify({
+          hardestPart: feedback.selected,
+          details: (text?.value || "").trim(),
+          source: "trainer_briefcase_panel",
+          pagePath: window.location.pathname
+        })
+      });
+
+      // Helpful debugging in dev: if you’re signed in on 127.0.0.1 but viewing localhost (or vice versa), cookies won’t match.
+      if (res.status === 401) {
+        console.warn("[TRIX] /api/feedback 401", {
+          origin: window.location.origin,
+          hostname: window.location.hostname,
+          path: window.location.pathname,
+          cookieLen: (document.cookie || "").length
+        });
+        showModal({
+          title: "Sign in to send feedback",
+          body: "<p>Please sign in first, then submit your coaching request again.</p><p style='margin-top:8px; opacity:.85'>If you’re already signed in, make sure you’re using the <strong>same URL</strong> you signed in with (e.g. <code>localhost</code> vs <code>127.0.0.1</code>). Cookies don’t carry across.</p>",
+          actions: [
+            { label: "Go to sign in", primary: true, href: "/sign-in" },
+            { label: "Close" }
+          ]
+        });
+        if (submit) {
+          submit.disabled = false;
+          submit.textContent = "Submit →";
+        }
+        return;
+      }
+
+      // If you haven't created /api/feedback yet, this will 404 — we show a friendly message.
+      if (!res.ok) {
+        throw new Error("FEEDBACK_FAILED");
+      }
+
+      if (success) success.style.display = "block";
+      if (submit) {
+        submit.textContent = "Submitted";
+      }
+
+      // Optional: auto-close if not pinned (keeps UI slick)
+      setTimeout(() => {
+        try {
+          resetFeedbackFlow();
+          if (!feedback.pinned) closeFeedbackPanel();
+        } catch (_) {}
+      }, 1600);
+
+    } catch (e) {
+      console.error(e);
+      showModal({
+        title: "Almost there",
+        body: "<p>Feedback couldn’t be sent just yet.</p><p>If you’re not signed in, please sign in and try again. If you are signed in, the <code>/api/feedback</code> endpoint may still be returning an error.</p>",
+        actions: [{ label: "Close", primary: true }]
+      });
+      if (submit) {
+        submit.disabled = false;
+        submit.textContent = "Submit →";
+      }
+    }
+  }
+
+  function wireFeedbackPanel() {
+    const logo = document.getElementById("trix-logo");
+    const panel = document.getElementById("feedback-panel");
+    const header = document.getElementById("right-header");
+    const back = document.getElementById("feedback-back");
+    const submit = document.getElementById("feedback-submit");
+
+    // The logo IS the briefcase trigger
+    const toggle = logo;
+
+    if (!toggle || !panel || !header) return;
+
+    // Debug + make sure the element is definitely interactive
+    try {
+      toggle.style.cursor = "pointer";
+      toggle.style.pointerEvents = "auto";
+      toggle.title = "Click for coaching panel";
+      toggle.dataset.feedbackWired = "1";
+      console.log("[TRIX] Feedback wired", { toggle: !!toggle, panel: !!panel, header: !!header });
+    } catch (_) {}
+
+    // Hover-to-peek (treat the whole right header area as the hover zone)
+    header.addEventListener("mouseenter", () => openFeedbackPanel());
+    header.addEventListener("mouseleave", () => closeFeedbackPanel());
+
+    // Extra safety: if hover isn't firing for any reason, clicking the header (not just the logo) opens it.
+    header.addEventListener("click", (e) => {
+      // Ignore clicks inside the panel itself so buttons still work normally
+      if (panel.contains(e.target)) return;
+      openFeedbackPanel();
+    });
+
+    // Click pins/unpins (click the briefcase image)
+    toggle.addEventListener("click", (e) => {
+      // prevent the click from immediately triggering a mouseleave close edge-case
+      e.preventDefault();
+      setFeedbackPinned(!feedback.pinned);
+    });
+
+    // Option select -> reveal details
+    panel.querySelectorAll(".feedback-opt").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const val = btn.getAttribute("data-value") || "";
+        feedback.selected = val;
+
+        const opts = document.getElementById("feedback-options");
+        const detail = document.getElementById("feedback-detail");
+        const sub = document.getElementById("feedback-sub");
+
+        if (sub) {
+          const map = {
+            opener: "Tell me what you say in the first 10 seconds (roughly).",
+            uncovering_pain: "What was the prospect’s situation + what did they say when you probed?",
+            qualifying_pain: "What did you ask next — and where did it go flat?",
+            asking_meeting: "What did you ask for, and what was the objection?"
+          };
+          sub.textContent = (map[val] || "Share a bit more context and I’ll tailor tips to you (optional).") + " (optional)";
+        }
+
+        if (opts) opts.style.display = "none";
+        if (detail) detail.classList.add("show");
+      });
+    });
+
+    if (back) {
+      back.addEventListener("click", () => {
+        resetFeedbackFlow();
+      });
+    }
+
+    if (submit) {
+      submit.addEventListener("click", submitFeedback);
+    }
+
+    // Start closed
+    resetFeedbackFlow();
+    closeFeedbackPanel();
+  }
+
+  function setCookie(name, value, days) {
+    try {
+      const maxAge = days ? `; max-age=${Math.floor(days * 24 * 60 * 60)}` : "";
+      document.cookie = `${encodeURIComponent(name)}=${encodeURIComponent(value)}${maxAge}; path=/; samesite=lax`;
+    } catch (_) {}
+  }
+
+  function getCookie(name) {
+    try {
+      const key = encodeURIComponent(name) + "=";
+      const parts = (document.cookie || "").split(";");
+      for (const p of parts) {
+        const s = p.trim();
+        if (s.startsWith(key)) return decodeURIComponent(s.substring(key.length));
+      }
+    } catch (_) {}
+    return "";
+  }
+
+  async function submitPracticeOptIn() {
+    const checkbox = document.getElementById("marketing-optin");
+    const btn = document.getElementById("optin-btn");
+    const box = document.getElementById("practice-optin");
+    const ok = document.getElementById("optin-success");
+
+    if (!checkbox || !btn) return;
+
+    if (!checkbox.checked) {
+      showModal({
+        title: "One quick step",
+        body: "<p>Please tick the box to confirm you want the Prospect GPT + weekly tips by email.</p>",
+        actions: [{ label: "Got it", primary: true }]
+      });
+      return;
+    }
+
+    btn.disabled = true;
+    const original = btn.textContent;
+    btn.textContent = "Sending…";
+
+    try {
+      const optInUrl = new URL("/api/marketing/opt-in", window.location.href).toString();
+      const res = await fetch(optInUrl, {
+        method: "POST",
+        credentials: "same-origin",
+        cache: "no-store",
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
+        body: JSON.stringify({
+          source: "trainer_optin_box",
+          wantsPracticeGpt: true,
+          wantsWeeklyTips: true,
+          pagePath: window.location.pathname
+        })
+      });
+
+      if (res.status === 401) {
+        throw new Error("NOT_SIGNED_IN");
+      }
+
+      if (!res.ok) {
+        throw new Error("Opt-in failed");
+      }
+
+      btn.textContent = "✅ You’re in";
+
+      // Persist success so on refresh this box stays gone
+      try {
+        localStorage.setItem("trix_optin_sent", "1");
+        localStorage.setItem("trix_optin_sent_at", String(Date.now()));
+      } catch (_) {}
+      setCookie("trix_optin_sent", "1", 365);
+
+      // Hide the opt-in box after success and show a small confirmation chip (only until refresh)
+      if (box) box.style.display = "none";
+      if (ok) ok.style.display = "inline-flex";
+
+      // analytics removed
+
+      // Reset UI state (so it doesn't look 'half done' if shown again)
+      try { checkbox.checked = false; } catch (_) {}
+
+      showModal({
+        title: "You're in",
+        body: "<p>Done — we’ll email your Prospect GPT access shortly (plus weekly cold call tips).</p>",
+        actions: [{ label: "Close", primary: true }]
+      });
+      // Optional: also remove the success chip after a few seconds (keeps UI ultra-clean even without refresh)
+      try {
+        if (ok) {
+          setTimeout(() => {
+            try { ok.style.display = "none"; } catch (_) {}
+          }, 4500);
+        }
+      } catch (_) {}
+    } catch (e) {
+      console.error(e);
+
+      // If not signed in, route them to /trainer so Clerk UI is visible
+      if (String(e?.message) === "NOT_SIGNED_IN") {
+        btn.disabled = false;
+        btn.textContent = original || "Send me access →";
+        showModal({
+          title: "Sign in to get the GPT",
+          body: "<p>Please sign in first, then click <strong>Send me access</strong> again.</p>",
+          actions: [
+            { label: "Go to sign in", primary: true, href: "/trainer" },
+            { label: "Close" }
+          ]
+        });
+        return;
+      }
+
+      btn.disabled = false;
+      btn.textContent = original || "Send me access →";
+      showModal({
+        title: "Something went wrong",
+        body: "<p>Couldn’t save your opt-in. Please refresh and try again.</p>",
+        actions: [{ label: "Close", primary: true }]
+      });
+    }
+  }
+
+
+async function startCheckout() {
+  // analytics removed
+  // Supports BOTH modes:
+  // - If API returns { url }, redirect to hosted Stripe Checkout (works immediately).
+  // - If API returns { client_secret }, open on-page modal and mount Embedded Checkout.
+  const res = await fetch("/api/stripe/checkout", {
+  method: "POST",
+  credentials: "include", // ✅ force cookies/session to be sent
+});
+
+  let data = null;
+  try { data = await res.json(); } catch (_) {}
+
+  if (!res.ok) {
+    alert(`Checkout failed (${res.status}). Please try again.`);
+    return;
+  }
+
+  if (data && data.url) {
+    window.top.location.href = data.url;
+    return;
+  }
+
+  if (data && data.client_secret) {
+    const pk =
+      data.publishableKey ||
+      window.STRIPE_PUBLISHABLE_KEY ||
+      "";
+
+    if (!pk) {
+      alert("Embedded checkout needs a Stripe publishable key. Add window.STRIPE_PUBLISHABLE_KEY or return publishableKey from /api/stripe/checkout.");
+      return;
+    }
+
+    openCheckoutModal();
+
+    try {
+      const stripe = Stripe(pk);
+      window.__trixStripeEmbeddedCheckout = window.__trixStripeEmbeddedCheckout || { stripe: null, checkout: null };
+
+      if (window.__trixStripeEmbeddedCheckout.checkout && window.__trixStripeEmbeddedCheckout.checkout.unmount) {
+        window.__trixStripeEmbeddedCheckout.checkout.unmount();
+      }
+
+      window.__trixStripeEmbeddedCheckout.stripe = stripe;
+      window.__trixStripeEmbeddedCheckout.checkout = await stripe.initEmbeddedCheckout({
+        clientSecret: data.client_secret
+      });
+
+      window.__trixStripeEmbeddedCheckout.checkout.mount("#stripe-embedded-checkout");
+    } catch (e) {
+      console.error(e);
+      alert("Could not load embedded checkout. Falling back to redirect checkout.");
+      if (data.fallback_url) window.top.location.href = data.fallback_url;
+      closeCheckoutModal();
+    }
+
+    return;
+  }
+
+  alert("Checkout failed. No checkout URL or client secret returned.");
+}
+
+function openCheckoutModal() {
+  const el = document.getElementById("checkout-modal");
+  if (el) el.classList.add("show");
+}
+
+function closeCheckoutModal() {
+  const el = document.getElementById("checkout-modal");
+  if (el) el.classList.remove("show");
+
+  const state = window.__trixStripeEmbeddedCheckout;
+  if (state && state.checkout && state.checkout.unmount) {
+    try { state.checkout.unmount(); } catch (_) {}
+  }
+}
+
+
+  function showModal({ title, body, actions }) {
+    $("modal-title").textContent = title;
+    $("modal-body").innerHTML = body;
+    const area = $("modal-actions");
+    area.innerHTML = "";
+    (actions || []).forEach(a => {
+      if (a.href) {
+        const link = document.createElement("a");
+        link.className = "btn " + (a.primary ? "primary" : "");
+        link.href = a.href;
+        link.target = "_blank";
+        link.rel = "noopener";
+        link.textContent = a.label;
+        area.appendChild(link);
+      } else {
+        const btn = document.createElement("button");
+        btn.className = "btn " + (a.primary ? "primary" : "");
+        btn.textContent = a.label;
+        btn.addEventListener("click", () => {
+          if (a.onClick) a.onClick();
+          hideModal();
+        });
+        area.appendChild(btn);
+      }
+    });
+    $("modal").classList.add("show");
+  }
+
+  function hideModal() {
+    $("modal").classList.remove("show");
+  }
+
+  $("modal").addEventListener("click", (e) => {
+    if (e.target === $("modal")) hideModal();
+  });
+
+
+// Stripe checkout modal close handlers
+const checkoutBackdrop = document.getElementById("checkout-modal");
+const checkoutCloseBtn = document.getElementById("checkout-close-btn");
+if (checkoutCloseBtn) checkoutCloseBtn.addEventListener("click", closeCheckoutModal);
+if (checkoutBackdrop) {
+  checkoutBackdrop.addEventListener("click", (e) => {
+    if (e.target === checkoutBackdrop) closeCheckoutModal();
+  });
+}
+
+  function animatePulse(el) {
+    if (!el) return;
+    el.classList.remove("pulse");
+    // force reflow
+    void el.offsetWidth;
+    el.classList.add("pulse");
+  }
+
+  function safeText(s) {
+    return String(s || "").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+
+  function isDeliverProblem(node) {
+    return node && node.speaker === "action" && /deliver\s+problem\s+statement/i.test(node.text);
+  }
+
+  function isEndCall(node) {
+    return node && node.speaker === "action" && /end\s+call/i.test(node.text);
+  }
+
+  // ========= LOADING =========
+  async function loadGraph(phaseKey, filename) {
+    const res = await fetch(filename);
+    if (!res.ok) { const err = new Error(`Failed to load ${filename} (${res.status})`); err.status = res.status; throw err; }
+    const data = await res.json();
+
+    // Normalize keys: we expect ('n2', {'n15', 'n56', 'n27', 'n10', 'n60', 'n25', 'n16', 'n46', 'n54', 'n24', 'n6', 'n61', 'n30', 'n5', 'n58', 'n57', 'n51', 'n17', 'n1', 'n18', 'n36', 'n49', 'n32', 'n11', 'n40', 'n2', 'n4', 'n13', 'n14', 'n28', 'n33', 'n35', 'n48', 'n3', 'n31', 'n63', 'n52', 'n8', 'n19', 'n45', 'n53', 'n38', 'n29', 'n39', 'n44', 'n37', 'n47', 'n26', 'n42', 'n59', 'n22', 'n20', 'n12', 'n9', 'n21', 'n34', 'n23', 'n43', 'n55', 'n62', 'n7', 'n50', 'n41'}, {'n1': ['n2'], 'n2': ['n3', 'n5', 'n11', 'n17', 'n23', 'n47', 'n59'], 'n3': ['n4'], 'n4': [], 'n5': ['n6'], 'n6': ['n7', 'n9'], 'n7': ['n8'], 'n8': [], 'n9': ['n10'], 'n10': [], 'n11': ['n12', 'n13', 'n15'], 'n12': [], 'n13': ['n14'], 'n14': [], 'n15': ['n16'], 'n16': [], 'n17': ['n18'], 'n18': ['n19', 'n21'], 'n19': ['n20'], 'n20': [], 'n21': ['n22'], 'n22': [], 'n23': ['n24'], 'n24': ['n25', 'n41'], 'n25': ['n26'], 'n26': ['n27', 'n39'], 'n27': ['n28'], 'n28': ['n29', 'n33'], 'n29': ['n30'], 'n30': ['n31'], 'n31': ['n32'], 'n32': [], 'n33': ['n34'], 'n34': ['n35', 'n37'], 'n35': ['n36'], 'n36': [], 'n37': ['n38'], 'n38': [], 'n39': ['n40'], 'n40': [], 'n41': ['n42'], 'n42': ['n43', 'n45'], 'n43': ['n44'], 'n44': [], 'n45': ['n46'], 'n46': [], 'n47': ['n48'], 'n48': ['n49', 'n53'], 'n49': ['n50'], 'n50': ['n51', 'n52'], 'n51': [], 'n52': [], 'n53': ['n54'], 'n54': ['n55', 'n57'], 'n55': ['n56'], 'n56': [], 'n57': ['n58'], 'n58': [], 'n59': ['n60'], 'n60': ['n61', 'n63'], 'n61': ['n62'], 'n62': [], 'n63': ['n64'], 'n64': []})
+    return {
+      root: data.root,
+      currentId: data.root,
+      nodes: data.nodes,
+      children: data.edges,
+      history: [data.root]
+    };
+  }
+
+  // ========= NAV / TABS =========
+  function switchTab(targetPhase) {
+    const __prevPhase = activePhase;
+    activePhase = targetPhase;
+
+    document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+    const tabEl = document.querySelector(`.tab[data-tab="${targetPhase}"]`);
+    if (tabEl) tabEl.classList.add("active");
+
+    document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
+    const viewEl = document.getElementById("view-" + targetPhase);
+    if (viewEl) viewEl.classList.add("active");
+
+    renderPhase(targetPhase);
+  }
+
+  document.querySelectorAll(".tab").forEach(tab => {
+    tab.addEventListener("click", () => {
+      switchTab(tab.dataset.tab);
+    });
+  });
+
+  // ========= AUTO ADVANCE =========
+  function autoAdvance(phaseKey) {
+    const g = graphs[phaseKey];
+    if (!g) return;
+
+    let safety = 0;
+    while (safety++ < 60) {
+      const cur = g.nodes[g.currentId];
+      const kids = g.children[g.currentId] || [];
+      if (!kids.length) break;
+
+      // If we're on a prospect line and there's exactly one next step, auto-follow it.
+      if (cur && cur.speaker === "prospect" && kids.length === 1) {
+        const nextId = kids[0];
+        g.history.push(nextId);
+        g.currentId = nextId;
+        continue;
+      }
+
+      // If we're on a YOU line and there's only one action next, auto-follow it.
+      if (cur && cur.speaker === "you" && kids.length === 1) {
+        const nxt = g.nodes[kids[0]];
+        if (nxt && nxt.speaker === "action") {
+          const nextId = kids[0];
+          g.history.push(nextId);
+          g.currentId = nextId;
+          continue;
+        }
+      }
+
+      // If we're on an action and it has a single child, auto-follow it.
+      if (cur && cur.speaker === "action" && kids.length === 1) {
+        const nextId = kids[0];
+        g.history.push(nextId);
+        g.currentId = nextId;
+        continue;
+      }
+
+      break;
+    }
+  }
+
+  // ========= INTERACTIONS =========
+  function clickOption(phaseKey, optionId) {
+    const g = graphs[phaseKey];
+    if (!g) return;
+
+    // analytics removed
+
+    // Gate Phase 2 interactions in freemium
+    if (phaseKey === "phase2" && !IS_PREMIUM) {
+      // analytics removed
+      showModal({
+        title: "Unlock Phase 2",
+        body: `
+          <p><strong>Phase 2 is locked</strong> in the free preview.</p>
+          <p>To get the full call script + the prospect GPT + videos + examples, upgrade to Premium.</p>
+        `,
+        actions: [
+          { label: "Unlock Premium", primary: true, onClick: () => startCheckout() },
+          { label: "Close" }
+        ]
+      });
+      return;
+    }
+
+    g.history.push(optionId);
+    g.currentId = optionId;
+
+    autoAdvance(phaseKey);
+
+    // Phase 1 special action handling
+    if (phaseKey === "phase1") {
+      const node = g.nodes[g.currentId];
+
+      if (isEndCall(node)) {
+        renderPhase("phase1");
+        showModal({
+          title: "End of call",
+          body: `
+            <p>This path ends the call.</p>
+            <p>${IS_PREMIUM ? "Want to run it again and try a different branch?" : "Want access to the full call script + Phase 2?"}</p>
+          `,
+          actions: IS_PREMIUM
+            ? [{ label: "Restart Phase 1", primary: true, onClick: () => restartPhase("phase1") }, { label: "Close" }]
+            : [{ label: "Unlock Premium", primary: true, onClick: () => startCheckout() }, { label: "Restart Phase 1", onClick: () => restartPhase("phase1") }]
+        });
+        return;
+      }
+
+      if (isDeliverProblem(node)) {
+        // smooth transition to Phase 2
+        setTimeout(() => {
+          switchTab("phase2");
+        }, 140);
+        return;
+      }
+    }
+
+    renderPhase(phaseKey);
+  }
+
+  function goBack(phaseKey) {
+    const g = graphs[phaseKey];
+    if (!g) return;
+    if (g.history.length <= 1) return;
+
+    g.history.pop();
+    g.currentId = g.history[g.history.length - 1];
+
+    // Prefer landing on a YOU or ACTION node for readability
+    let safety = 0;
+    while (safety++ < 40) {
+      const cur = g.nodes[g.currentId];
+      if (!cur) break;
+      if (cur.speaker === "you" || cur.speaker === "action") break;
+      if (g.history.length <= 1) break;
+      g.history.pop();
+      g.currentId = g.history[g.history.length - 1];
+    }
+
+    renderPhase(phaseKey);
+  }
+
+  function restartPhase(phaseKey) {
+    const g = graphs[phaseKey];
+    if (!g) return;
+    g.currentId = g.root;
+    g.history = [g.root];
+    selectedIndex[phaseKey] = 0;
+    renderPhase(phaseKey);
+  }
+
+  // ========= RENDER =========
+  function renderPhase(phaseKey) {
+    const g = graphs[phaseKey];
+    if (!g) return;
+
+    const isP1 = phaseKey === "phase1";
+
+    const current = g.nodes[g.currentId];
+
+    const currentTextEl = $(isP1 ? "p1-current-text" : "p2-current-text");
+    const speakerPillEl = $(isP1 ? "p1-speaker-pill" : "p2-speaker-pill");
+    const optionsEl = $(isP1 ? "p1-options" : "p2-options");
+    const historyEl = $(isP1 ? "p1-history" : "p2-history");
+    const backBtn = $(isP1 ? "p1-back-btn" : "p2-back-btn");
+    const restartBtn = $(isP1 ? "p1-restart-btn" : "p2-restart-btn");
+
+    // Meta
+    const metaEl = $(isP1 ? "p1-meta" : "p2-meta");
+    const hMetaEl = $(isP1 ? "p1-history-meta" : "p2-history-meta");
+    const oMetaEl = $(isP1 ? "p1-options-meta" : "p2-options-meta");
+
+    if (metaEl) metaEl.textContent = `Step ${g.history.length}`;
+    if (hMetaEl) hMetaEl.textContent = `${g.history.length} items`;
+    const kidsAll = g.children[g.currentId] || [];
+    const prospectKidsAll = kidsAll.filter(id => g.nodes[id] && g.nodes[id].speaker === "prospect");
+    if (oMetaEl) oMetaEl.textContent = prospectKidsAll.length ? `${prospectKidsAll.length} options` : "";
+
+    // Speaker + current
+    if (current) {
+      currentTextEl.textContent = current.text || "";
+      speakerPillEl.textContent =
+        current.speaker === "you" ? "You" :
+        current.speaker === "prospect" ? "Prospect" : "Action";
+
+      speakerPillEl.classList.remove("you","prospect","action");
+      speakerPillEl.classList.add(current.speaker || "action");
+      animatePulse(currentTextEl);
+    } else {
+      currentTextEl.textContent = "";
+      speakerPillEl.textContent = "";
+    }
+
+    // Options
+    const searchInput = $(isP1 ? "p1-search" : "p2-search");
+    const q = (searchInput?.value || "").trim().toLowerCase();
+
+    optionsEl.innerHTML = "";
+
+    const kids = prospectKidsAll.filter(id => {
+      const node = g.nodes[id];
+      if (!node) return false;
+      if (!q) return true;
+      return (node.text || "").toLowerCase().includes(q);
+    });
+
+    // update selected index bounds
+    if (selectedIndex[phaseKey] >= kids.length) selectedIndex[phaseKey] = Math.max(0, kids.length - 1);
+
+    if (!kidsAll.length) {
+      const empty = document.createElement("div");
+      empty.className = "history-empty";
+      empty.textContent = "No further branches from here. This path is complete.";
+      optionsEl.appendChild(empty);
+    } else if (!kids.length) {
+      const empty = document.createElement("div");
+      empty.className = "history-empty";
+      empty.innerHTML = q
+        ? `No matches for <strong>${safeText(q)}</strong>.`
+        : "No prospect responses to click from this line.";
+      optionsEl.appendChild(empty);
+    } else {
+      kids.forEach((id, i) => {
+        const node = g.nodes[id];
+        const btn = document.createElement("button");
+        btn.className = "option-btn";
+        if (i === selectedIndex[phaseKey]) btn.classList.add("selected");
+
+        const isLocked = (phaseKey === "phase2" && !IS_PREMIUM);
+        if (isLocked) btn.classList.add("locked");
+
+        btn.addEventListener("click", () => clickOption(phaseKey, id));
+        const left = document.createElement("div");
+        const lbl = document.createElement("div");
+        lbl.className = "option-label";
+        lbl.textContent = "Prospect";
+
+        const txt = document.createElement("div");
+        txt.className = "option-text";
+        txt.textContent = node?.text || "";
+
+        left.appendChild(lbl);
+        left.appendChild(txt);
+
+        const right = document.createElement("div");
+        right.className = "option-right";
+
+        const pill = document.createElement("span");
+        pill.className = "option-pill";
+        pill.textContent = isLocked ? "Locked" : `#${i + 1}`;
+
+        const arrow = document.createElement("span");
+        arrow.className = "option-arrow";
+        arrow.textContent = "→";
+
+        right.appendChild(pill);
+        right.appendChild(arrow);
+
+        btn.appendChild(left);
+        btn.appendChild(right);
+
+        optionsEl.appendChild(btn);
+      });
+    }
