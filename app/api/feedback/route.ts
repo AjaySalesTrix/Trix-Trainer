@@ -7,8 +7,8 @@ import { createClient } from "@supabase/supabase-js";
 export async function POST(req: Request) {
   try {
     // Try the App Router helper first
-    const a = auth();
-    let userId = a.userId;
+    const { userId: authUserId } = await auth();
+    let userId = authUserId;
 
     // Fallback: if middleware isn’t running for this route (e.g. marked public),
     // getAuth can still resolve the session directly from the Request.

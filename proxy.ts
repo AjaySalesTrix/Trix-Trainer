@@ -1,18 +1,28 @@
+// middleware.ts
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
 const isPublicRoute = createRouteMatcher([
   "/",
+  "/trainer.html(.*)",
+
   "/sign-in(.*)",
   "/sign-up(.*)",
-  "/api/stripe/webhook",
-  "/api/stripe/checkout",
+
+  // ✅ public data
+  "/api/phase1",
+  "/api/phase2-preview",
+
+  // ✅ public marketing endpoints (opt-in flow)
   "/api/marketing/opt-in",
-  "/api/marketing/opt-in/status",
+  "/api/marketing/status",
+
+  // ✅ Stripe webhook must be public
+  "/api/stripe/webhook",
 ]);
 
-export default clerkMiddleware((auth, req) => {
+export default clerkMiddleware(async (auth, req) => {
   if (!isPublicRoute(req)) {
-    auth.protect();
+    await auth.protect();
   }
 });
 

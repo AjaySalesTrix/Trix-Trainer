@@ -40,7 +40,7 @@
 
     body {
       margin: 0;
-      min-height: 100vh;
+      height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -51,7 +51,7 @@
         radial-gradient(900px 520px at 100% 35%, rgba(204, 226, 255, 0.30), rgba(255,255,255,0) 55%),
         linear-gradient(180deg, #f6efe1 0%, #d0c0a6 40%, #b19c7a 100%);
       position: relative;
-      overflow-x: hidden;
+      overflow: hidden;
     }
 
     /* subtle noise overlay */
@@ -86,7 +86,7 @@
 
     .app {
       width: min(1320px, 100%);
-      min-height: calc(100vh - 36px);
+      height: calc(100vh - 36px);
       border-radius: var(--radius-xl);
       position: relative;
       overflow: hidden;
@@ -95,6 +95,8 @@
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
       border: 1px solid rgba(255,255,255,0.55);
+      display: flex;
+      flex-direction: column;
     }
 
     /* gradient border frame */
@@ -126,6 +128,7 @@
       display: flex;
       align-items: flex-start; /* was center: prevents the right side being vertically centered against the opt-in */
       justify-content: space-between;
+      overflow: visible;
       gap: 14px;
       padding: 14px 16px;
       border-bottom: 1px solid var(--border);
@@ -214,16 +217,71 @@
       box-shadow: 0 10px 24px rgba(9,28,45,0.18);
     }
 
+    .mode-tabs {
+      display: inline-flex;
+      gap: 6px;
+      padding: 4px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.66);
+      border: 1px solid rgba(9, 28, 45, 0.18);
+      box-shadow: 0 10px 30px rgba(9, 28, 45, 0.08);
+      width: fit-content;
+      position: absolute;
+      right: 0;
+      top: 0;
+    }
+
+    .mode-tab {
+      font-size: 0.82rem;
+      padding: 6px 12px;
+      border-radius: 999px;
+      cursor: pointer;
+      color: var(--muted);
+      user-select: none;
+      white-space: nowrap;
+      position: relative;
+      transition: transform .12s ease, background .12s ease, color .12s ease;
+      display: inline-flex;
+      align-items: center;
+      border: 0;
+      background: transparent;
+      font-family: inherit;
+    }
+
+    .mode-tab:hover {
+      transform: translateY(-1px);
+      background: rgba(9,28,45,0.06);
+    }
+
+    .mode-tab.active {
+      background: var(--navy);
+      color: #fefdf9;
+      box-shadow: 0 10px 24px rgba(9,28,45,0.18);
+    }
+
+    .admin-only {
+      display: none !important;
+    }
+
+    body.is-admin .admin-only {
+      display: inline-flex !important;
+    }
+
     .right-header {
       display: flex;
-      align-items: center;
+      align-items: flex-end;
       gap: 10px;
       flex-shrink: 0;
       align-self: flex-start; /* keep logo + shortcuts pinned to the top */
+      margin-left: auto;
       padding-top: 2px;
       z-index: 50;
       pointer-events: auto;
+      flex-direction: column;
+      position: relative;
+      overflow: visible;
     }
+
 
     .logo {
       height: 42px;
@@ -275,21 +333,14 @@
       pointer-events: auto;
     }
 
-    /* Hover fallback: if JS doesn’t fire, hovering the right header still reveals the panel */
-    #right-header:hover .feedback-panel {
-      transform: translateX(0);
-      opacity: 1;
-      pointer-events: auto;
-    }
-
-    /* Strong hover trigger: hovering the briefcase/logo itself reveals the panel */
+    /* Hover trigger: hovering the briefcase/logo itself reveals the panel */
     #trix-logo {
       cursor: pointer;
       pointer-events: auto;
     }
 
     /* Panel is placed directly after the logo in DOM; use adjacent sibling selector */
-    #trix-logo:hover + #feedback-panel,
+    #trix-logo:hover ~ #feedback-panel,
     #feedback-panel:hover {
       transform: translateX(0);
       opacity: 1;
@@ -780,6 +831,15 @@
       background: rgba(255, 255, 255, 0.78);
     }
 
+    .phase-toolbar .toolbar-btn.active {
+      border-color: rgba(9,28,45,0.4);
+      background: rgba(209,178,135,0.2);
+    }
+
+    .phase-toolbar {
+      flex-shrink: 0;
+    }
+
     .phase-toolbar .toolbar-btn:disabled {
       opacity: 0.45;
       cursor: default;
@@ -798,6 +858,24 @@
     /* MAIN LAYOUT */
     .views {
       padding: 14px 16px 18px;
+      position: relative;
+      flex: 1;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    .view iframe.embed-frame {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+      flex: 1;
+    }
+
+    body.mode-problem-lab .tabs,
+    body.mode-dashboard .tabs {
+      opacity: 0.4;
+      pointer-events: none;
     }
 
     .view {
@@ -806,7 +884,10 @@
       animation: viewIn .18s ease-out both;
     }
     .view.active {
-      display: block;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      height: 100%;
     }
 
     @keyframes viewIn {
@@ -819,7 +900,8 @@
       grid-template-columns: 1.35fr 1.1fr 1.1fr;
       gap: 12px;
       align-items: stretch;
-      min-height: 520px;
+      min-height: 0;
+      flex: 1;
     }
 
     .panel {
@@ -904,6 +986,10 @@
       line-height: 1.55;
       color: #0b1220;
       margin: 12px 0 10px;
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
+      padding-right: 6px;
       position: relative;
       z-index: 1;
     }
@@ -1020,6 +1106,10 @@
     .options {
       display: flex;
       flex-direction: column;
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
+      padding-right: 6px;
       gap: 10px;
       margin-top: 6px;
       position: relative;
@@ -1125,6 +1215,7 @@
     .history-list {
       margin-top: 6px;
       flex: 1;
+      min-height: 0;
       overflow-y: auto;
       padding-right: 6px;
       position: relative;
@@ -1294,6 +1385,61 @@
       border-color: rgba(9,28,45,0.55);
     }
 
+    .call-ended-group {
+      margin-bottom: 14px;
+    }
+
+    .call-ended-label {
+      font-size: 0.82rem;
+      color: rgba(9,28,45,0.72);
+      margin: 0 0 8px;
+    }
+
+    .call-ended-radio {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      font-size: 0.92rem;
+      color: #0b1220;
+      margin-bottom: 8px;
+    }
+
+    .call-ended-radio input {
+      margin-top: 2px;
+    }
+
+    .call-ended-textarea {
+      width: 100%;
+      min-height: 110px;
+      resize: vertical;
+      border-radius: 14px;
+      border: 1px solid rgba(9,28,45,0.16);
+      padding: 10px 12px;
+      font-size: 0.92rem;
+      font-family: inherit;
+      background: rgba(255,255,255,0.78);
+      color: #0b1220;
+    }
+
+    .call-ended-count {
+      font-size: 0.74rem;
+      color: rgba(9,28,45,0.55);
+      text-align: right;
+      margin-top: 6px;
+    }
+
+    .call-ended-error {
+      font-size: 0.82rem;
+      color: #8b1e1e;
+      margin-top: 6px;
+      display: none;
+    }
+
+    .call-ended-body {
+      max-height: min(60vh, 520px);
+      overflow-y: auto;
+    }
+
     .kbdbar {
       margin-top: 8px;
       font-size: 0.76rem;
@@ -1307,6 +1453,154 @@
       padding: 2px 6px;
       border-radius: 8px;
       margin: 0 2px;
+    }
+
+    .context-box {
+      margin-top: 10px;
+      border-radius: 16px;
+      border: 1px solid rgba(9,28,45,0.14);
+      background: rgba(255,255,255,0.6);
+      padding: 10px 12px;
+      box-shadow: 0 10px 22px rgba(9,28,45,0.06);
+    }
+
+    .context-box summary {
+      cursor: pointer;
+      font-size: 0.8rem;
+      color: rgba(9,28,45,0.7);
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      list-style: none;
+    }
+
+    .context-box summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .context-row {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .context-row label {
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(9,28,45,0.6);
+    }
+
+    .context-input {
+      width: 100%;
+      border-radius: 12px;
+      border: 1px solid rgba(9,28,45,0.18);
+      padding: 10px 12px;
+      font-size: 0.9rem;
+      background: #fbf7ef;
+      color: #0b1220;
+      height: 40px;
+      transition: border-color .12s ease, box-shadow .12s ease;
+    }
+
+    .context-input::placeholder {
+      color: rgba(9,28,45,0.4);
+    }
+
+    .context-input:focus {
+      outline: none;
+      border-color: rgba(9,28,45,0.35);
+      box-shadow: 0 0 0 3px rgba(209,178,135,0.25);
+    }
+
+    .context-field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .context-popover {
+      position: absolute;
+      width: min(380px, 92vw);
+      border-radius: 20px;
+      border: 1px solid rgba(9, 28, 45, 0.22);
+      background: #fbf7ef;
+      box-shadow: 0 20px 45px rgba(9,28,45,0.16);
+      padding: 14px 14px 12px;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(10px);
+      transition: transform .22s ease, opacity .22s ease;
+      z-index: 90;
+    }
+
+    .context-popover.open {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+
+    .context-popover .helper-text {
+      font-size: 0.8rem;
+      color: rgba(9,28,45,0.62);
+      margin: 6px 0 8px;
+      position: relative;
+      z-index: 1;
+      line-height: 1.3;
+      max-width: 320px;
+    }
+
+    .context-popover .context-row {
+      position: relative;
+      z-index: 1;
+    }
+
+    .context-popover .context-row .context-input {
+      flex: 1;
+    }
+
+    .context-popover .context-row .context-save {
+      min-width: 140px;
+      height: 40px;
+      justify-content: center;
+      padding: 8px 12px;
+    }
+
+    .context-popover .context-row .context-line {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .context-popover-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      position: relative;
+      z-index: 1;
+      margin-bottom: 4px;
+    }
+
+    .context-popover-title {
+      font-size: 0.76rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(9,28,45,0.6);
+      margin: 0;
+    }
+
+    .context-pill {
+      font-size: 0.68rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(9,28,45,0.18);
+      background: rgba(255,255,255,0.7);
+      color: rgba(9,28,45,0.55);
+      white-space: nowrap;
     }
 
     @media (max-width: 1060px) {
@@ -1390,6 +1684,7 @@
 }
   </style>
   <script src="https://js.stripe.com/v3/"></script>
+  <script src="https://cdn.posthog.com/posthog.js"></script>
 </head>
 <body>
   <div class="app">
@@ -1427,11 +1722,15 @@
           </div>
         </div>
 
-        <div class="optin-success" id="optin-success" style="display:none; margin-top:10px;">✅ Sent — check your email</div>
       </div>
 
       <div class="right-header" id="right-header">
         <img src="SALESTRIX.png" alt="TRIX logo" class="logo" id="trix-logo" style="cursor:pointer" />
+        <div class="mode-tabs" id="mode-tabs" role="tablist" aria-label="Modes">
+          <button class="mode-tab active" data-mode="trainer" role="tab" aria-selected="true" type="button">Trainer</button>
+          <button class="mode-tab" data-mode="problem-lab" role="tab" aria-selected="false" type="button">Problem Lab</button>
+          <button class="mode-tab admin-only" data-mode="dashboard" role="tab" aria-selected="false" type="button">Dashboard</button>
+        </div>
         <div class="feedback-panel" id="feedback-panel" aria-label="Feedback panel">
           <div class="feedback-head">
             <p class="feedback-title">Coaching tips</p>
@@ -1482,6 +1781,8 @@
           </div>
           <button class="toolbar-btn" id="p1-back-top" type="button" title="Shortcut: B">← Back</button>
           <button class="toolbar-btn" id="p1-restart-top" type="button" title="Shortcut: R">⟲ Restart</button>
+          <button class="toolbar-btn" id="p1-ended-top" type="button">Prospect ended call</button>
+          <button class="toolbar-btn" id="p1-context-top" type="button">Add context</button>
         </div>
         <div class="grid">
           <div class="panel focus">
@@ -1493,10 +1794,6 @@
             <div class="current-line" id="p1-current-text"></div>
             <div class="helper">
               Phase 1 = earn the right. Your job is to keep them on the line, not pitch.
-            </div>
-            <div class="controls-row">
-              <button class="small-btn" id="p1-back-btn" title="Shortcut: B">← Back</button>
-              <button class="small-btn" id="p1-restart-btn" title="Shortcut: R">⟲ Restart</button>
             </div>
           </div>
 
@@ -1540,6 +1837,8 @@
           </div>
           <button class="toolbar-btn" id="p2-back-top" type="button" title="Shortcut: B">← Back</button>
           <button class="toolbar-btn" id="p2-restart-top" type="button" title="Shortcut: R">⟲ Restart</button>
+          <button class="toolbar-btn" id="p2-ended-top" type="button">Prospect ended call</button>
+          <button class="toolbar-btn" id="p2-context-top" type="button">Add context</button>
         </div>
         <div class="grid">
           <div class="panel focus">
@@ -1551,11 +1850,7 @@
             <div class="current-line" id="p2-current-text">Loading Phase 2 script…</div>
             <div class="helper">
               Phase 2 = find out if they actually have a problem, how big it is, and whether they care.
-              <br><strong style="color: rgba(9,28,45,0.72)">Free plan:</strong> Phase 2 clicks are locked until you upgrade.</br>
-            </div>
-            <div class="controls-row">
-              <button class="small-btn" id="p2-back-btn" disabled title="Shortcut: B">← Back</button>
-              <button class="small-btn" id="p2-restart-btn" disabled title="Shortcut: R">⟲ Restart</button>
+              <span id="p2-free-note"><br><strong style="color: rgba(9,28,45,0.72)">Free plan:</strong> Phase 2 clicks are locked until you upgrade.</span>
             </div>
           </div>
 
@@ -1574,7 +1869,7 @@
             </div>
 
             <div class="options" id="p2-options">
-              <div class="history-empty">
+              <div class="history-empty" id="p2-preview-empty">
                 Phase 2 unlocks after you upgrade. Once you're premium, the Phase 2 tree loads automatically.
               </div>
             </div>
@@ -1592,9 +1887,62 @@
             <div class="history-list" id="p2-history"><div class="timeline"></div></div>
           </div>
         </div>
+        </div>
+      </div>
+
+      <div class="view" id="view-problem-lab">
+        <iframe
+          id="problem-lab-frame"
+          class="embed-frame"
+          title="Problem Lab"
+          src="/problem-lab?embed=1"
+        ></iframe>
+      </div>
+
+      <div class="view" id="view-dashboard">
+        <iframe
+          id="dashboard-frame"
+          class="embed-frame"
+          title="Dashboard"
+          src="/admin?embed=1"
+        ></iframe>
       </div>
     </div>
-  </div>
+
+    <div class="context-popover" id="context-popover" aria-hidden="true">
+      <div class="context-popover-header">
+        <p class="context-popover-title">Context</p>
+        <span class="context-pill">Optional</span>
+      </div>
+      <p class="helper-text">Add details as you uncover the problem/impact during the call — we’ll auto-populate them into your lines so it’s easier to read.</p>
+      <div class="context-row">
+        <div class="context-field">
+          <label for="context-problem">Prospect problem</label>
+          <div class="context-line">
+            <input class="context-input" id="context-problem" type="text" placeholder="e.g., slow follow-up on inbound leads" />
+            <button class="small-btn context-save" type="button" data-field="problem">Save for this call</button>
+          </div>
+        </div>
+      </div>
+      <div class="context-row">
+        <div class="context-field">
+          <label for="context-impact">Impact</label>
+          <div class="context-line">
+            <input class="context-input" id="context-impact" type="text" placeholder="e.g., pipeline misses targets by 20%" />
+            <button class="small-btn context-save" type="button" data-field="impact">Save for this call</button>
+          </div>
+        </div>
+      </div>
+      <div class="context-row">
+        <div class="context-field">
+          <label for="context-competitors">Competitors</label>
+          <div class="context-line">
+            <input class="context-input" id="context-competitors" type="text" placeholder="e.g., Apollo and ZoomInfo" />
+            <button class="small-btn context-save" type="button" data-field="competitors">Save for this call</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
   <!-- modal -->
   <div class="modal-backdrop" id="modal">
@@ -1604,6 +1952,46 @@
       </div>
       <div class="modal-body" id="modal-body"></div>
       <div class="modal-actions" id="modal-actions"></div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="call-ended-modal">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="call-ended-title">
+      <div class="modal-head">
+        <h3 class="modal-title" id="call-ended-title">Prospect ended call</h3>
+      </div>
+      <div class="modal-body call-ended-body" id="call-ended-body">
+        <form id="call-ended-form">
+          <div class="call-ended-group">
+            <p class="call-ended-label">Why did the call end?</p>
+            <label class="call-ended-radio">
+              <input type="radio" name="call-ended-reason" value="not_covered" />
+              Prospect said something not covered
+            </label>
+            <label class="call-ended-radio">
+              <input type="radio" name="call-ended-reason" value="lost_control" />
+              I lost control of the conversation
+            </label>
+            <label class="call-ended-radio">
+              <input type="radio" name="call-ended-reason" value="disengaged" />
+              Prospect disengaged / shut me down
+            </label>
+            <div class="call-ended-error" id="call-ended-error">Select a reason to continue.</div>
+          </div>
+          <div class="call-ended-group">
+            <label class="call-ended-label" for="call-ended-note">What did they say/do? (short notes)</label>
+            <textarea class="call-ended-textarea" id="call-ended-note" maxlength="500" placeholder="Optional, short notes"></textarea>
+            <div class="call-ended-count" id="call-ended-count">0/500</div>
+          </div>
+        </form>
+        <div id="call-ended-success" style="display:none;">
+          <p style="margin: 0; font-size: 0.98rem; color: rgba(9,28,45,0.82);">Saved.</p>
+        </div>
+      </div>
+      <div class="modal-actions" id="call-ended-actions">
+        <button class="btn" id="call-ended-cancel" type="button">Cancel</button>
+        <button class="btn primary" id="call-ended-submit" type="button">Submit</button>
+      </div>
     </div>
   </div>
 
@@ -1623,6 +2011,89 @@
 <script>
   // ========= CONFIG =========
   let IS_PREMIUM = false;
+  const POSTHOG_KEY = "phc_xj2ayZ9QQPbLqRt1xMg9s5Pax7va0kkyYUDM3Z591qq";
+  const POSTHOG_HOST = "https://eu.posthog.com";
+
+  function initPostHog() {
+    try {
+      if (!window.posthog || !POSTHOG_KEY || !POSTHOG_HOST) {
+        console.warn("[TRIX] PostHog unavailable for trainer iframe.");
+        return false;
+      }
+      if (!window.__TRIX_POSTHOG_INIT) {
+        window.posthog.init(POSTHOG_KEY, {
+          api_host: POSTHOG_HOST,
+          capture_pageview: false
+        });
+        window.__TRIX_POSTHOG_INIT = true;
+      }
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  const __TRIX_PH_READY__ = initPostHog();
+
+  function capturePostHog(event, props) {
+    try {
+      if (!__TRIX_PH_READY__ || !window.posthog) return;
+      window.posthog.capture(event, props || {});
+    } catch (_) {}
+  }
+
+  async function identifyPostHog() {
+    if (!__TRIX_PH_READY__ || !window.posthog) return;
+    try {
+      const res = await fetch("/api/me", { credentials: "same-origin", cache: "no-store" });
+      if (!res.ok) {
+        window.posthog.reset();
+        return;
+      }
+      const data = await res.json();
+      console.log("me:", data);
+      if (data && data.userId) {
+        window.posthog.identify(data.userId, {
+          email: data.email || undefined,
+          name: data.fullName || undefined,
+          $email: data.email || undefined,
+          $name: data.fullName || undefined,
+          firstName: data.firstName || undefined,
+          lastName: data.lastName || undefined
+        });
+      } else {
+        window.posthog.reset();
+      }
+    } catch (_) {
+      try { window.posthog.reset(); } catch (_) {}
+    }
+  }
+
+  if (__TRIX_PH_READY__) {
+    capturePostHog("trainer_loaded", { source: "trainer_html_iframe" });
+    identifyPostHog();
+    const sessionStart = Date.now();
+    let sessionEnded = false;
+    const sendSessionEnd = () => {
+      if (sessionEnded) return;
+      sessionEnded = true;
+      capturePostHog("session_end", {
+        source: "trainer_html_iframe",
+        duration_ms: Date.now() - sessionStart
+      });
+    };
+    capturePostHog("session_start", { source: "trainer_html_iframe" });
+    window.addEventListener("pagehide", sendSessionEnd);
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "hidden") sendSessionEnd();
+    });
+  }
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible" && __TRIX_CHECKOUT_STARTED__) {
+      try { refreshPremium(); } catch (_) {}
+    }
+  });
 
   // ========= STATE =========
   const graphs = {
@@ -1630,10 +2101,299 @@
     phase2: null  // loaded from phase2.json
   };
   let activePhase = "phase1";
+  let activeMode = "trainer";
   let selectedIndex = { phase1: 0, phase2: 0 };
+  const callContext = { problem: "", impact: "", competitors: "" };
+  let __TRIX_CHECKOUT_STARTED__ = false;
+  let IS_ADMIN = false;
+  let CURRENT_USER_ID = null;
 
   // ========= UTIL =========
   const $ = (id) => document.getElementById(id);
+
+  function applyPremiumUI() {
+    const badge = $("account-badge");
+    if (badge) {
+      badge.textContent = IS_PREMIUM ? "Premium" : "Free preview";
+      badge.classList.toggle("premium", IS_PREMIUM);
+    }
+    const freeNote = $("p2-free-note");
+    if (freeNote) freeNote.style.display = IS_PREMIUM ? "none" : "";
+    const previewEmpty = $("p2-preview-empty");
+    if (previewEmpty) previewEmpty.style.display = IS_PREMIUM ? "none" : "";
+    document.body.classList.toggle("is-premium", IS_PREMIUM);
+  }
+
+  async function syncOptInPanel() {
+    const box = document.getElementById("practice-optin");
+    if (!box) return;
+
+    if (!CURRENT_USER_ID) {
+      box.style.display = "none";
+      return;
+    }
+
+    // Hide until we know server truth (prevents flicker)
+    box.style.display = "none";
+    let shouldShow = true;
+    let statusJson = null;
+    try {
+      const res = await fetch("/api/marketing/status", {
+        credentials: "same-origin",
+        cache: "no-store"
+      });
+      if (res.ok) {
+        statusJson = await res.json();
+        const optedIn = !!(statusJson?.opted_in || statusJson?.optedIn);
+        shouldShow = !optedIn;
+      }
+    } catch (_) {
+      shouldShow = true;
+    }
+
+    console.log("[optin] user", CURRENT_USER_ID, "localFlag", null, "status", statusJson);
+    box.style.display = shouldShow ? "" : "none";
+  }
+
+  function setActiveView(viewId) {
+    document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
+    const viewEl = document.getElementById(viewId);
+    if (viewEl) viewEl.classList.add("active");
+  }
+
+  function updateModeTabs() {
+    document.querySelectorAll(".mode-tab").forEach(tab => {
+      const mode = tab.dataset.mode;
+      tab.classList.toggle("active", mode === activeMode);
+      tab.setAttribute("aria-selected", mode === activeMode ? "true" : "false");
+    });
+    document.body.classList.toggle("is-admin", IS_ADMIN);
+    document.body.classList.toggle("mode-trainer", activeMode === "trainer");
+    document.body.classList.toggle("mode-problem-lab", activeMode === "problem-lab");
+    document.body.classList.toggle("mode-dashboard", activeMode === "dashboard");
+    positionModeTabs();
+  }
+
+  function positionModeTabs() {
+    const modeTabs = document.querySelector(".mode-tabs");
+    const phaseTabs = document.querySelector(".tabs");
+    const rightHeader = document.getElementById("right-header");
+    if (!modeTabs || !phaseTabs || !rightHeader) return;
+    const rightRect = rightHeader.getBoundingClientRect();
+    const tabsRect = phaseTabs.getBoundingClientRect();
+    const top = tabsRect.top - rightRect.top;
+    modeTabs.style.top = `${Math.max(0, top)}px`;
+  }
+
+  function getDashboardSrc() {
+    const params = new URLSearchParams(window.location.search || "");
+    const userId = params.get("userId");
+    if (userId) {
+      return `/admin/users/${encodeURIComponent(userId)}?embed=1`;
+    }
+    return "/admin?embed=1";
+  }
+
+  function ensureProblemLabFrame() {
+    const frame = document.getElementById("problem-lab-frame");
+    if (!frame) return;
+    const expected = "/problem-lab?embed=1";
+    if (frame.getAttribute("src") !== expected) {
+      frame.setAttribute("src", expected);
+    }
+  }
+
+  function ensureDashboardFrame() {
+    const frame = document.getElementById("dashboard-frame");
+    if (!frame) return;
+    const expected = getDashboardSrc();
+    if (frame.getAttribute("src") !== expected) {
+      frame.setAttribute("src", expected);
+    }
+  }
+
+  function updateModeUrl() {
+    const params = new URLSearchParams(window.location.search || "");
+    params.set("mode", activeMode);
+    if (activeMode !== "dashboard") params.delete("userId");
+    const next = `${window.location.pathname}?${params.toString()}`;
+    try { window.history.replaceState({}, "", next); } catch (_) {}
+  }
+
+  function switchMode(mode) {
+    if (mode === "dashboard" && !IS_ADMIN) {
+      mode = "trainer";
+    }
+    activeMode = mode;
+    updateModeTabs();
+    updateModeUrl();
+    if (activeMode === "trainer") {
+      setActiveView(activePhase === "phase2" ? "view-phase2" : "view-phase1");
+    } else if (activeMode === "problem-lab") {
+      ensureProblemLabFrame();
+      setActiveView("view-problem-lab");
+    } else if (activeMode === "dashboard") {
+      ensureDashboardFrame();
+      setActiveView("view-dashboard");
+    }
+  }
+
+  function loadCallContext() {
+    try {
+      const raw = sessionStorage.getItem("trix_call_context");
+      if (!raw) return;
+      const data = JSON.parse(raw);
+      if (!data || typeof data !== "object") return;
+      callContext.problem = String(data.problem || "");
+      callContext.impact = String(data.impact || "");
+      callContext.competitors = String(data.competitors || "");
+    } catch (_) {}
+  }
+
+  function persistCallContext() {
+    try {
+      sessionStorage.setItem("trix_call_context", JSON.stringify(callContext));
+    } catch (_) {}
+  }
+
+  function clearCallContext() {
+    callContext.problem = "";
+    callContext.impact = "";
+    callContext.competitors = "";
+    try { sessionStorage.removeItem("trix_call_context"); } catch (_) {}
+    const problemInput = $("context-problem");
+    const impactInput = $("context-impact");
+    const competitorsInput = $("context-competitors");
+    if (problemInput) problemInput.value = "";
+    if (impactInput) impactInput.value = "";
+    if (competitorsInput) competitorsInput.value = "";
+  }
+
+  function wireCallContext() {
+    const problemInput = $("context-problem");
+    const impactInput = $("context-impact");
+    const competitorsInput = $("context-competitors");
+    if (problemInput) problemInput.value = callContext.problem || "";
+    if (impactInput) impactInput.value = callContext.impact || "";
+    if (competitorsInput) competitorsInput.value = callContext.competitors || "";
+
+    document.querySelectorAll(".context-save").forEach((btn) => {
+      if (btn.dataset.wired) return;
+      btn.dataset.wired = "1";
+      btn.addEventListener("click", () => {
+        const field = btn.dataset.field || "";
+        let value = "";
+        if (field === "problem") value = (problemInput?.value || "").trim();
+        if (field === "impact") value = (impactInput?.value || "").trim();
+        if (field === "competitors") value = (competitorsInput?.value || "").trim();
+        if (!["problem", "impact", "competitors"].includes(field)) return;
+        callContext[field] = value;
+        persistCallContext();
+        capturePostHog("context_saved", { field, hasValue: !!value });
+        renderPhase(activePhase);
+      });
+    });
+  }
+
+  const contextPopover = document.getElementById("context-popover");
+  const contextPopoverState = { open: false, pinned: false, hovering: false };
+
+  function positionContextPopover(anchorBtn, phaseKey) {
+    if (!contextPopover || !anchorBtn) return;
+    const viewEl = document.getElementById(`view-${phaseKey}`);
+    const historyEl = document.getElementById(phaseKey === "phase1" ? "p1-history" : "p2-history");
+    const panelEl = historyEl ? historyEl.closest(".panel") : null;
+    const appEl = document.querySelector(".app");
+    if (!viewEl || !panelEl || !appEl) return;
+
+    const appRect = appEl.getBoundingClientRect();
+    const panelRect = panelEl.getBoundingClientRect();
+    const btnRect = anchorBtn.getBoundingClientRect();
+
+    contextPopover.style.maxWidth = `${Math.max(220, panelRect.width - 16)}px`;
+    contextPopover.style.maxHeight = `${Math.max(220, panelRect.height - 16)}px`;
+
+    const popRect = contextPopover.getBoundingClientRect();
+    let left = btnRect.left;
+    let top = btnRect.bottom + 8;
+
+    const minLeft = panelRect.left + 8;
+    const maxLeft = panelRect.right - popRect.width - 8;
+    const minTop = panelRect.top + 8;
+    const maxTop = panelRect.bottom - popRect.height - 8;
+
+    left = Math.min(Math.max(left, minLeft), Math.max(minLeft, maxLeft));
+    top = Math.min(Math.max(top, minTop), Math.max(minTop, maxTop));
+
+    contextPopover.style.left = `${left - appRect.left}px`;
+    contextPopover.style.top = `${top - appRect.top}px`;
+  }
+
+  function openContextPopover(anchorBtn, phaseKey, pin) {
+    if (!contextPopover) return;
+    contextPopoverState.open = true;
+    if (typeof pin === "boolean") contextPopoverState.pinned = pin;
+    contextPopover.classList.add("open");
+    contextPopover.setAttribute("aria-hidden", "false");
+    if (anchorBtn) anchorBtn.classList.toggle("active", contextPopoverState.pinned);
+    requestAnimationFrame(() => {
+      positionContextPopover(anchorBtn, phaseKey);
+    });
+  }
+
+  function closeContextPopover() {
+    if (!contextPopover) return;
+    contextPopoverState.open = false;
+    contextPopoverState.pinned = false;
+    contextPopover.classList.remove("open");
+    contextPopover.setAttribute("aria-hidden", "true");
+    const btn1 = document.getElementById("p1-context-top");
+    const btn2 = document.getElementById("p2-context-top");
+    if (btn1) btn1.classList.remove("active");
+    if (btn2) btn2.classList.remove("active");
+  }
+
+  function applyContext(text) {
+    if (text === null || text === undefined) return "";
+    let out = String(text);
+
+    if (callContext.problem) {
+      out = out.replace(/\{\{PROBLEM\}\}/g, callContext.problem);
+    }
+    if (callContext.impact) {
+      out = out.replace(/\{\{IMPACT\}\}/g, callContext.impact);
+    }
+    if (callContext.competitors) {
+      out = out.replace(/\{\{COMPETITORS\}\}/g, callContext.competitors);
+    }
+
+    if (callContext.problem) {
+      const problemRegexes = [
+        /(?:'X'|X')\s*\\\(([^)]*problem[^)]*)\\?\)/gi,
+        /X\s*\\\(([^)]*problem[^)]*)\\?\)/gi,
+      ];
+      problemRegexes.forEach((re) => {
+        out = out.replace(re, callContext.problem);
+      });
+    }
+
+    if (callContext.impact) {
+      const impactRegexes = [
+        /(?:Y'|Y|X impact)\s*\\\(([^)]*impact[^)]*)\\?\)/gi,
+        /\\\(([^)]*impact[^)]*)\\?\)/gi,
+      ];
+      impactRegexes.forEach((re) => {
+        out = out.replace(re, callContext.impact);
+      });
+    }
+
+    if (callContext.competitors) {
+      const competitorRegex = /A and B\s*\\\(([^)]*competitors[^)]*)\\?\)/gi;
+      out = out.replace(competitorRegex, callContext.competitors);
+    }
+
+    return out;
+  }
 
 // ========= FEEDBACK PANEL (briefcase) =========
 
@@ -1741,6 +2501,11 @@
         throw new Error("FEEDBACK_FAILED");
       }
 
+      capturePostHog("feedback_submitted", {
+        hardestPart: feedback.selected,
+        hasDetails: !!(text?.value || "").trim()
+      });
+
       if (success) success.style.display = "block";
       if (submit) {
         submit.textContent = "Submitted";
@@ -1789,15 +2554,19 @@
       console.log("[TRIX] Feedback wired", { toggle: !!toggle, panel: !!panel, header: !!header });
     } catch (_) {}
 
-    // Hover-to-peek (treat the whole right header area as the hover zone)
-    header.addEventListener("mouseenter", () => openFeedbackPanel());
-    header.addEventListener("mouseleave", () => closeFeedbackPanel());
-
-    // Extra safety: if hover isn't firing for any reason, clicking the header (not just the logo) opens it.
-    header.addEventListener("click", (e) => {
-      // Ignore clicks inside the panel itself so buttons still work normally
-      if (panel.contains(e.target)) return;
-      openFeedbackPanel();
+    // Hover-to-peek: only the logo (briefcase) should trigger the panel.
+    toggle.addEventListener("mouseenter", () => openFeedbackPanel());
+    toggle.addEventListener("mouseleave", () => {
+      if (feedback.pinned) return;
+      setTimeout(() => {
+        if (!panel.matches(":hover")) closeFeedbackPanel();
+      }, 60);
+    });
+    panel.addEventListener("mouseenter", () => {
+      if (!feedback.pinned) openFeedbackPanel();
+    });
+    panel.addEventListener("mouseleave", () => {
+      if (!feedback.pinned) closeFeedbackPanel();
     });
 
     // Click pins/unpins (click the briefcase image)
@@ -1883,6 +2652,7 @@
       return;
     }
 
+    capturePostHog("opt_in_clicked");
     btn.disabled = true;
     const original = btn.textContent;
     btn.textContent = "Sending…";
@@ -1910,18 +2680,11 @@
         throw new Error("Opt-in failed");
       }
 
-      btn.textContent = "✅ You’re in";
+      capturePostHog("opt_in_success");
 
-      // Persist success so on refresh this box stays gone
-      try {
-        localStorage.setItem("trix_optin_sent", "1");
-        localStorage.setItem("trix_optin_sent_at", String(Date.now()));
-      } catch (_) {}
-      setCookie("trix_optin_sent", "1", 365);
-
-      // Hide the opt-in box after success and show a small confirmation chip (only until refresh)
+      // Hide the opt-in box after success
       if (box) box.style.display = "none";
-      if (ok) ok.style.display = "inline-flex";
+      if (ok) ok.style.display = "none";
 
       // analytics removed
 
@@ -1933,16 +2696,16 @@
         body: "<p>Done — we’ll email your Prospect GPT access shortly (plus weekly cold call tips).</p>",
         actions: [{ label: "Close", primary: true }]
       });
-      // Optional: also remove the success chip after a few seconds (keeps UI ultra-clean even without refresh)
+      // Re-check once in the background to confirm server truth
       try {
-        if (ok) {
-          setTimeout(() => {
-            try { ok.style.display = "none"; } catch (_) {}
-          }, 4500);
-        }
+        fetch("/api/marketing/status", {
+          credentials: "same-origin",
+          cache: "no-store"
+        }).catch(() => {});
       } catch (_) {}
     } catch (e) {
       console.error(e);
+      capturePostHog("opt_in_failed");
 
       // If not signed in, route them to /trainer so Clerk UI is visible
       if (String(e?.message) === "NOT_SIGNED_IN") {
@@ -1975,6 +2738,8 @@ async function startCheckout() {
   // Supports BOTH modes:
   // - If API returns { url }, redirect to hosted Stripe Checkout (works immediately).
   // - If API returns { client_secret }, open on-page modal and mount Embedded Checkout.
+  capturePostHog("checkout_clicked");
+  __TRIX_CHECKOUT_STARTED__ = true;
   const res = await fetch("/api/stripe/checkout", {
   method: "POST",
   credentials: "include", // ✅ force cookies/session to be sent
@@ -1987,6 +2752,8 @@ async function startCheckout() {
     alert(`Checkout failed (${res.status}). Please try again.`);
     return;
   }
+
+  capturePostHog("checkout_created");
 
   if (data && data.url) {
     window.top.location.href = data.url;
@@ -2016,7 +2783,10 @@ async function startCheckout() {
 
       window.__trixStripeEmbeddedCheckout.stripe = stripe;
       window.__trixStripeEmbeddedCheckout.checkout = await stripe.initEmbeddedCheckout({
-        clientSecret: data.client_secret
+        clientSecret: data.client_secret,
+        onComplete: () => {
+          try { refreshPremium(); } catch (_) {}
+        }
       });
 
       window.__trixStripeEmbeddedCheckout.checkout.mount("#stripe-embedded-checkout");
@@ -2085,6 +2855,187 @@ function closeCheckoutModal() {
     if (e.target === $("modal")) hideModal();
   });
 
+  const callEndedModal = document.getElementById("call-ended-modal");
+  const callEndedTitle = document.getElementById("call-ended-title");
+  const callEndedForm = document.getElementById("call-ended-form");
+  const callEndedSuccess = document.getElementById("call-ended-success");
+  const callEndedError = document.getElementById("call-ended-error");
+  const callEndedNote = document.getElementById("call-ended-note");
+  const callEndedCount = document.getElementById("call-ended-count");
+  const callEndedCancel = document.getElementById("call-ended-cancel");
+  const callEndedSubmit = document.getElementById("call-ended-submit");
+  const callEndedActions = document.getElementById("call-ended-actions");
+
+  const callEndedState = {
+    phase: null,
+    nodeId: null,
+    path: []
+  };
+
+  function resetCallEndedModal() {
+    if (callEndedTitle) callEndedTitle.textContent = "Prospect ended call";
+    if (callEndedForm) callEndedForm.style.display = "block";
+    if (callEndedSuccess) callEndedSuccess.style.display = "none";
+    if (callEndedError) callEndedError.style.display = "none";
+    if (callEndedError) callEndedError.textContent = "Select a reason to continue.";
+    if (callEndedNote) callEndedNote.value = "";
+    if (callEndedNote) callEndedNote.disabled = false;
+    if (callEndedCount) callEndedCount.textContent = "0/500";
+    if (callEndedSubmit) {
+      callEndedSubmit.disabled = false;
+      callEndedSubmit.textContent = "Submit";
+      callEndedSubmit.onclick = submitCallEnded;
+    }
+    if (callEndedCancel) {
+      callEndedCancel.disabled = false;
+      callEndedCancel.textContent = "Cancel";
+      callEndedCancel.onclick = closeCallEndedModal;
+    }
+    const radios = document.querySelectorAll("input[name='call-ended-reason']");
+    radios.forEach((el) => {
+      el.checked = false;
+      el.disabled = false;
+    });
+  }
+
+  function openCallEndedModal(phaseKey) {
+    const g = graphs[phaseKey];
+    if (!g || !callEndedModal) return;
+    callEndedState.phase = phaseKey;
+    callEndedState.nodeId = g.currentId || null;
+    callEndedState.path = (g.history || []).map((id) => ({
+      id,
+      speaker: g.nodes[id]?.speaker || "unknown"
+    }));
+    resetCallEndedModal();
+    callEndedModal.classList.add("show");
+    capturePostHog("call_ended_opened", {
+      phase: phaseKey,
+      nodeId: g.currentId || null
+    });
+  }
+
+  function closeCallEndedModal() {
+    if (!callEndedModal) return;
+    callEndedModal.classList.remove("show");
+  }
+
+  async function submitCallEnded() {
+    if (!callEndedState.phase || !callEndedModal) return;
+    const reasonEl = document.querySelector("input[name='call-ended-reason']:checked");
+    if (!reasonEl) {
+      if (callEndedError) callEndedError.style.display = "block";
+      return;
+    }
+    if (callEndedError) callEndedError.style.display = "none";
+
+    const note = (callEndedNote?.value || "").trim();
+    if (callEndedSubmit) {
+      callEndedSubmit.disabled = true;
+      callEndedSubmit.textContent = "Saving…";
+    }
+    if (callEndedCancel) callEndedCancel.disabled = true;
+    const reasonInputs = document.querySelectorAll("input[name='call-ended-reason']");
+    reasonInputs.forEach((el) => { el.disabled = true; });
+    if (callEndedNote) callEndedNote.disabled = true;
+
+    capturePostHog("call_ended_submitted", {
+      reason: reasonEl.value,
+      phase: callEndedState.phase,
+      nodeId: callEndedState.nodeId
+    });
+
+    try {
+      const res = await fetch("/api/call-ended", {
+        method: "POST",
+        credentials: "same-origin",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          phase: callEndedState.phase,
+          nodeId: callEndedState.nodeId,
+          path: callEndedState.path,
+          reason: reasonEl.value,
+          note: note || null,
+          source: "trainer_html_iframe"
+        })
+      });
+
+      if (!res.ok) {
+        throw new Error("CALL_ENDED_FAILED");
+      }
+
+      capturePostHog("call_ended_success");
+
+      if (callEndedTitle) callEndedTitle.textContent = "Saved.";
+      if (callEndedForm) callEndedForm.style.display = "none";
+      if (callEndedSuccess) callEndedSuccess.style.display = "block";
+      if (callEndedSubmit) {
+        callEndedSubmit.disabled = false;
+        callEndedSubmit.textContent = "Start new call";
+        callEndedSubmit.onclick = () => {
+          restartPhase("phase1");
+          switchTab("phase1");
+          closeCallEndedModal();
+        };
+      }
+      if (callEndedCancel) {
+        callEndedCancel.disabled = false;
+        callEndedCancel.textContent = "Close";
+        callEndedCancel.onclick = closeCallEndedModal;
+      }
+    } catch (e) {
+      capturePostHog("call_ended_failed");
+      if (callEndedError) {
+        callEndedError.textContent = "Could not save. Please try again.";
+        callEndedError.style.display = "block";
+      }
+      if (callEndedSubmit) {
+        callEndedSubmit.disabled = false;
+        callEndedSubmit.textContent = "Submit";
+      }
+      if (callEndedCancel) callEndedCancel.disabled = false;
+      reasonInputs.forEach((el) => { el.disabled = false; });
+      if (callEndedNote) callEndedNote.disabled = false;
+    }
+  }
+
+  if (callEndedNote) {
+    callEndedNote.addEventListener("input", () => {
+      if (callEndedCount) callEndedCount.textContent = `${callEndedNote.value.length}/500`;
+    });
+  }
+
+  if (callEndedModal) {
+    callEndedModal.addEventListener("click", (e) => {
+      if (e.target === callEndedModal) closeCallEndedModal();
+    });
+  }
+
+  if (contextPopover) {
+    contextPopover.addEventListener("mouseenter", () => {
+      contextPopoverState.hovering = true;
+    });
+    contextPopover.addEventListener("mouseleave", () => {
+      contextPopoverState.hovering = false;
+      if (!contextPopoverState.pinned) closeContextPopover();
+    });
+  }
+
+  document.addEventListener("click", (e) => {
+    if (!contextPopoverState.open) return;
+    const target = e.target;
+    if (contextPopover && contextPopover.contains(target)) return;
+    if (target && (target.closest("#p1-context-top") || target.closest("#p2-context-top"))) return;
+    closeContextPopover();
+  });
+
+  window.addEventListener("resize", () => {
+    if (!contextPopoverState.open) return;
+    const anchor = document.getElementById(activePhase === "phase1" ? "p1-context-top" : "p2-context-top");
+    if (anchor) positionContextPopover(anchor, activePhase);
+  });
+
+
 
 // Stripe checkout modal close handlers
 const checkoutBackdrop = document.getElementById("checkout-modal");
@@ -2118,9 +3069,26 @@ if (checkoutBackdrop) {
 
   // ========= LOADING =========
   async function loadGraph(phaseKey, filename) {
-    const res = await fetch(filename);
-    if (!res.ok) { const err = new Error(`Failed to load ${filename} (${res.status})`); err.status = res.status; throw err; }
+    const startedAt = (typeof performance !== "undefined" && performance.now) ? performance.now() : Date.now();
+    const res = await fetch(filename, { credentials: "same-origin", cache: "no-store" });
+    const endedAt = (typeof performance !== "undefined" && performance.now) ? performance.now() : Date.now();
+    const ms = Math.round(endedAt - startedAt);
+    if (!res.ok) {
+      capturePostHog(phaseKey === "phase1" ? "phase1_loaded" : "phase2_preview_loaded", {
+        ok: false,
+        status: res.status,
+        ms
+      });
+      const err = new Error(`Failed to load ${filename} (${res.status})`);
+      err.status = res.status;
+      throw err;
+    }
     const data = await res.json();
+    capturePostHog(phaseKey === "phase1" ? "phase1_loaded" : "phase2_preview_loaded", {
+      ok: true,
+      status: res.status,
+      ms
+    });
 
     // Normalize keys: we expect ('n2', {'n15', 'n56', 'n27', 'n10', 'n60', 'n25', 'n16', 'n46', 'n54', 'n24', 'n6', 'n61', 'n30', 'n5', 'n58', 'n57', 'n51', 'n17', 'n1', 'n18', 'n36', 'n49', 'n32', 'n11', 'n40', 'n2', 'n4', 'n13', 'n14', 'n28', 'n33', 'n35', 'n48', 'n3', 'n31', 'n63', 'n52', 'n8', 'n19', 'n45', 'n53', 'n38', 'n29', 'n39', 'n44', 'n37', 'n47', 'n26', 'n42', 'n59', 'n22', 'n20', 'n12', 'n9', 'n21', 'n34', 'n23', 'n43', 'n55', 'n62', 'n7', 'n50', 'n41'}, {'n1': ['n2'], 'n2': ['n3', 'n5', 'n11', 'n17', 'n23', 'n47', 'n59'], 'n3': ['n4'], 'n4': [], 'n5': ['n6'], 'n6': ['n7', 'n9'], 'n7': ['n8'], 'n8': [], 'n9': ['n10'], 'n10': [], 'n11': ['n12', 'n13', 'n15'], 'n12': [], 'n13': ['n14'], 'n14': [], 'n15': ['n16'], 'n16': [], 'n17': ['n18'], 'n18': ['n19', 'n21'], 'n19': ['n20'], 'n20': [], 'n21': ['n22'], 'n22': [], 'n23': ['n24'], 'n24': ['n25', 'n41'], 'n25': ['n26'], 'n26': ['n27', 'n39'], 'n27': ['n28'], 'n28': ['n29', 'n33'], 'n29': ['n30'], 'n30': ['n31'], 'n31': ['n32'], 'n32': [], 'n33': ['n34'], 'n34': ['n35', 'n37'], 'n35': ['n36'], 'n36': [], 'n37': ['n38'], 'n38': [], 'n39': ['n40'], 'n40': [], 'n41': ['n42'], 'n42': ['n43', 'n45'], 'n43': ['n44'], 'n44': [], 'n45': ['n46'], 'n46': [], 'n47': ['n48'], 'n48': ['n49', 'n53'], 'n49': ['n50'], 'n50': ['n51', 'n52'], 'n51': [], 'n52': [], 'n53': ['n54'], 'n54': ['n55', 'n57'], 'n55': ['n56'], 'n56': [], 'n57': ['n58'], 'n58': [], 'n59': ['n60'], 'n60': ['n61', 'n63'], 'n61': ['n62'], 'n62': [], 'n63': ['n64'], 'n64': []})
     return {
@@ -2132,27 +3100,134 @@ if (checkoutBackdrop) {
     };
   }
 
+  async function refreshPremium() {
+    let isPremium = false;
+    let isAdmin = false;
+    try {
+      const res = await fetch("/api/me", { credentials: "same-origin", cache: "no-store" });
+      if (res.ok) {
+        const data = await res.json();
+        isPremium = !!data?.is_premium;
+        isAdmin = !!data?.is_admin;
+        CURRENT_USER_ID = data?.userId || null;
+        console.log("me:", data);
+      } else {
+        CURRENT_USER_ID = null;
+      }
+    } catch (_) {
+      CURRENT_USER_ID = null;
+    }
+
+    IS_PREMIUM = isPremium;
+    IS_ADMIN = isAdmin;
+    applyPremiumUI();
+    updateModeTabs();
+    try { await syncOptInPanel(); } catch (_) {}
+    try {
+      graphs.phase2 = await loadGraph("phase2", IS_PREMIUM ? "/api/phase2" : "/api/phase2-preview");
+    } catch (_) {
+      graphs.phase2 = graphs.phase2 || null;
+    }
+
+    try { renderPhase(activePhase); } catch (_) {}
+    return IS_PREMIUM;
+  }
+
   // ========= NAV / TABS =========
   function switchTab(targetPhase) {
     const __prevPhase = activePhase;
     activePhase = targetPhase;
 
-    document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+    document.querySelectorAll(".tab[data-tab]").forEach(t => t.classList.remove("active"));
     const tabEl = document.querySelector(`.tab[data-tab="${targetPhase}"]`);
     if (tabEl) tabEl.classList.add("active");
 
-    document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
-    const viewEl = document.getElementById("view-" + targetPhase);
-    if (viewEl) viewEl.classList.add("active");
+    if (activeMode === "trainer") {
+      setActiveView("view-" + targetPhase);
+    }
 
     renderPhase(targetPhase);
   }
 
-  document.querySelectorAll(".tab").forEach(tab => {
+  document.querySelectorAll(".tab[data-tab]").forEach(tab => {
     tab.addEventListener("click", () => {
+      if (activeMode !== "trainer") switchMode("trainer");
       switchTab(tab.dataset.tab);
     });
   });
+
+  document.querySelectorAll(".mode-tab").forEach(tab => {
+    tab.addEventListener("click", () => {
+      const mode = tab.dataset.mode || "trainer";
+      switchMode(mode);
+    });
+  });
+
+  function wireNavControls() {
+    const controls = [
+      { back: "p1-back-top", restart: "p1-restart-top", ended: "p1-ended-top", context: "p1-context-top", phase: "phase1" },
+      { back: "p2-back-top", restart: "p2-restart-top", ended: "p2-ended-top", context: "p2-context-top", phase: "phase2" },
+    ];
+
+    controls.forEach(({ back, restart, ended, context, phase }) => {
+      const backBtn = document.getElementById(back);
+      if (backBtn && !backBtn.dataset.wired) {
+        backBtn.dataset.wired = "1";
+        backBtn.addEventListener("click", () => goBack(phase));
+      }
+
+      const restartBtn = document.getElementById(restart);
+      if (restartBtn && !restartBtn.dataset.wired) {
+        restartBtn.dataset.wired = "1";
+        restartBtn.addEventListener("click", () => restartPhase(phase));
+      }
+
+      const endedBtn = document.getElementById(ended);
+      if (endedBtn && !endedBtn.dataset.wired) {
+        endedBtn.dataset.wired = "1";
+        endedBtn.addEventListener("click", () => openCallEndedModal(phase));
+      }
+
+      const contextBtn = document.getElementById(context);
+      if (contextBtn && !contextBtn.dataset.wired) {
+        contextBtn.dataset.wired = "1";
+        contextBtn.addEventListener("mouseenter", () => {
+          if (!contextPopoverState.pinned) openContextPopover(contextBtn, phase);
+        });
+        contextBtn.addEventListener("mouseleave", () => {
+          if (!contextPopoverState.pinned && !contextPopoverState.hovering) closeContextPopover();
+        });
+        contextBtn.addEventListener("click", (e) => {
+          e.preventDefault();
+          const nextPinned = !contextPopoverState.pinned;
+          openContextPopover(contextBtn, phase, nextPinned);
+          contextBtn.classList.toggle("active", contextPopoverState.pinned);
+        });
+      }
+    });
+
+    if (!document.body.dataset.trixNavKeys) {
+      document.body.dataset.trixNavKeys = "1";
+      document.addEventListener("keydown", (e) => {
+        const tag = (e.target && e.target.tagName) ? e.target.tagName.toLowerCase() : "";
+        if (tag === "input" || tag === "textarea" || (e.target && e.target.isContentEditable)) return;
+        const key = (e.key || "").toLowerCase();
+        if (key === "b") {
+          e.preventDefault();
+          goBack(activePhase);
+        } else if (key === "r") {
+          e.preventDefault();
+          restartPhase(activePhase);
+        } else if (key === "escape") {
+          if (contextPopoverState.open) {
+            e.preventDefault();
+            closeContextPopover();
+          }
+        }
+      });
+    }
+  }
+
 
   // ========= AUTO ADVANCE =========
   function autoAdvance(phaseKey) {
@@ -2223,6 +3298,13 @@ if (checkoutBackdrop) {
     g.history.push(optionId);
     g.currentId = optionId;
 
+    const selectedNode = g.nodes[optionId];
+    capturePostHog("node_selected", {
+      phase: phaseKey,
+      nodeId: optionId,
+      speaker: selectedNode?.speaker || "unknown"
+    });
+
     autoAdvance(phaseKey);
 
     // Phase 1 special action handling
@@ -2281,9 +3363,13 @@ if (checkoutBackdrop) {
   function restartPhase(phaseKey) {
     const g = graphs[phaseKey];
     if (!g) return;
+    clearCallContext();
     g.currentId = g.root;
     g.history = [g.root];
     selectedIndex[phaseKey] = 0;
+    if (phaseKey === "phase1") {
+      try { autoAdvance(phaseKey); } catch (_) {}
+    }
     renderPhase(phaseKey);
   }
 
@@ -2300,8 +3386,8 @@ if (checkoutBackdrop) {
     const speakerPillEl = $(isP1 ? "p1-speaker-pill" : "p2-speaker-pill");
     const optionsEl = $(isP1 ? "p1-options" : "p2-options");
     const historyEl = $(isP1 ? "p1-history" : "p2-history");
-    const backBtn = $(isP1 ? "p1-back-btn" : "p2-back-btn");
-    const restartBtn = $(isP1 ? "p1-restart-btn" : "p2-restart-btn");
+    const backBtn = $(isP1 ? "p1-back-top" : "p2-back-top");
+    const restartBtn = $(isP1 ? "p1-restart-top" : "p2-restart-top");
 
     // Meta
     const metaEl = $(isP1 ? "p1-meta" : "p2-meta");
@@ -2316,7 +3402,7 @@ if (checkoutBackdrop) {
 
     // Speaker + current
     if (current) {
-      currentTextEl.textContent = current.text || "";
+      currentTextEl.textContent = applyContext(current.text || "");
       speakerPillEl.textContent =
         current.speaker === "you" ? "You" :
         current.speaker === "prospect" ? "Prospect" : "Action";
@@ -2329,11 +3415,15 @@ if (checkoutBackdrop) {
       speakerPillEl.textContent = "";
     }
 
+    // Controls
+    if (backBtn) backBtn.disabled = g.history.length <= 1;
+    if (restartBtn) restartBtn.disabled = false;
+
     // Options
     const searchInput = $(isP1 ? "p1-search" : "p2-search");
     const q = (searchInput?.value || "").trim().toLowerCase();
 
-    optionsEl.innerHTML = "";
+    if (optionsEl) optionsEl.innerHTML = "";
 
     const kids = prospectKidsAll.filter(id => {
       const node = g.nodes[id];
@@ -2343,7 +3433,9 @@ if (checkoutBackdrop) {
     });
 
     // update selected index bounds
-    if (selectedIndex[phaseKey] >= kids.length) selectedIndex[phaseKey] = Math.max(0, kids.length - 1);
+    if (selectedIndex[phaseKey] >= kids.length) {
+      selectedIndex[phaseKey] = Math.max(0, kids.length - 1);
+    }
 
     if (!kidsAll.length) {
       const empty = document.createElement("div");
@@ -2368,6 +3460,7 @@ if (checkoutBackdrop) {
         if (isLocked) btn.classList.add("locked");
 
         btn.addEventListener("click", () => clickOption(phaseKey, id));
+
         const left = document.createElement("div");
         const lbl = document.createElement("div");
         lbl.className = "option-label";
@@ -2375,7 +3468,7 @@ if (checkoutBackdrop) {
 
         const txt = document.createElement("div");
         txt.className = "option-text";
-        txt.textContent = node?.text || "";
+        txt.textContent = applyContext(node?.text || "");
 
         left.appendChild(lbl);
         left.appendChild(txt);
@@ -2385,7 +3478,7 @@ if (checkoutBackdrop) {
 
         const pill = document.createElement("span");
         pill.className = "option-pill";
-        pill.textContent = isLocked ? "Locked" : `#${i + 1}`;
+        pill.textContent = isLocked ? "🔒 Locked" : `#${i + 1}`;
 
         const arrow = document.createElement("span");
         arrow.className = "option-arrow";
@@ -2400,3 +3493,122 @@ if (checkoutBackdrop) {
         optionsEl.appendChild(btn);
       });
     }
+
+    // History
+    if (historyEl) {
+      const timeline = historyEl.querySelector(".timeline") || historyEl;
+      if (timeline) timeline.innerHTML = "";
+
+      g.history.forEach((id) => {
+        const node = g.nodes[id];
+        if (!node) return;
+
+        const item = document.createElement("div");
+        item.className = "history-item";
+
+        const dot = document.createElement("div");
+        dot.className = "dot " + (node.speaker || "action");
+
+        const bubbleWrap = document.createElement("div");
+
+        const label = document.createElement("div");
+        label.className = "history-label";
+        label.textContent = node.speaker === "you" ? "You" : node.speaker === "prospect" ? "Prospect" : "Action";
+
+        const bubble = document.createElement("div");
+        bubble.className = "bubble " + (node.speaker || "action");
+        bubble.textContent = applyContext(node.text || "");
+
+        bubbleWrap.appendChild(label);
+        bubbleWrap.appendChild(bubble);
+
+        item.appendChild(dot);
+        item.appendChild(bubbleWrap);
+
+        timeline.appendChild(item);
+      });
+    }
+  } // END renderPhase
+
+  // ========= BOOT / INIT =========
+  async function boot() {
+    // Wire UI extras
+    try { wireFeedbackPanel(); } catch (_) {}
+    try {
+      loadCallContext();
+      wireCallContext();
+    } catch (_) {}
+    try { applyPremiumUI(); } catch (_) {}
+
+    // Wire opt-in CTA
+    try {
+      const optBtn = document.getElementById("optin-btn");
+      if (optBtn && !optBtn.dataset.wired) {
+        optBtn.dataset.wired = "1";
+        optBtn.addEventListener("click", submitPracticeOptIn);
+      }
+
+      // Visibility is handled after /api/me resolves via syncOptInPanel()
+    } catch (_) {}
+
+    // Wire navigation controls
+    try { wireNavControls(); } catch (_) {}
+
+    // Load Phase 1 immediately
+    try {
+      graphs.phase1 = await loadGraph("phase1", "/api/phase1");
+    } catch (e) {
+      showModal({
+        title: "Trainer failed to load",
+        body: "<p>Couldn’t load Phase 1.</p><p>Please make sure you’re signed in, then refresh.</p>",
+        actions: [
+          { label: "Go to sign in", primary: true, href: "/sign-in" },
+          { label: "Close" }
+        ]
+      });
+      return;
+    }
+
+    // Load Phase 2 based on premium status (server-enforced).
+    try { await refreshPremium(); } catch (_) {}
+
+    // Auto-advance through single-path action/you nodes on first load
+    try { autoAdvance(activePhase); } catch (_) {}
+
+    // Render current phase
+    try { renderPhase(activePhase); } catch (_) {}
+
+    // Apply initial mode from URL
+    try {
+      const params = new URLSearchParams(window.location.search || "");
+      const mode = params.get("mode");
+      if (mode === "problem-lab" || mode === "dashboard") {
+        switchMode(mode);
+      } else {
+        switchMode("trainer");
+      }
+    } catch (_) {}
+  }
+
+  let __TRIX_BOOTED__ = false;
+
+  async function bootOnce() {
+    if (__TRIX_BOOTED__) return;
+    __TRIX_BOOTED__ = true;
+    try {
+      await boot();
+    } catch (_) {
+      // swallow so the UI doesn't die silently
+    }
+  }
+
+  // Run it multiple ways so it never misses the event in an iframe
+  bootOnce();
+  document.addEventListener("DOMContentLoaded", bootOnce);
+  window.addEventListener("load", bootOnce);
+  window.addEventListener("resize", () => {
+    try { positionModeTabs(); } catch (_) {}
+  });
+</script>
+</body>
+</html>
