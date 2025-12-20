@@ -7,8 +7,8 @@ import { createClient } from "@supabase/supabase-js";
 export async function POST(req: Request) {
   try {
     // Try the App Router helper first
-    const { userId: authUserId } = await auth();
-    let userId = authUserId;
+    const a = await auth();
+    let userId = a.userId;
 
     // Fallback: if middleware isn’t running for this route (e.g. marked public),
     // getAuth can still resolve the session directly from the Request.
@@ -27,7 +27,7 @@ export async function POST(req: Request) {
         hasCookie: !!req.headers.get("cookie"),
         referer: req.headers.get("referer"),
       });
-      return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+      return NextResponse.json({ error: "unauthorized" }, { status: 401 });
     }
 
     const SUPABASE_URL = process.env.SUPABASE_URL;
