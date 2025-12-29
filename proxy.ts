@@ -3,6 +3,7 @@ import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
 const isPublicRoute = createRouteMatcher([
   "/",
+  "/trainer(.*)",
   "/trainer.html(.*)",
 
   "/sign-in(.*)",
@@ -15,6 +16,7 @@ const isPublicRoute = createRouteMatcher([
   // ✅ public marketing endpoints (opt-in flow)
   "/api/marketing/opt-in",
   "/api/marketing/status",
+  "/api/me",
 
   // ✅ Stripe webhook must be public
   "/api/stripe/webhook",

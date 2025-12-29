@@ -20,6 +20,8 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+Note: Clerk shows a "Secured by Clerk" / "Development mode" badge when using development keys or an unverified domain. This disappears when you switch to production keys on a verified domain.
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:

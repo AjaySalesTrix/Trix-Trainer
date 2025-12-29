@@ -3,13 +3,14 @@ export const runtime = "nodejs";
 
 import Stripe from "stripe";
 import { auth, currentUser } from "@clerk/nextjs/server";
+import { createClient } from "@supabase/supabase-js";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2025-12-15.clover",
 });
 
-export async function POST() {
-  const { userId } = await auth(); // ✅ FIX
+export async function POST(req: Request) {
+  const { userId } = await auth();
 
   console.log("CHECKOUT ROUTE userId =", userId);
 
@@ -25,22 +26,55 @@ export async function POST() {
     undefined;
 
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+  const priceId = process.env.STRIPE_PRICE_ID_PREMIUM;
+  if (!priceId) {
+    return Response.json({ error: "MISSING_STRIPE_PRICE_ID" }, { status: 500 });
+  }
+
+  let returnUrl = "";
+  try {
+    const body = await req.json();
+    if (body && typeof body.returnUrl === "string") {
+      returnUrl = body.returnUrl;
+    }
+  } catch (_) {}
+
+  const baseReturnUrl = returnUrl
+    ? returnUrl.startsWith("http")
+      ? returnUrl
+      : `${appUrl}${returnUrl.startsWith("/") ? "" : "/"}${returnUrl}`
+    : `${appUrl}/trainer`;
+
+  const successUrl = baseReturnUrl.includes("?")
+    ? `${baseReturnUrl}&success=1`
+    : `${baseReturnUrl}?success=1`;
+  const cancelUrl = baseReturnUrl.includes("?")
+    ? `${baseReturnUrl}&canceled=1`
+    : `${baseReturnUrl}?canceled=1`;
+
+  const supabase = createClient(
+    process.env.SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+
+  const { data: existingUser } = await supabase
+    .from("users")
+    .select("stripe_customer_id")
+    .eq("clerk_user_id", userId)
+    .maybeSingle();
 
   const session = await stripe.checkout.sessions.create({
-    ui_mode: "embedded",
-    mode: "payment",
-    customer_email: email,
+    mode: "subscription",
+    customer_email: existingUser?.stripe_customer_id ? undefined : email,
+    customer: existingUser?.stripe_customer_id || undefined,
     line_items: [
       {
-        price_data: {
-          currency: "gbp",
-          unit_amount: 14700,
-          product_data: { name: "TRIX Cold Call Trainer — Premium" },
-        },
+        price: priceId,
         quantity: 1,
       },
     ],
-    return_url: `${appUrl}/trainer?paid=1`,
+    success_url: successUrl,
+    cancel_url: cancelUrl,
     metadata: {
       clerk_user_id: userId,
       email: email ?? "",
@@ -48,7 +82,6 @@ export async function POST() {
   });
 
   return Response.json({
-    client_secret: session.client_secret,
-    publishableKey: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
+    url: session.url,
   });
 }

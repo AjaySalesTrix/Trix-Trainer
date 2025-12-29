@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>TRIX Cold Call Trainer — Freemium</title>
+  <title>Call Navigator — Freemium</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     :root {
@@ -31,20 +31,27 @@
       --glow: 0 0 0 1px rgba(245,239,228,0.35), 0 0 0 6px rgba(209,178,135,0.20);
       --glow-2: 0 0 0 1px rgba(245,239,228,0.42), 0 0 0 10px rgba(209,178,135,0.16);
 
+      --base-font: 14px;
+      --pad: 10px;
+      --gap: 10px;
+
       font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
       color-scheme: light;
     }
 
-    * { box-sizing: border-box; }
-    html, body { height: 100%; }
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { height: 100%; min-height: 100dvh; }
+    body { margin: 0; overflow: hidden; }
+
+    :focus-visible {
+      outline: 2px solid rgba(9,28,45,0.55);
+      outline-offset: 2px;
+    }
 
     body {
       margin: 0;
+      height: 100dvh;
       height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 18px;
       background:
         radial-gradient(1200px 520px at 50% -10%, rgba(255,255,255,0.8), rgba(255,255,255,0) 60%),
         radial-gradient(900px 520px at 0% 20%, rgba(255, 235, 206, 0.85), rgba(255,255,255,0) 62%),
@@ -52,6 +59,22 @@
         linear-gradient(180deg, #f6efe1 0%, #d0c0a6 40%, #b19c7a 100%);
       position: relative;
       overflow: hidden;
+    }
+
+    @media (max-height: 800px) {
+      :root {
+        --base-font: 12.5px;
+        --pad: 8px;
+        --gap: 8px;
+      }
+    }
+
+    @media (max-height: 700px) {
+      :root {
+        --base-font: 12px;
+        --pad: 6px;
+        --gap: 6px;
+      }
     }
 
     /* subtle noise overlay */
@@ -84,9 +107,21 @@
       100% { transform: translate3d(2%, 1%, 0) rotate(2deg); }
     }
 
+    .app-shell {
+      height: 100dvh;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      padding: 10px;
+      align-items: center;
+      min-height: 0;
+    }
+
     .app {
       width: min(1320px, 100%);
-      height: calc(100vh - 36px);
+      height: 100%;
+      margin: 0 auto;
       border-radius: var(--radius-xl);
       position: relative;
       overflow: hidden;
@@ -97,6 +132,8 @@
       border: 1px solid rgba(255,255,255,0.55);
       display: flex;
       flex-direction: column;
+      min-height: 0;
+      font-size: var(--base-font);
     }
 
     /* gradient border frame */
@@ -124,13 +161,14 @@
     .topbar {
       position: sticky;
       top: 0;
-      z-index: 10;
+      z-index: 50;
       display: flex;
-      align-items: flex-start; /* was center: prevents the right side being vertically centered against the opt-in */
+      align-items: flex-start;
       justify-content: space-between;
+      flex-wrap: wrap;
       overflow: visible;
-      gap: 14px;
-      padding: 14px 16px;
+      gap: var(--gap);
+      padding: var(--pad);
       border-bottom: 1px solid var(--border);
       background:
         linear-gradient(180deg, rgba(243, 235, 220, 0.92), rgba(243, 235, 220, 0.78));
@@ -856,12 +894,22 @@
     }
 
     /* MAIN LAYOUT */
+    .main {
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
     .views {
-      padding: 14px 16px 18px;
+      padding: var(--pad);
       position: relative;
       flex: 1;
       min-height: 0;
       overflow: hidden;
+      display: flex;
+      flex-direction: column;
     }
 
     .view iframe.embed-frame {
@@ -881,6 +929,7 @@
     .view {
       display: none;
       height: 100%;
+      min-height: 0;
       animation: viewIn .18s ease-out both;
     }
     .view.active {
@@ -888,6 +937,8 @@
       flex-direction: column;
       min-height: 0;
       height: 100%;
+      overflow: auto;
+      -webkit-overflow-scrolling: touch;
     }
 
     @keyframes viewIn {
@@ -904,18 +955,26 @@
       flex: 1;
     }
 
+    .stack {
+      display: grid;
+      grid-template-rows: minmax(140px, 0.9fr) minmax(200px, 1.1fr);
+      gap: var(--gap);
+      min-height: 0;
+      flex: 1;
+    }
+
     .panel {
       background:
         linear-gradient(180deg, rgba(253, 247, 237, 0.92), rgba(253, 247, 237, 0.86));
       border-radius: var(--radius);
       border: 1px solid rgba(9, 28, 45, 0.09);
       box-shadow: var(--shadow);
-      padding: 12px 12px 12px;
+      padding: var(--pad);
       display: flex;
       flex-direction: column;
-      min-height: 270px;
+      min-height: 0;
       position: relative;
-      overflow: hidden;
+      overflow: visible;
     }
 
     /* glossy highlight */
@@ -944,6 +1003,42 @@
       gap: 8px;
       position: relative;
       z-index: 1;
+      position: sticky;
+      top: 0;
+      background: rgba(253,247,237,0.92);
+      padding-bottom: 6px;
+    }
+
+    .panel-chip {
+      font-size: 0.7rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid rgba(9,28,45,0.2);
+      background: rgba(255,255,255,0.75);
+      color: rgba(9,28,45,0.75);
+    }
+
+    .panel-chip::before {
+      content: "•";
+      font-size: 0.9rem;
+      line-height: 1;
+    }
+
+    .panel-chip.you {
+      background: rgba(209,178,135,0.25);
+      border-color: rgba(9,28,45,0.28);
+      color: rgba(9,28,45,0.85);
+    }
+
+    .panel-chip.prospect {
+      background: rgba(9,28,45,0.08);
+      border-color: rgba(9,28,45,0.18);
+      color: rgba(9,28,45,0.75);
     }
 
     .panel-title .meta {
@@ -951,6 +1046,24 @@
       letter-spacing: 0.08em;
       text-transform: none;
       color: var(--muted-2);
+    }
+
+    .panel-title .meta-note {
+      font-size: 0.7rem;
+      letter-spacing: 0.04em;
+      text-transform: none;
+      color: rgba(9,28,45,0.55);
+      margin-left: 8px;
+    }
+
+    .you-panel {
+      background: rgba(245,239,228,0.92);
+      border-left: 4px solid rgba(9,28,45,0.45);
+    }
+
+    .prospect-panel {
+      background: rgba(255,253,248,0.92);
+      border-left: 4px solid rgba(209,178,135,0.7);
     }
 
     .speaker-pill {
@@ -985,7 +1098,7 @@
       font-size: 1.12rem;
       line-height: 1.55;
       color: #0b1220;
-      margin: 12px 0 10px;
+      margin: 8px 0 6px;
       flex: 1;
       min-height: 0;
       overflow-y: auto;
@@ -1053,64 +1166,15 @@
       box-shadow: none;
     }
 
-    .hint {
-      font-size: 0.78rem;
-      color: var(--muted);
-      margin-top: 10px;
-      line-height: 1.35;
-      position: relative;
-      z-index: 1;
-    }
-
     /* OPTIONS */
-    .options-top {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      margin-bottom: 6px;
-      position: relative;
-      z-index: 1;
-    }
-
-    .search {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 10px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.66);
-      border: 1px solid rgba(9,28,45,0.14);
-      box-shadow: 0 10px 22px rgba(9,28,45,0.07);
-    }
-
-    .search input {
-      border: 0;
-      outline: none;
-      background: transparent;
-      width: 100%;
-      font-size: 0.88rem;
-      color: var(--navy);
-    }
-
-    .search .k {
-      font-size: 0.74rem;
-      color: rgba(9,28,45,0.55);
-      border: 1px solid rgba(9,28,45,0.18);
-      padding: 3px 7px;
-      border-radius: 8px;
-      background: rgba(255,255,255,0.6);
-    }
-
     .options {
-      display: flex;
-      flex-direction: column;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
       flex: 1;
       min-height: 0;
-      overflow-y: auto;
-      padding-right: 6px;
-      gap: 10px;
+      overflow: auto;
+      padding: 12px;
       margin-top: 6px;
       position: relative;
       z-index: 1;
@@ -1118,7 +1182,7 @@
 
     .option-btn {
       border-radius: 16px;
-      padding: 11px 12px;
+      padding: var(--pad);
       border: 1px solid rgba(9, 28, 45, 0.16);
       background:
         linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,255,255,0.72));
@@ -1131,7 +1195,12 @@
       gap: 10px;
       box-shadow: 0 14px 26px rgba(9,28,45,0.08);
       position: relative;
-      overflow: hidden;
+      overflow: visible;
+      min-width: 0;
+    }
+
+    .option-btn > div {
+      min-width: 0;
     }
 
     .option-btn::before {
@@ -1149,9 +1218,10 @@
       transform: translateY(-2px);
     }
 
-    .option-btn.selected {
-      border-color: rgba(9, 28, 45, 0.55);
-      box-shadow: 0 20px 36px rgba(9, 28, 45, 0.14), var(--glow-2);
+    .option-btn.selected,
+    .option-btn.is-selected {
+      border-color: rgba(20, 20, 20, 0.35);
+      box-shadow: inset 0 0 0 2px rgba(20,20,20,0.9), 0 10px 24px rgba(0,0,0,0.08);
     }
 
     .option-btn.locked {
@@ -1176,6 +1246,39 @@
       font-size: 0.94rem;
       color: #0b1220;
       line-height: 1.35;
+      white-space: normal;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+      hyphens: auto;
+    }
+
+    @media (max-width: 640px) {
+      .options {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(9,28,45,0.88);
+      color: #fefdf9;
+      padding: 10px 14px;
+      border-radius: 999px;
+      font-size: 0.86rem;
+      letter-spacing: 0.02em;
+      box-shadow: 0 18px 32px rgba(9,28,45,0.25);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .18s ease, transform .18s ease;
+      z-index: 9999;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(-6px);
     }
 
     .option-right {
@@ -1209,6 +1312,7 @@
       line-height: 1.45;
       position: relative;
       z-index: 1;
+      grid-column: 1 / -1;
     }
 
     /* HISTORY: timeline */
@@ -1385,6 +1489,16 @@
       border-color: rgba(9,28,45,0.55);
     }
 
+    .link-btn {
+      border: none;
+      background: none;
+      color: var(--navy);
+      text-decoration: underline;
+      padding: 0;
+      cursor: pointer;
+      font: inherit;
+    }
+
     .call-ended-group {
       margin-bottom: 14px;
     }
@@ -1438,21 +1552,6 @@
     .call-ended-body {
       max-height: min(60vh, 520px);
       overflow-y: auto;
-    }
-
-    .kbdbar {
-      margin-top: 8px;
-      font-size: 0.76rem;
-      color: rgba(9,28,45,0.55);
-    }
-    .kbdbar code {
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-      font-size: 0.74rem;
-      background: rgba(255,255,255,0.65);
-      border: 1px solid rgba(9,28,45,0.14);
-      padding: 2px 6px;
-      border-radius: 8px;
-      margin: 0 2px;
     }
 
     .context-box {
@@ -1603,9 +1702,76 @@
       white-space: nowrap;
     }
 
+    .conversation-popover {
+      position: absolute;
+      width: min(420px, 94vw);
+      border-radius: 20px;
+      border: 1px solid rgba(9, 28, 45, 0.2);
+      background: #fbf7ef;
+      box-shadow: 0 20px 45px rgba(9,28,45,0.16);
+      padding: 12px 12px 10px;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(10px);
+      transition: transform .22s ease, opacity .22s ease;
+      z-index: 90;
+    }
+
+    .conversation-popover.open {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+
+    .conversation-popover-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+
+    .conversation-popover-title {
+      font-size: 0.76rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(9,28,45,0.6);
+    }
+
+    .conversation-popover-meta {
+      font-size: 0.72rem;
+      color: rgba(9,28,45,0.6);
+      background: rgba(9,28,45,0.08);
+      padding: 4px 8px;
+      border-radius: 999px;
+      margin-left: auto;
+    }
+
+    .conversation-list {
+      max-height: min(52vh, 420px);
+      overflow: auto;
+      padding-right: 4px;
+    }
+
     @media (max-width: 1060px) {
       .grid { grid-template-columns: 1fr; min-height: unset; }
       .right-header .chip { display:none; }
+    }
+
+    @media (max-width: 900px) {
+      .options { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 640px) {
+      .options { grid-template-columns: 1fr; }
+    }
+
+    @media (max-height: 800px) {
+      :root { --base-font: 12.5px; --pad: 8px; --gap: 8px; }
+    }
+
+    @media (max-height: 700px) {
+      :root { --base-font: 12px; --pad: 6px; --gap: 6px; }
     }
 /* STRIPE EMBEDDED CHECKOUT MODAL */
 .checkout-backdrop {
@@ -1687,17 +1853,18 @@
   <script src="https://cdn.posthog.com/posthog.js"></script>
 </head>
 <body>
+  <div class="app-shell">
   <div class="app">
     <div class="topbar">
       <div class="left-header">
         <div class="title-row">
-          <div class="title">TRIX Cold Call Trainer</div>
+          <div class="title">Cold Call Navigator</div>
           <div class="badge "id="account-badge">Free preview</div>
         </div>
         <div class="subtitle">
-          Have your GPT in your ears, this on screen. Click what the prospect said,
+          Have the GPT on audio mode, the navigator on screen. Click what the prospect said,
           and it reveals exactly what you say next.
-          <span class="feedback-hint">Want free <strong>personalised coaching tips</strong>? Click the <strong>briefcase</strong> top right.</span>
+          <span class="feedback-hint">Want <strong> free personalised coaching tips</strong>? Click the <strong>briefcase</strong> top right.</span>
         </div>
         <div class="tabs" role="tablist" aria-label="Phases">
           <div class="tab active" data-tab="phase1" role="tab" aria-selected="true">Phase 1 — Permission</div>
@@ -1771,6 +1938,7 @@
       </div>
     </div>
 
+    <div class="main">
     <div class="views">
       <!-- Phase 1 -->
       <div class="view active" id="view-phase1">
@@ -1779,51 +1947,28 @@
             <span class="dot"></span>
             <span><strong>Shortcuts:</strong> <span style="color: rgba(9,28,45,0.65)">↑↓</span> select · <span style="color: rgba(9,28,45,0.65)">Enter</span> choose · <span style="color: rgba(9,28,45,0.65)">B</span> back · <span style="color: rgba(9,28,45,0.65)">R</span> restart</span>
           </div>
-          <button class="toolbar-btn" id="p1-back-top" type="button" title="Shortcut: B">← Back</button>
-          <button class="toolbar-btn" id="p1-restart-top" type="button" title="Shortcut: R">⟲ Restart</button>
-          <button class="toolbar-btn" id="p1-ended-top" type="button">Prospect ended call</button>
-          <button class="toolbar-btn" id="p1-context-top" type="button">Add context</button>
+          <button class="toolbar-btn" id="p1-back-top" data-action="back" data-phase="phase1" type="button" title="Shortcut: B">← Back</button>
+          <button class="toolbar-btn" id="p1-restart-top" data-action="restart" data-phase="phase1" type="button" title="Shortcut: R">⟲ Restart</button>
+          <button class="toolbar-btn" id="p1-ended-top" data-action="ended" data-phase="phase1" type="button">Prospect ended call</button>
+          <button class="toolbar-btn" id="p1-context-top" data-action="context" data-phase="phase1" type="button">Add context</button>
+          <button class="toolbar-btn" id="p1-history-top" data-action="history" data-phase="phase1" type="button">Conversation path</button>
         </div>
-        <div class="grid">
-          <div class="panel focus">
+        <div class="stack">
+          <div class="panel focus you-panel" id="p1-you-panel">
             <div class="panel-title">
-              <span>You say (read this)</span>
+              <span class="panel-chip you">YOU SAY</span>
               <span class="meta" id="p1-meta"></span>
             </div>
             <div class="speaker-pill you" id="p1-speaker-pill">You</div>
             <div class="current-line" id="p1-current-text"></div>
-            <div class="helper">
-              Phase 1 = earn the right. Your job is to keep them on the line, not pitch.
-            </div>
           </div>
 
-          <div class="panel">
+          <div class="panel prospect-panel" id="p1-prospect-panel">
             <div class="panel-title">
-              <span>Prospect said… (click one)</span>
+              <span class="panel-chip prospect">PROSPECT SAYS</span>
               <span class="meta" id="p1-options-meta"></span>
             </div>
-
-            <div class="options-top">
-              <div class="search" title="Filter options">
-                <span style="opacity:.7">⌕</span>
-                <input id="p1-search" type="text" placeholder="Filter responses…" autocomplete="off" />
-                <span class="k">/</span>
-              </div>
-            </div>
-
-            <div class="options" id="p1-options"></div>
-            <div class="hint">
-              When you hear the prospect’s line on the mock call, click the closest match.
-              <div class="kbdbar">Tip: press <code>/</code> to jump to search.</div>
-            </div>
-          </div>
-
-          <div class="panel">
-            <div class="panel-title">
-              <span>Conversation path</span>
-              <span class="meta" id="p1-history-meta"></span>
-            </div>
-            <div class="history-list" id="p1-history"><div class="timeline"></div></div>
+            <div class="options" id="p1-options" tabindex="0"></div>
           </div>
         </div>
       </div>
@@ -1835,58 +1980,34 @@
             <span class="dot"></span>
             <span><strong>Shortcuts:</strong> <span style="color: rgba(9,28,45,0.65)">↑↓</span> select · <span style="color: rgba(9,28,45,0.65)">Enter</span> choose · <span style="color: rgba(9,28,45,0.65)">B</span> back · <span style="color: rgba(9,28,45,0.65)">R</span> restart</span>
           </div>
-          <button class="toolbar-btn" id="p2-back-top" type="button" title="Shortcut: B">← Back</button>
-          <button class="toolbar-btn" id="p2-restart-top" type="button" title="Shortcut: R">⟲ Restart</button>
-          <button class="toolbar-btn" id="p2-ended-top" type="button">Prospect ended call</button>
-          <button class="toolbar-btn" id="p2-context-top" type="button">Add context</button>
+          <button class="toolbar-btn" id="p2-back-top" data-action="back" data-phase="phase2" type="button" title="Shortcut: B">← Back</button>
+          <button class="toolbar-btn" id="p2-restart-top" data-action="restart" data-phase="phase2" type="button" title="Shortcut: R">⟲ Restart</button>
+          <button class="toolbar-btn" id="p2-ended-top" data-action="ended" data-phase="phase2" type="button">Prospect ended call</button>
+          <button class="toolbar-btn" id="p2-context-top" data-action="context" data-phase="phase2" type="button">Add context</button>
+          <button class="toolbar-btn" id="p2-history-top" data-action="history" data-phase="phase2" type="button">Conversation path</button>
         </div>
-        <div class="grid">
-          <div class="panel focus">
+        <div class="stack">
+          <div class="panel focus you-panel" id="p2-you-panel">
             <div class="panel-title">
-              <span>You say (problem statement)</span>
+              <span class="panel-chip you">YOU SAY</span>
               <span class="meta" id="p2-meta"></span>
+              <span class="meta-note" id="p2-free-note">Free preview: Phase 2 clicks are locked until you upgrade.</span>
             </div>
             <div class="speaker-pill you" id="p2-speaker-pill">You</div>
             <div class="current-line" id="p2-current-text">Loading Phase 2 script…</div>
-            <div class="helper">
-              Phase 2 = find out if they actually have a problem, how big it is, and whether they care.
-              <span id="p2-free-note"><br><strong style="color: rgba(9,28,45,0.72)">Free plan:</strong> Phase 2 clicks are locked until you upgrade.</span>
-            </div>
           </div>
 
-          <div class="panel">
+          <div class="panel prospect-panel" id="p2-prospect-panel">
             <div class="panel-title">
-              <span>Prospect said… (click one)</span>
+              <span class="panel-chip prospect">PROSPECT SAYS</span>
               <span class="meta" id="p2-options-meta"></span>
             </div>
-
-            <div class="options-top">
-              <div class="search" title="Filter options">
-                <span style="opacity:.7">⌕</span>
-                <input id="p2-search" type="text" placeholder="Filter responses…" autocomplete="off" />
-                <span class="k">/</span>
-              </div>
-            </div>
-
-            <div class="options" id="p2-options">
+            <div class="options" id="p2-options" tabindex="0">
               <div class="history-empty" id="p2-preview-empty">
                 Phase 2 unlocks after you upgrade. Once you're premium, the Phase 2 tree loads automatically.
               </div>
             </div>
-            <div class="hint">
-              Same idea: click what they say, we reveal how you drill down.
-              <div class="kbdbar">Tip: press <code>/</code> to jump to search.</div>
-            </div>
           </div>
-
-          <div class="panel">
-            <div class="panel-title">
-              <span>Conversation path</span>
-              <span class="meta" id="p2-history-meta"></span>
-            </div>
-            <div class="history-list" id="p2-history"><div class="timeline"></div></div>
-          </div>
-        </div>
         </div>
       </div>
 
@@ -1907,6 +2028,7 @@
           src="/admin?embed=1"
         ></iframe>
       </div>
+    </div>
     </div>
 
     <div class="context-popover" id="context-popover" aria-hidden="true">
@@ -1944,6 +2066,17 @@
       </div>
     </div>
 
+    <div class="conversation-popover" id="conversation-popover" aria-hidden="true">
+      <div class="conversation-popover-header">
+        <div class="conversation-popover-title">Conversation path</div>
+        <div class="conversation-popover-meta" id="conversation-count">Step 1</div>
+        <button class="small-btn" id="conversation-close" type="button" aria-label="Close">✕</button>
+      </div>
+      <div class="conversation-list history-list" id="conversation-list">
+        <div class="timeline"></div>
+      </div>
+    </div>
+
   <!-- modal -->
   <div class="modal-backdrop" id="modal">
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
@@ -1953,6 +2086,7 @@
       <div class="modal-body" id="modal-body"></div>
       <div class="modal-actions" id="modal-actions"></div>
     </div>
+  </div>
   </div>
 
   <div class="modal-backdrop" id="call-ended-modal">
@@ -2008,6 +2142,7 @@
     </div>
   </div>
 </div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script>
   // ========= CONFIG =========
   let IS_PREMIUM = false;
@@ -2230,9 +2365,11 @@
     if (activeMode === "trainer") {
       setActiveView(activePhase === "phase2" ? "view-phase2" : "view-phase1");
     } else if (activeMode === "problem-lab") {
+      if (conversationPopoverState.open) closeConversationPopover();
       ensureProblemLabFrame();
       setActiveView("view-problem-lab");
     } else if (activeMode === "dashboard") {
+      if (conversationPopoverState.open) closeConversationPopover();
       ensureDashboardFrame();
       setActiveView("view-dashboard");
     }
@@ -2301,13 +2438,11 @@
   function positionContextPopover(anchorBtn, phaseKey) {
     if (!contextPopover || !anchorBtn) return;
     const viewEl = document.getElementById(`view-${phaseKey}`);
-    const historyEl = document.getElementById(phaseKey === "phase1" ? "p1-history" : "p2-history");
-    const panelEl = historyEl ? historyEl.closest(".panel") : null;
     const appEl = document.querySelector(".app");
-    if (!viewEl || !panelEl || !appEl) return;
+    if (!viewEl || !appEl) return;
 
     const appRect = appEl.getBoundingClientRect();
-    const panelRect = panelEl.getBoundingClientRect();
+    const panelRect = viewEl.getBoundingClientRect();
     const btnRect = anchorBtn.getBoundingClientRect();
 
     contextPopover.style.maxWidth = `${Math.max(220, panelRect.width - 16)}px`;
@@ -2351,6 +2486,54 @@
     const btn2 = document.getElementById("p2-context-top");
     if (btn1) btn1.classList.remove("active");
     if (btn2) btn2.classList.remove("active");
+  }
+
+  const conversationPopover = document.getElementById("conversation-popover");
+  const conversationPopoverState = { open: false, phase: null, anchor: null };
+
+  function positionConversationPopover(anchorBtn, phaseKey) {
+    if (!conversationPopover || !anchorBtn) return;
+    const viewEl = document.getElementById(`view-${phaseKey}`);
+    const appEl = document.querySelector(".app");
+    if (!viewEl || !appEl) return;
+
+    const appRect = appEl.getBoundingClientRect();
+    const panelRect = viewEl.getBoundingClientRect();
+    const btnRect = anchorBtn.getBoundingClientRect();
+
+    const popRect = conversationPopover.getBoundingClientRect();
+    let left = btnRect.left;
+    let top = btnRect.bottom + 8;
+
+    const minLeft = panelRect.left + 8;
+    const maxLeft = panelRect.right - popRect.width - 8;
+    const minTop = panelRect.top + 8;
+    const maxTop = panelRect.bottom - popRect.height - 8;
+
+    left = Math.min(Math.max(left, minLeft), Math.max(minLeft, maxLeft));
+    top = Math.min(Math.max(top, minTop), Math.max(minTop, maxTop));
+
+    conversationPopover.style.left = `${left - appRect.left}px`;
+    conversationPopover.style.top = `${top - appRect.top}px`;
+  }
+
+  function openConversationPopover(anchorBtn, phaseKey) {
+    if (!conversationPopover) return;
+    conversationPopoverState.open = true;
+    conversationPopoverState.phase = phaseKey;
+    conversationPopoverState.anchor = anchorBtn;
+    conversationPopover.classList.add("open");
+    conversationPopover.setAttribute("aria-hidden", "false");
+    requestAnimationFrame(() => positionConversationPopover(anchorBtn, phaseKey));
+  }
+
+  function closeConversationPopover() {
+    if (!conversationPopover) return;
+    conversationPopoverState.open = false;
+    conversationPopoverState.phase = null;
+    conversationPopoverState.anchor = null;
+    conversationPopover.classList.remove("open");
+    conversationPopover.setAttribute("aria-hidden", "true");
   }
 
   function applyContext(text) {
@@ -2803,6 +2986,50 @@ async function startCheckout() {
   alert("Checkout failed. No checkout URL or client secret returned.");
 }
 
+async function openBillingPortal() {
+  const res = await fetch("/api/stripe/portal", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ returnUrl: "/trainer" })
+  });
+  const data = await res.json();
+  if (data && data.url) {
+    window.top.location.href = data.url;
+    return;
+  }
+  alert("Could not open billing portal. Please try again.");
+}
+
+function showPaywallModal() {
+  showModal({
+    title: "Unlock Phase 2",
+    body: `
+      <p><strong>Phase 2 is locked</strong> until you upgrade.</p>
+      <ul>
+        <li>Full Phase 2 call tree with smart branches</li>
+        <li>Prospect GPT (audio mode) to practice live calls</li>
+        <li>Realistic objections, deflections, and redirects</li>
+        <li>Weekly cold-call tips + examples</li>
+      </ul>
+      <p style="margin-top:10px;font-size:0.86rem;color:rgba(9,28,45,0.6);">
+        Already subscribed? <button class="link-btn" id="manage-billing-btn" type="button">Manage billing</button>
+      </p>
+    `,
+    actions: [
+      { label: "Upgrade – £29/mo", primary: true, onClick: () => startCheckout() },
+      { label: "Not now" }
+    ]
+  });
+
+  const manageBtn = document.getElementById("manage-billing-btn");
+  if (manageBtn) {
+    manageBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      openBillingPortal();
+    }, { once: true });
+  }
+}
+
 function openCheckoutModal() {
   const el = document.getElementById("checkout-modal");
   if (el) el.classList.add("show");
@@ -2818,6 +3045,9 @@ function closeCheckoutModal() {
   }
 }
 
+
+  let modalTrapHandler = null;
+  let modalLastFocus = null;
 
   function showModal({ title, body, actions }) {
     $("modal-title").textContent = title;
@@ -2845,10 +3075,52 @@ function closeCheckoutModal() {
       }
     });
     $("modal").classList.add("show");
+    trapModalFocus();
   }
 
   function hideModal() {
     $("modal").classList.remove("show");
+    releaseModalFocus();
+  }
+
+  function trapModalFocus() {
+    const modal = $("modal");
+    if (!modal) return;
+    modalLastFocus = document.activeElement;
+    const focusable = modal.querySelectorAll(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    );
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (first) first.focus();
+    modalTrapHandler = (e) => {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        hideModal();
+      }
+      if (e.key !== "Tab") return;
+      if (focusable.length === 0) return;
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
+    modal.addEventListener("keydown", modalTrapHandler);
+  }
+
+  function releaseModalFocus() {
+    const modal = $("modal");
+    if (modal && modalTrapHandler) {
+      modal.removeEventListener("keydown", modalTrapHandler);
+    }
+    modalTrapHandler = null;
+    if (modalLastFocus && modalLastFocus.focus) {
+      modalLastFocus.focus();
+    }
+    modalLastFocus = null;
   }
 
   $("modal").addEventListener("click", (e) => {
@@ -3107,7 +3379,7 @@ if (checkoutBackdrop) {
       const res = await fetch("/api/me", { credentials: "same-origin", cache: "no-store" });
       if (res.ok) {
         const data = await res.json();
-        isPremium = !!data?.is_premium;
+        isPremium = data?.plan_status === "active" || !!data?.is_premium;
         isAdmin = !!data?.is_admin;
         CURRENT_USER_ID = data?.userId || null;
         console.log("me:", data);
@@ -3146,7 +3418,15 @@ if (checkoutBackdrop) {
       setActiveView("view-" + targetPhase);
     }
 
+    if (conversationPopoverState.open && conversationPopoverState.phase !== targetPhase) {
+      closeConversationPopover();
+    }
+
     renderPhase(targetPhase);
+
+    if (targetPhase === "phase2" && !IS_PREMIUM) {
+      showPaywallModal();
+    }
   }
 
   document.querySelectorAll(".tab[data-tab]").forEach(tab => {
@@ -3163,68 +3443,172 @@ if (checkoutBackdrop) {
     });
   });
 
-  function wireNavControls() {
-    const controls = [
-      { back: "p1-back-top", restart: "p1-restart-top", ended: "p1-ended-top", context: "p1-context-top", phase: "phase1" },
-      { back: "p2-back-top", restart: "p2-restart-top", ended: "p2-ended-top", context: "p2-context-top", phase: "phase2" },
-    ];
+  function showToast(message) {
+    const toast = document.getElementById("toast");
+    if (!toast) return;
+    toast.textContent = message;
+    toast.classList.add("show");
+    clearTimeout(showToast.__t);
+    showToast.__t = setTimeout(() => toast.classList.remove("show"), 1400);
+  }
 
-    controls.forEach(({ back, restart, ended, context, phase }) => {
-      const backBtn = document.getElementById(back);
-      if (backBtn && !backBtn.dataset.wired) {
-        backBtn.dataset.wired = "1";
-        backBtn.addEventListener("click", () => goBack(phase));
-      }
+  function isTypingTarget() {
+    const el = document.activeElement;
+    if (!el) return false;
+    const tag = el.tagName ? el.tagName.toLowerCase() : "";
+    return tag === "input" || tag === "textarea" || tag === "select" || el.isContentEditable;
+  }
 
-      const restartBtn = document.getElementById(restart);
-      if (restartBtn && !restartBtn.dataset.wired) {
-        restartBtn.dataset.wired = "1";
-        restartBtn.addEventListener("click", () => restartPhase(phase));
-      }
+  function canAutoFocusOptions() {
+    if (isTypingTarget()) return false;
+    if (document.querySelector(".modal-backdrop.show")) return false;
+    if (document.querySelector(".checkout-backdrop.show")) return false;
+    return true;
+  }
 
-      const endedBtn = document.getElementById(ended);
-      if (endedBtn && !endedBtn.dataset.wired) {
-        endedBtn.dataset.wired = "1";
-        endedBtn.addEventListener("click", () => openCallEndedModal(phase));
-      }
+  function getProspectOptions(phaseKey) {
+    const g = graphs[phaseKey];
+    if (!g) return [];
+    const kidsAll = g.children[g.currentId] || [];
+    return kidsAll.filter(id => g.nodes[id] && g.nodes[id].speaker === "prospect");
+  }
 
-      const contextBtn = document.getElementById(context);
-      if (contextBtn && !contextBtn.dataset.wired) {
-        contextBtn.dataset.wired = "1";
-        contextBtn.addEventListener("mouseenter", () => {
-          if (!contextPopoverState.pinned) openContextPopover(contextBtn, phase);
-        });
-        contextBtn.addEventListener("mouseleave", () => {
-          if (!contextPopoverState.pinned && !contextPopoverState.hovering) closeContextPopover();
-        });
-        contextBtn.addEventListener("click", (e) => {
-          e.preventDefault();
-          const nextPinned = !contextPopoverState.pinned;
-          openContextPopover(contextBtn, phase, nextPinned);
-          contextBtn.classList.toggle("active", contextPopoverState.pinned);
-        });
+  function chooseSelectedOption(phaseKey) {
+    const kids = getProspectOptions(phaseKey);
+    if (!kids.length) return false;
+    const idx = Math.max(0, Math.min(selectedIndex[phaseKey] || 0, kids.length - 1));
+    clickOption(phaseKey, kids[idx]);
+    return true;
+  }
+
+  function goNext(phaseKey) {
+    return chooseSelectedOption(phaseKey);
+  }
+
+  function updateProspectSelectionUI(phaseKey) {
+    const optionsEl = document.getElementById(phaseKey === "phase1" ? "p1-options" : "p2-options");
+    if (!optionsEl) return;
+    const btns = Array.from(optionsEl.querySelectorAll(".option-btn"));
+    btns.forEach((btn, i) => {
+      btn.classList.toggle("selected", i === selectedIndex[phaseKey]);
+      btn.classList.toggle("is-selected", i === selectedIndex[phaseKey]);
+      if (i === selectedIndex[phaseKey]) {
+        btn.scrollIntoView({ block: "nearest" });
       }
     });
+  }
+
+  function selectNextProspectResponse(phaseKey) {
+    const kids = getProspectOptions(phaseKey);
+    if (!kids.length) return;
+    selectedIndex[phaseKey] = Math.min(selectedIndex[phaseKey] + 1, kids.length - 1);
+    updateProspectSelectionUI(phaseKey);
+  }
+
+  function selectPrevProspectResponse(phaseKey) {
+    const kids = getProspectOptions(phaseKey);
+    if (!kids.length) return;
+    selectedIndex[phaseKey] = Math.max(selectedIndex[phaseKey] - 1, 0);
+    updateProspectSelectionUI(phaseKey);
+  }
+
+  async function copyCurrentLine(phaseKey) {
+    const g = graphs[phaseKey];
+    if (!g) return;
+    const cur = g.nodes[g.currentId];
+    const text = applyContext(cur?.text || "");
+    if (!text) return;
+    try {
+      await navigator.clipboard.writeText(text);
+      showToast("Copied");
+    } catch (_) {
+      showToast("Copy failed");
+    }
+  }
+
+  function focusProspectPanel(phaseKey) {
+    const el = document.getElementById(phaseKey === "phase1" ? "p1-options" : "p2-options");
+    if (el) {
+      el.focus({ preventScroll: false });
+      el.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    }
+  }
+
+  function wireNavControls() {
+    if (!document.body.dataset.trixActions) {
+      document.body.dataset.trixActions = "1";
+      document.addEventListener("click", (e) => {
+        const btn = e.target && e.target.closest ? e.target.closest("[data-action]") : null;
+        if (!btn) return;
+        const phase = btn.getAttribute("data-phase") || activePhase;
+        const action = btn.getAttribute("data-action");
+        if (!action) return;
+        if (action === "back") return goBack(phase);
+        if (action === "restart") return restartPhase(phase);
+        if (action === "ended") return openCallEndedModal(phase);
+        if (action === "context") {
+          const nextPinned = !contextPopoverState.pinned;
+          openContextPopover(btn, phase, nextPinned);
+          btn.classList.toggle("active", contextPopoverState.pinned);
+          return;
+        }
+        if (action === "history") {
+          if (conversationPopoverState.open && conversationPopoverState.phase === phase) {
+            closeConversationPopover();
+          } else {
+            openConversationPopover(btn, phase);
+          }
+          return;
+        }
+        if (action === "copy_you") return copyCurrentLine(phase);
+        if (action === "next") {
+          if (chooseSelectedOption(phase)) showToast("Moved to next");
+          return;
+        }
+      });
+
+      document.addEventListener("mouseover", (e) => {
+        const btn = e.target && e.target.closest ? e.target.closest('[data-action="context"]') : null;
+        if (!btn) return;
+        if (!contextPopoverState.pinned) {
+          openContextPopover(btn, btn.getAttribute("data-phase") || activePhase);
+        }
+      });
+
+      document.addEventListener("mouseout", (e) => {
+        const btn = e.target && e.target.closest ? e.target.closest('[data-action="context"]') : null;
+        if (!btn) return;
+        if (!contextPopoverState.pinned && !contextPopoverState.hovering) {
+          closeContextPopover();
+        }
+      });
+
+    }
 
     if (!document.body.dataset.trixNavKeys) {
       document.body.dataset.trixNavKeys = "1";
-      document.addEventListener("keydown", (e) => {
-        const tag = (e.target && e.target.tagName) ? e.target.tagName.toLowerCase() : "";
-        if (tag === "input" || tag === "textarea" || (e.target && e.target.isContentEditable)) return;
-        const key = (e.key || "").toLowerCase();
-        if (key === "b") {
+      window.addEventListener("keydown", (e) => {
+        if (isTypingTarget()) return;
+        if (e.altKey || e.metaKey || e.ctrlKey) return;
+        const k = e.key;
+        if (k === "ArrowUp" || k === "ArrowDown") {
+          e.preventDefault();
+          e.stopPropagation();
+          if (k === "ArrowUp") {
+            selectPrevProspectResponse(activePhase);
+          } else {
+            selectNextProspectResponse(activePhase);
+          }
+          return;
+        }
+        if (k === "b" || k === "B") {
           e.preventDefault();
           goBack(activePhase);
-        } else if (key === "r") {
+        } else if (k === "r" || k === "R") {
           e.preventDefault();
           restartPhase(activePhase);
-        } else if (key === "escape") {
-          if (contextPopoverState.open) {
-            e.preventDefault();
-            closeContextPopover();
-          }
         }
-      });
+      }, { capture: true });
     }
   }
 
@@ -3281,17 +3665,7 @@ if (checkoutBackdrop) {
     // Gate Phase 2 interactions in freemium
     if (phaseKey === "phase2" && !IS_PREMIUM) {
       // analytics removed
-      showModal({
-        title: "Unlock Phase 2",
-        body: `
-          <p><strong>Phase 2 is locked</strong> in the free preview.</p>
-          <p>To get the full call script + the prospect GPT + videos + examples, upgrade to Premium.</p>
-        `,
-        actions: [
-          { label: "Unlock Premium", primary: true, onClick: () => startCheckout() },
-          { label: "Close" }
-        ]
-      });
+      showPaywallModal();
       return;
     }
 
@@ -3385,17 +3759,17 @@ if (checkoutBackdrop) {
     const currentTextEl = $(isP1 ? "p1-current-text" : "p2-current-text");
     const speakerPillEl = $(isP1 ? "p1-speaker-pill" : "p2-speaker-pill");
     const optionsEl = $(isP1 ? "p1-options" : "p2-options");
-    const historyEl = $(isP1 ? "p1-history" : "p2-history");
+    const historyEl = $("conversation-list");
     const backBtn = $(isP1 ? "p1-back-top" : "p2-back-top");
     const restartBtn = $(isP1 ? "p1-restart-top" : "p2-restart-top");
 
     // Meta
     const metaEl = $(isP1 ? "p1-meta" : "p2-meta");
-    const hMetaEl = $(isP1 ? "p1-history-meta" : "p2-history-meta");
     const oMetaEl = $(isP1 ? "p1-options-meta" : "p2-options-meta");
+    const conversationCount = $("conversation-count");
 
     if (metaEl) metaEl.textContent = `Step ${g.history.length}`;
-    if (hMetaEl) hMetaEl.textContent = `${g.history.length} items`;
+    if (conversationCount) conversationCount.textContent = `Step ${g.history.length}`;
     const kidsAll = g.children[g.currentId] || [];
     const prospectKidsAll = kidsAll.filter(id => g.nodes[id] && g.nodes[id].speaker === "prospect");
     if (oMetaEl) oMetaEl.textContent = prospectKidsAll.length ? `${prospectKidsAll.length} options` : "";
@@ -3420,17 +3794,8 @@ if (checkoutBackdrop) {
     if (restartBtn) restartBtn.disabled = false;
 
     // Options
-    const searchInput = $(isP1 ? "p1-search" : "p2-search");
-    const q = (searchInput?.value || "").trim().toLowerCase();
-
     if (optionsEl) optionsEl.innerHTML = "";
-
-    const kids = prospectKidsAll.filter(id => {
-      const node = g.nodes[id];
-      if (!node) return false;
-      if (!q) return true;
-      return (node.text || "").toLowerCase().includes(q);
-    });
+    const kids = prospectKidsAll.slice();
 
     // update selected index bounds
     if (selectedIndex[phaseKey] >= kids.length) {
@@ -3445,16 +3810,14 @@ if (checkoutBackdrop) {
     } else if (!kids.length) {
       const empty = document.createElement("div");
       empty.className = "history-empty";
-      empty.innerHTML = q
-        ? `No matches for <strong>${safeText(q)}</strong>.`
-        : "No prospect responses to click from this line.";
+      empty.textContent = "No prospect responses to click from this line.";
       optionsEl.appendChild(empty);
     } else {
       kids.forEach((id, i) => {
         const node = g.nodes[id];
         const btn = document.createElement("button");
         btn.className = "option-btn";
-        if (i === selectedIndex[phaseKey]) btn.classList.add("selected");
+        if (i === selectedIndex[phaseKey]) btn.classList.add("selected", "is-selected");
 
         const isLocked = (phaseKey === "phase2" && !IS_PREMIUM);
         if (isLocked) btn.classList.add("locked");
@@ -3528,6 +3891,10 @@ if (checkoutBackdrop) {
         timeline.appendChild(item);
       });
     }
+
+    if (activeMode === "trainer" && optionsEl && canAutoFocusOptions()) {
+      try { optionsEl.focus({ preventScroll: true }); } catch (_) {}
+    }
   } // END renderPhase
 
   // ========= BOOT / INIT =========
@@ -3553,6 +3920,24 @@ if (checkoutBackdrop) {
 
     // Wire navigation controls
     try { wireNavControls(); } catch (_) {}
+    try {
+      const convoClose = $("conversation-close");
+      if (convoClose && !convoClose.dataset.wired) {
+        convoClose.dataset.wired = "1";
+        convoClose.addEventListener("click", () => closeConversationPopover());
+      }
+      if (!document.body.dataset.trixConversationOutside) {
+        document.body.dataset.trixConversationOutside = "1";
+        document.addEventListener("mousedown", (e) => {
+          if (!conversationPopoverState.open) return;
+          const pop = $("conversation-popover");
+          if (!pop) return;
+          if (pop.contains(e.target)) return;
+          if (conversationPopoverState.anchor && conversationPopoverState.anchor.contains(e.target)) return;
+          closeConversationPopover();
+        });
+      }
+    } catch (_) {}
 
     // Load Phase 1 immediately
     try {
@@ -3560,9 +3945,8 @@ if (checkoutBackdrop) {
     } catch (e) {
       showModal({
         title: "Trainer failed to load",
-        body: "<p>Couldn’t load Phase 1.</p><p>Please make sure you’re signed in, then refresh.</p>",
+        body: "<p>Couldn’t load Phase 1.</p><p>Please refresh and try again.</p>",
         actions: [
-          { label: "Go to sign in", primary: true, href: "/sign-in" },
           { label: "Close" }
         ]
       });
@@ -3608,6 +3992,17 @@ if (checkoutBackdrop) {
   window.addEventListener("load", bootOnce);
   window.addEventListener("resize", () => {
     try { positionModeTabs(); } catch (_) {}
+    try {
+      if (contextPopoverState.open && contextPopoverState.pinned) {
+        const btn = contextPopoverState.pinned ? (document.getElementById("p1-context-top") || document.getElementById("p2-context-top")) : null;
+        if (btn) positionContextPopover(btn, activePhase);
+      }
+    } catch (_) {}
+    try {
+      if (conversationPopoverState.open && conversationPopoverState.anchor) {
+        positionConversationPopover(conversationPopoverState.anchor, conversationPopoverState.phase || activePhase);
+      }
+    } catch (_) {}
   });
 </script>
 </body>

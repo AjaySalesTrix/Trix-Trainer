@@ -57,7 +57,7 @@ export async function GET() {
 
   const { data, error } = await supabase
     .from("users")
-    .select("is_premium")
+    .select("is_premium, plan_status, current_period_end, stripe_customer_id")
     .eq("clerk_user_id", userId)
     .maybeSingle();
 
@@ -81,6 +81,9 @@ export async function GET() {
     lastName,
     fullName,
     is_premium: !!data?.is_premium && !error,
+    plan_status: data?.plan_status || null,
+    current_period_end: data?.current_period_end || null,
+    stripe_customer_id: data?.stripe_customer_id || null,
     is_admin: isAdmin,
   });
 }

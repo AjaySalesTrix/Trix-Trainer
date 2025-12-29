@@ -1,0 +1,13 @@
+.gate {
+  position: relative;
+  height: 100%;
+  width: 100%;
+}
+
+.blocker {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  background: transparent;
+  cursor: pointer;
+}
