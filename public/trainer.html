@@ -2146,6 +2146,7 @@
 <script>
   // ========= CONFIG =========
   let IS_PREMIUM = false;
+  const MIRROR_PRACTICE_GPT_URL = "https://chatgpt.com/g/g-6949b991e590819182262bb9087d96c2-trix-mirroring-gpt";
   const POSTHOG_KEY = "phc_xj2ayZ9QQPbLqRt1xMg9s5Pax7va0kkyYUDM3Z591qq";
   const POSTHOG_HOST = "https://eu.posthog.com";
 
@@ -3048,6 +3049,7 @@ function closeCheckoutModal() {
 
   let modalTrapHandler = null;
   let modalLastFocus = null;
+  const mirrorGateState = { open: false, resolver: null };
 
   function showModal({ title, body, actions }) {
     $("modal-title").textContent = title;
@@ -3081,6 +3083,12 @@ function closeCheckoutModal() {
   function hideModal() {
     $("modal").classList.remove("show");
     releaseModalFocus();
+    if (mirrorGateState.open && mirrorGateState.resolver) {
+      const resolve = mirrorGateState.resolver;
+      mirrorGateState.open = false;
+      mirrorGateState.resolver = null;
+      resolve(false);
+    }
   }
 
   function trapModalFocus() {
@@ -3126,6 +3134,138 @@ function closeCheckoutModal() {
   $("modal").addEventListener("click", (e) => {
     if (e.target === $("modal")) hideModal();
   });
+
+  function setModalContent({ title, body, actions }) {
+    $("modal-title").textContent = title;
+    $("modal-body").innerHTML = body;
+    const area = $("modal-actions");
+    area.innerHTML = "";
+    (actions || []).forEach(a => {
+      const btn = document.createElement("button");
+      btn.className = "btn " + (a.primary ? "primary" : "");
+      if (a.variant === "link") btn.className = "link-btn";
+      btn.textContent = a.label;
+      btn.addEventListener("click", () => {
+        if (a.onClick) a.onClick();
+      });
+      area.appendChild(btn);
+    });
+  }
+
+  async function getMirrorGateKey() {
+    if (CURRENT_USER_ID) return `trix_mirror_gate_dismissed_${CURRENT_USER_ID}`;
+    try {
+      const res = await fetch("/api/me", { credentials: "same-origin", cache: "no-store" });
+      if (res.ok) {
+        const data = await res.json();
+        if (data?.userId) {
+          CURRENT_USER_ID = data.userId;
+          return `trix_mirror_gate_dismissed_${data.userId}`;
+        }
+      }
+    } catch (_) {}
+    return "trix_mirror_gate_dismissed";
+  }
+
+  function setMirrorGateDismissed(key, checked) {
+    if (!checked) return;
+    try { localStorage.setItem(key, "1"); } catch (_) {}
+  }
+
+  function closeMirrorGate(result) {
+    if (mirrorGateState.resolver) mirrorGateState.resolver(result);
+    mirrorGateState.open = false;
+    mirrorGateState.resolver = null;
+    $("modal").classList.remove("show");
+    releaseModalFocus();
+  }
+
+  function openMirrorGateStep1(key) {
+    mirrorGateState.open = true;
+    setModalContent({
+      title: "Before you start Phase 2",
+      body: `
+        <p>Are you confident and comfortable with your ability to mirror prospects?</p>
+        <label style="display:flex;gap:8px;align-items:center;margin-top:10px;font-size:0.9rem;">
+          <input type="checkbox" id="mirror-gate-skip" />
+          Don’t show this again
+        </label>
+      `,
+      actions: [
+        {
+          label: "Yes — carry on",
+          primary: true,
+          onClick: () => {
+            const checked = !!document.getElementById("mirror-gate-skip")?.checked;
+            setMirrorGateDismissed(key, checked);
+            closeMirrorGate(true);
+          }
+        },
+        {
+          label: "No — I need to practice",
+          onClick: () => {
+            const checked = !!document.getElementById("mirror-gate-skip")?.checked;
+            setMirrorGateDismissed(key, checked);
+            openMirrorGateStep2(key);
+          }
+        }
+      ]
+    });
+    $("modal").classList.add("show");
+    trapModalFocus();
+    const btn = $("modal-actions")?.querySelector(".btn.primary");
+    if (btn) btn.focus();
+  }
+
+  function openMirrorGateStep2(key) {
+    setModalContent({
+      title: "Mirroring first, questions second",
+      body: `
+        <p>Great cold calls start by mirroring what the prospect just said. It keeps them calm and engaged.</p>
+        <p>The trainer assumes you mirror first, then ask the on-screen question.</p>
+        <p>Practice with the mirroring GPT and use this trainer alongside it for realistic reps.</p>
+      `,
+      actions: [
+        {
+          label: "Open Mirroring Practice GPT →",
+          primary: true,
+          onClick: () => {
+            if (!MIRROR_PRACTICE_GPT_URL) {
+              showToast("GPT link not set yet.");
+              return;
+            }
+            window.open(MIRROR_PRACTICE_GPT_URL, "_blank", "noopener");
+          }
+        },
+        {
+          label: "Back",
+          onClick: () => openMirrorGateStep1(key)
+        },
+        {
+          label: "Close",
+          variant: "link",
+          onClick: () => closeMirrorGate(false)
+        }
+      ]
+    });
+    $("modal").classList.add("show");
+    trapModalFocus();
+    const btn = $("modal-actions")?.querySelector(".btn.primary");
+    if (btn) btn.focus();
+  }
+
+  async function maybeShowMirrorGate() {
+    if (!IS_PREMIUM) return true;
+    const key = await getMirrorGateKey();
+    try {
+      if (localStorage.getItem(key) === "1") return true;
+    } catch (_) {}
+    if (mirrorGateState.open) return false;
+    return await new Promise((resolve) => {
+      mirrorGateState.resolver = resolve;
+      openMirrorGateStep1(key);
+    });
+  }
 
   const callEndedModal = document.getElementById("call-ended-modal");
   const callEndedTitle = document.getElementById("call-ended-title");
@@ -3406,8 +3546,14 @@ if (checkoutBackdrop) {
   }
 
   // ========= NAV / TABS =========
-  function switchTab(targetPhase) {
+  async function switchTab(targetPhase) {
     const __prevPhase = activePhase;
+
+    if (targetPhase === "phase2" && IS_PREMIUM) {
+      const ok = await maybeShowMirrorGate();
+      if (!ok) return;
+    }
+
     activePhase = targetPhase;
 
     document.querySelectorAll(".tab[data-tab]").forEach(t => t.classList.remove("active"));
@@ -3430,9 +3576,9 @@ if (checkoutBackdrop) {
   }
 
   document.querySelectorAll(".tab[data-tab]").forEach(tab => {
-    tab.addEventListener("click", () => {
+    tab.addEventListener("click", async () => {
       if (activeMode !== "trainer") switchMode("trainer");
-      switchTab(tab.dataset.tab);
+      await switchTab(tab.dataset.tab);
     });
   });
 
