@@ -284,59 +284,15 @@ export default function TrixOnboardingAuthModal({
                 </button>
               )}
             </div>
-            {isFinalStep ? (
-              <div className={styles.authHint}>
-                Already have an account?{" "}
-                <button
-                  className={styles.link}
-                  type="button"
-                  onClick={() => {
-                    setMode("auth");
-                    setAuthView("signIn");
-                  }}
-                >
-                  Sign in
-                </button>
-              </div>
-            ) : null}
           </div>
         ) : (
-          <div className={styles.content}>
-            <h2 className={styles.title}>Welcome back</h2>
-            <p className={styles.bodyMuted}>
-              Create an account to save progress, or sign in to continue.
-            </p>
+          <div className={styles.authCenter}>
             <div className={styles.authWrap}>
               {/* Clerk shows "Secured by Clerk" in dev; this disappears on production keys/verified domain. */}
               {authView === "signUp" ? (
                 <SignUp routing="virtual" appearance={appearance} />
               ) : (
                 <SignIn routing="virtual" appearance={appearance} />
-              )}
-            </div>
-            <div className={styles.authToggle}>
-              {authView === "signUp" ? (
-                <span>
-                  Already have an account?{" "}
-                  <button
-                    className={styles.link}
-                    type="button"
-                    onClick={() => setAuthView("signIn")}
-                  >
-                    Sign in
-                  </button>
-                </span>
-              ) : (
-                <span>
-                  New here?{" "}
-                  <button
-                    className={styles.link}
-                    type="button"
-                    onClick={() => setAuthView("signUp")}
-                  >
-                    Create an account
-                  </button>
-                </span>
               )}
             </div>
           </div>

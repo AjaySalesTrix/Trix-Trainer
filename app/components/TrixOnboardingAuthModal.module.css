@@ -35,8 +35,12 @@
 }
 
 .modalAuth {
-  width: min(480px, 92vw);
+  width: auto;
   max-height: 92vh;
+  padding: 0;
+  background: transparent;
+  border: none;
+  box-shadow: none;
 }
 
 .header {
@@ -72,6 +76,16 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
+}
+
+.modalAuth .content {
+  width: 100%;
+}
+
+.authCenter {
+  width: 100%;
+  display: grid;
+  place-items: center;
 }
 
 .title {
@@ -172,13 +186,11 @@
   background: rgba(255, 255, 255, 0.02);
   border-radius: 16px;
   padding: 0;
+  width: auto;
+  display: grid;
+  place-items: center;
 }
 
-.authToggle {
-  text-align: center;
-  font-size: 0.85rem;
-  color: rgba(245, 241, 232, 0.6);
-}
 
 .listNumbered,
 .listBullets {
