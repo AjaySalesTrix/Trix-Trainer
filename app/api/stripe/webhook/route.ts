@@ -34,6 +34,14 @@ export async function POST(req: Request) {
     return "inactive";
   };
 
+  const getCurrentPeriodEnd = (sub: unknown) => {
+    if (!sub || typeof sub !== "object") return null;
+    if (!("current_period_end" in sub)) return null;
+    const val = (sub as { current_period_end?: number | null }).current_period_end;
+    if (typeof val !== "number") return null;
+    return new Date(val * 1000).toISOString();
+  };
+
   if (event.type === "checkout.session.completed") {
     const session = event.data.object as Stripe.Checkout.Session;
 
@@ -49,10 +57,12 @@ export async function POST(req: Request) {
 
     let currentPeriodEnd: string | null = null;
     if (stripeSubscriptionId) {
-      const subscription = await stripe.subscriptions.retrieve(stripeSubscriptionId);
-      currentPeriodEnd = subscription.current_period_end
-        ? new Date(subscription.current_period_end * 1000).toISOString()
-        : null;
+      const subscriptionResult = await stripe.subscriptions.retrieve(stripeSubscriptionId);
+      const subscriptionData =
+        "data" in subscriptionResult
+          ? subscriptionResult.data
+          : subscriptionResult;
+      currentPeriodEnd = getCurrentPeriodEnd(subscriptionData);
     }
 
     const { error } = await supabase
@@ -82,9 +92,7 @@ export async function POST(req: Request) {
     const stripeCustomerId = typeof sub.customer === "string" ? sub.customer : null;
     if (stripeCustomerId) {
       const planStatus = mapStatus(sub.status);
-      const currentPeriodEnd = sub.current_period_end
-        ? new Date(sub.current_period_end * 1000).toISOString()
-        : null;
+      const currentPeriodEnd = getCurrentPeriodEnd(sub);
       const stripeSubscriptionId = sub.id;
       const { error } = await supabase
         .from("users")
