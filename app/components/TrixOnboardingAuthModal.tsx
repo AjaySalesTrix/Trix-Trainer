@@ -52,7 +52,7 @@ const steps = [
     title: "This trainer removes that uncertainty",
     content: (
       <>
-        <p>This trainer removes that uncertainty.</p>
+        
         <p>
           You’re not expected to “think on your feet” or memorise scripts.
         </p>
@@ -74,7 +74,7 @@ const steps = [
     title: "This isn’t about sounding scripted.",
     content: (
       <>
-        <p>This isn’t about sounding scripted.</p>
+        
         <p>
           Every good cold call has structure — whether the rep realises it or
           not.
@@ -94,7 +94,7 @@ const steps = [
   },
   {
     title:
-      "If this is your first time here, check out the video below on how to use the trainer and get access to the custom GPT that lets your practice life-like cold calls with your prospect.",
+      "Check out the video below on how to use the trainer (and how to get access to the free custom cold calling GPT, where the GPT will roleplay as your prospect)!",
     content: <p>Watch a quick walkthrough, then create your account.</p>,
   },
 ];
