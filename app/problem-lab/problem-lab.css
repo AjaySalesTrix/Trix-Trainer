@@ -645,6 +645,103 @@ body {
   background: transparent;
 }
 
+/* === Trainer15 design system alignment === */
+.problem-lab-header-card,
+.problem-lab-card,
+.problem-lab-rowcard,
+.problem-lab-saved-row {
+  background: var(--paper);
+  border: var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+}
+
+.problem-lab-intro-card,
+.problem-lab-proof-card,
+.problem-lab-proof-preview {
+  background: var(--paper);
+  border: var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.problem-lab-title,
+.problem-lab-card-title,
+.problem-lab-rowtitle,
+.problem-lab-proof-company,
+.problem-lab-cell-title {
+  color: var(--ink);
+}
+
+.problem-lab-badge,
+.problem-lab-micro,
+.problem-lab-chip,
+.problem-lab-rowlabel,
+.problem-lab-field-label,
+.problem-lab-note,
+.problem-lab-counter {
+  color: var(--muted);
+  border: var(--border);
+  background: var(--paper);
+}
+
+.problem-lab-intro-label,
+.problem-lab-intro-text,
+.problem-lab-saved-meta,
+.problem-lab-field-text,
+.problem-lab-cell-text {
+  color: var(--muted);
+}
+
+.problem-lab-button,
+.problem-lab-saved-button,
+.problem-lab-link,
+.problem-lab-proof-toggle,
+.problem-lab-icon-btn {
+  border: var(--border);
+  border-radius: var(--radius-md);
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: var(--shadow-sm);
+  transition: transform 120ms ease, box-shadow 120ms ease;
+}
+
+.problem-lab-button:hover,
+.problem-lab-saved-button:hover,
+.problem-lab-icon-btn:hover,
+.problem-lab-proof-toggle:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0 var(--ink);
+}
+
+.problem-lab-button.primary {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.problem-lab-input,
+.problem-lab-textarea {
+  border: var(--border);
+  border-radius: var(--radius-md);
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.problem-lab-input:focus,
+.problem-lab-textarea:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(41,40,39,0.2);
+}
+
+.problem-lab-header-card,
+.problem-lab-rowcard {
+  box-shadow: var(--shadow-lg);
+}
+
+.problem-lab-header-card {
+  background: var(--paper);
+}
+
 html[data-embed="1"],
 html[data-embed="1"] body {
   background: transparent !important;

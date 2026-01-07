@@ -462,6 +462,78 @@ html {
   border-collapse: collapse;
 }
 
+/* === Trainer15 design system alignment === */
+.admin-layout {
+  color: var(--ink);
+}
+
+.admin-sidebar,
+.admin-card,
+.admin-user-card,
+.admin-summary-card,
+.admin-detail-card,
+.admin-metric-card,
+.admin-focus-card,
+.admin-section-card {
+  background: var(--paper);
+  border: var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+}
+
+.admin-nav-item,
+.admin-chip,
+.admin-pill,
+.admin-link,
+.admin-button,
+.admin-search-button {
+  border: var(--border);
+  border-radius: var(--radius-md);
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: var(--shadow-sm);
+  transition: transform 120ms ease, box-shadow 120ms ease;
+}
+
+.admin-nav-item.active,
+.admin-nav-item:hover,
+.admin-button:hover,
+.admin-search-button:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0 var(--ink);
+}
+
+.admin-title,
+.admin-section-title,
+.admin-logo {
+  color: var(--ink);
+}
+
+.admin-subtitle,
+.admin-section-sub,
+.admin-brand-sub,
+.admin-kicker,
+.admin-metric-label,
+.admin-metric-sub,
+.admin-list,
+.admin-list-row {
+  color: var(--muted);
+}
+
+.admin-search-input,
+.admin-filter-input {
+  border: var(--border);
+  border-radius: var(--radius-md);
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.admin-search-input:focus,
+.admin-filter-input:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(41,40,39,0.2);
+}
+
 .admin-table th,
 .admin-table td {
   padding: 10px 8px;

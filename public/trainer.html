@@ -6,36 +6,25 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     :root {
-      --beige: #d3c3aa;
-      --beige-2: #efe5d4;
-      --sand: #f6efe1;
-      --navy: #091c2d;
-      --navy-soft: #102238;
-      --navy-2: #0b2237;
-      --ink: #0b1220;
-
-      --border: rgba(9, 28, 45, 0.18);
-      --border-2: rgba(9, 28, 45, 0.12);
-
-      --muted: rgba(9, 28, 45, 0.62);
-      --muted-2: rgba(9, 28, 45, 0.45);
-
-      --radius-xl: 26px;
-      --radius: 18px;
-      --radius-sm: 14px;
-
-      --shadow-lg: 0 26px 80px rgba(6, 17, 26, 0.30);
-      --shadow: 0 14px 40px rgba(9, 28, 45, 0.14);
-      --shadow-soft: 0 10px 26px rgba(9, 28, 45, 0.10);
-
-      --glow: 0 0 0 1px rgba(245,239,228,0.35), 0 0 0 6px rgba(209,178,135,0.20);
-      --glow-2: 0 0 0 1px rgba(245,239,228,0.42), 0 0 0 10px rgba(209,178,135,0.16);
-
-      --base-font: 13.5px;
-      --pad: 9px;
-      --gap: 8px;
-
-      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+      --paper: #faf6f1;
+      --ink: #292827;
+      --ink-rgb: 41,40,39;
+      --muted: #5c5b59;
+      --accent: #6b4d3c;
+      --navy: var(--ink);
+      --card: #ffffff;
+      --radius-lg: 16px;
+      --radius-md: 12px;
+      --radius: var(--radius-md);
+      --border: 2px solid var(--ink);
+      --shadow-lg: 4px 4px 0 0 var(--ink);
+      --shadow-sm: 2px 2px 0 0 var(--ink);
+      --shadow-soft: var(--shadow-sm);
+      --glow: none;
+      --base-font: 14px;
+      --pad: 10px;
+      --gap: 10px;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
       color-scheme: light;
     }
 
@@ -44,7 +33,7 @@
     body { margin: 0; overflow: hidden; }
 
     :focus-visible {
-      outline: 2px solid rgba(9,28,45,0.55);
+      outline: 2px solid var(--ink);
       outline-offset: 2px;
     }
 
@@ -52,11 +41,8 @@
       margin: 0;
       height: 100dvh;
       height: 100vh;
-      background:
-        radial-gradient(1200px 520px at 50% -10%, rgba(255,255,255,0.8), rgba(255,255,255,0) 60%),
-        radial-gradient(900px 520px at 0% 20%, rgba(255, 235, 206, 0.85), rgba(255,255,255,0) 62%),
-        radial-gradient(900px 520px at 100% 35%, rgba(204, 226, 255, 0.30), rgba(255,255,255,0) 55%),
-        linear-gradient(180deg, #f6efe1 0%, #d0c0a6 40%, #b19c7a 100%);
+      background: #ffffff;
+      color: var(--ink);
       position: relative;
       overflow: hidden;
     }
@@ -77,30 +63,8 @@
       }
     }
 
-    /* subtle noise overlay */
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      opacity: 0.08;
-      mix-blend-mode: multiply;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E");
-      background-size: 240px 240px;
-    }
-
-    /* ambient moving sheen */
-    body::after {
-      content: "";
-      position: fixed;
-      inset: -30%;
-      pointer-events: none;
-      background: radial-gradient(circle at 20% 30%, rgba(255,255,255,0.35), rgba(255,255,255,0) 42%),
-                  radial-gradient(circle at 75% 60%, rgba(255,255,255,0.22), rgba(255,255,255,0) 45%);
-      filter: blur(18px);
-      animation: drift 14s ease-in-out infinite alternate;
-      opacity: 0.65;
-    }
+    body::before { content: none; }
+    body::after { content: none; }
 
     @keyframes drift {
       0%   { transform: translate3d(-2%, -1%, 0) rotate(-2deg); }
@@ -110,79 +74,85 @@
     .app-shell {
       height: 100dvh;
       height: 100vh;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      padding: 6px;
-      align-items: center;
+      display: grid;
+      place-items: center;
+      overflow: visible;
+      padding: 10px;
       min-height: 0;
     }
 
     .app {
-      width: min(1320px, 100%);
+      width: min(1400px, 100%);
       height: 100%;
       margin: 0 auto;
-      border-radius: var(--radius-xl);
+      border-radius: var(--radius-lg);
       position: relative;
-      overflow: hidden;
+      overflow: visible;
       box-shadow: var(--shadow-lg);
-      background: rgba(245, 239, 228, 0.86);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(255,255,255,0.55);
-      display: flex;
-      flex-direction: column;
+      background: var(--paper);
+      border: var(--border);
+      display: grid;
+      grid-template-columns: 260px minmax(0, 1fr) 420px;
+      grid-template-rows: 1fr;
+      gap: 12px;
       min-height: 0;
       font-size: var(--base-font);
     }
 
-    /* gradient border frame */
-    .app::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      border-radius: var(--radius-xl);
-      padding: 1px;
-      background: linear-gradient(135deg,
-        rgba(9,28,45,0.35),
-        rgba(209,178,135,0.55),
-        rgba(9,28,45,0.28)
-      );
-      -webkit-mask:
-        linear-gradient(#000 0 0) content-box,
-        linear-gradient(#000 0 0);
-      -webkit-mask-composite: xor;
-      mask-composite: exclude;
-      pointer-events: none;
-      opacity: 0.55;
+    @media (max-width: 1100px) {
+      .app {
+        grid-template-columns: 240px minmax(0, 1fr);
+        grid-template-rows: auto 1fr auto;
+      }
+      .right-header {
+        grid-column: 1;
+        grid-row: 1 / span 3;
+      }
+      .main {
+        grid-column: 2;
+        grid-row: 2;
+      }
+      .left-header {
+        grid-column: 2;
+        grid-row: 3;
+      }
     }
+
+    @media (max-width: 850px) {
+      .app {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto 1fr auto;
+      }
+      .right-header {
+        grid-column: 1;
+        grid-row: 1;
+      }
+      .main {
+        grid-column: 1;
+        grid-row: 2;
+      }
+      .left-header {
+        grid-column: 1;
+        grid-row: 3;
+      }
+    }
+
+    .app::before { content: ""; }
 
     /* HEADER */
-    .topbar {
-      position: sticky;
-      top: 0;
-      z-index: 50;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      overflow: visible;
-      gap: 4px;
-      padding: 6px 10px;
-      border-bottom: 1px solid var(--border);
-      background:
-        linear-gradient(180deg, rgba(243, 235, 220, 0.92), rgba(243, 235, 220, 0.86));
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-    }
+    .topbar { display: contents; }
 
     .left-header {
+      grid-column: 3;
       display: flex;
       flex-direction: column;
-      gap: 4px;
-      min-width: 240px;
-      flex: 1;
-      max-width: 760px;
+      gap: 10px;
+      padding: 12px;
+      border: var(--border);
+      border-radius: var(--radius-lg);
+      background: var(--card);
+      box-shadow: var(--shadow-sm);
+      min-height: 0;
     }
 
     .title-row {
@@ -193,28 +163,30 @@
     }
 
     .title {
-      font-size: 0.98rem;
-      font-weight: 720;
-      letter-spacing: 0.2px;
-      color: var(--navy);
+      font-size: 0.92rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink);
     }
 
     .badge {
       font-size: 0.68rem;
-      letter-spacing: 0.14em;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
       padding: 4px 9px;
-      border-radius: 999px;
-      color: var(--navy);
-      background: rgba(255,255,255,0.7);
-      border: 1px solid rgba(9, 28, 45, 0.18);
-      box-shadow: 0 8px 18px rgba(9,28,45,0.08);
+      border-radius: var(--radius-md);
+      color: var(--ink);
+      background: var(--paper);
+      border: var(--border);
+      box-shadow: var(--shadow-sm);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
     }
 
-    .badge.premium {
-      background: linear-gradient(135deg, rgba(209,178,135,0.55), rgba(255,255,255,0.65));
-      border-color: rgba(9,28,45,0.22);
-    }
+    .badge.premium { background: var(--card); }
 
     .subtitle {
       font-size: 0.72rem;
@@ -225,19 +197,19 @@
 
     .tabs {
       display: inline-flex;
-      gap: 4px;
-      padding: 3px;
-      border-radius: 999px;
-      background: rgba(255, 255, 255, 0.66);
-      border: 1px solid rgba(9, 28, 45, 0.18);
-      box-shadow: 0 10px 30px rgba(9, 28, 45, 0.08);
+      gap: 6px;
+      padding: 6px;
+      border-radius: var(--radius-md);
+      background: var(--paper);
+      border: var(--border);
+      box-shadow: var(--shadow-sm);
       width: fit-content;
     }
 
     .tab {
       font-size: 0.72rem;
-      padding: 4px 9px;
-      border-radius: 999px;
+      padding: 6px 10px;
+      border-radius: var(--radius-md);
       cursor: pointer;
       color: var(--muted);
       user-select: none;
@@ -247,26 +219,24 @@
     }
     .tab:hover {
       transform: translateY(-1px);
-      background: rgba(9,28,45,0.06);
+      background: rgba(var(--ink-rgb),0.06);
     }
     .tab.active {
-      background: var(--navy);
-      color: #fefdf9;
-      box-shadow: 0 10px 24px rgba(9,28,45,0.18);
+      background: var(--ink);
+      color: var(--paper);
+      box-shadow: var(--shadow-sm);
     }
 
     .mode-tabs {
       display: inline-flex;
-      gap: 4px;
-      padding: 3px;
-      border-radius: 999px;
-      background: rgba(255, 255, 255, 0.66);
-      border: 1px solid rgba(9, 28, 45, 0.18);
-      box-shadow: 0 10px 30px rgba(9, 28, 45, 0.08);
+      gap: 6px;
+      padding: 6px;
+      border-radius: var(--radius-md);
+      background: var(--paper);
+      border: var(--border);
+      box-shadow: var(--shadow-sm);
       width: fit-content;
-      position: absolute;
-      right: 0;
-      top: 0;
+      position: static;
     }
 
     .mode-tab {
@@ -288,13 +258,13 @@
 
     .mode-tab:hover {
       transform: translateY(-1px);
-      background: rgba(9,28,45,0.06);
+      background: rgba(var(--ink-rgb),0.06);
     }
 
     .mode-tab.active {
-      background: var(--navy);
-      color: #fefdf9;
-      box-shadow: 0 10px 24px rgba(9,28,45,0.18);
+      background: var(--ink);
+      color: var(--paper);
+      box-shadow: var(--shadow-sm);
     }
 
     .admin-only {
@@ -306,15 +276,15 @@
     }
 
     .right-header {
+      grid-column: 1;
       display: flex;
-      align-items: flex-end;
-      gap: 10px;
-      flex-shrink: 0;
-      align-self: flex-start; /* keep logo + shortcuts pinned to the top */
-      margin-left: auto;
-      padding-top: 2px;
-      z-index: 50;
-      pointer-events: auto;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px;
+      border: var(--border);
+      border-radius: var(--radius-lg);
+      background: var(--card);
+      box-shadow: var(--shadow-sm);
       flex-direction: column;
       position: relative;
       overflow: visible;
@@ -322,10 +292,10 @@
 
 
     .logo {
-      height: 36px;
-      width: 126px;
+      height: 34px;
+      width: 120px;
       object-fit: contain;
-      filter: drop-shadow(0 10px 18px rgba(9,28,45,0.14));
+      filter: none;
       cursor: pointer; /* logo is the briefcase trigger */
       position: relative;
       z-index: 60;
@@ -333,9 +303,9 @@
     }
 
     .logo.pinned {
-      outline: 2px solid rgba(209,178,135,0.55);
+      outline: 2px solid var(--ink);
       outline-offset: 2px;
-      border-radius: 12px;
+      border-radius: 10px;
     }
 
     /* FEEDBACK (briefcase) slide-out panel */
@@ -345,31 +315,22 @@
 
 
     .feedback-panel {
-      position: absolute;
-      top: 0;
-      right: 150px; /* sits just left of the briefcase */
-      width: min(360px, 72vw);
-      border-radius: 18px;
-      border: 1px solid rgba(9, 28, 45, 0.14);
-      background:
-        radial-gradient(700px 220px at 10% 0%, rgba(209,178,135,0.32), rgba(255,255,255,0) 55%),
-        radial-gradient(600px 200px at 100% 40%, rgba(9,28,45,0.08), rgba(255,255,255,0) 62%),
-        linear-gradient(180deg, rgba(255,255,255,0.74), rgba(255,255,255,0.56));
-      box-shadow: 0 18px 42px rgba(9,28,45,0.14);
-      padding: 12px 12px 12px;
-      transform: translateX(18px);
-      opacity: 0;
-      pointer-events: none;
-      transition: transform .22s ease, opacity .22s ease;
-      overflow: hidden;
-      z-index: 55;
-    }
-
-    .feedback-panel.open {
-      transform: translateX(0);
+      position: static;
+      width: 100%;
+      border-radius: var(--radius-md);
+      border: var(--border);
+      background: var(--paper);
+      box-shadow: var(--shadow-sm);
+      padding: 10px;
+      transform: none;
       opacity: 1;
       pointer-events: auto;
+      transition: none;
+      overflow: hidden;
+      z-index: 1;
     }
+
+    .feedback-panel.open { }
 
     /* Hover trigger: hovering the briefcase/logo itself reveals the panel */
     #trix-logo {
@@ -379,27 +340,14 @@
 
     /* Panel is placed directly after the logo in DOM; use adjacent sibling selector */
     #trix-logo:hover ~ #feedback-panel,
-    #feedback-panel:hover {
-      transform: translateX(0);
-      opacity: 1;
-      pointer-events: auto;
-    }
+    #feedback-panel:hover { }
 
     /* Ensure it sits above other header elements */
     #feedback-panel {
       z-index: 9999;
     }
 
-    .feedback-panel::before {
-      content: "";
-      position: absolute;
-      inset: -2px;
-      background:
-        radial-gradient(520px 220px at 20% -10%, rgba(255,255,255,0.65), rgba(255,255,255,0) 60%),
-        radial-gradient(520px 220px at 95% 30%, rgba(209,178,135,0.28), rgba(255,255,255,0) 62%);
-      opacity: 0.85;
-      pointer-events: none;
-    }
+    .feedback-panel::before { content: ""; }
 
     .feedback-head {
       display: flex;
@@ -416,12 +364,12 @@
       font-size: 0.82rem;
       letter-spacing: 0.12em;
       text-transform: uppercase;
-      color: rgba(9,28,45,0.62);
+      color: var(--muted);
     }
 
     .feedback-mini {
       font-size: 0.74rem;
-      color: rgba(9,28,45,0.55);
+      color: var(--muted);
       white-space: nowrap;
     }
 
@@ -429,7 +377,7 @@
       margin: 0 0 10px;
       font-size: 0.92rem;
       font-weight: 780;
-      color: var(--navy);
+      color: var(--ink);
       line-height: 1.25;
       position: relative;
       z-index: 1;
@@ -444,11 +392,11 @@
     }
 
     .feedback-opt {
-      border-radius: 14px;
+      border-radius: var(--radius-md);
       padding: 10px 10px;
-      border: 1px solid rgba(9, 28, 45, 0.14);
-      background: rgba(255,255,255,0.62);
-      box-shadow: 0 12px 22px rgba(9,28,45,0.08);
+      border: var(--border);
+      background: var(--paper);
+      box-shadow: var(--shadow-sm);
       cursor: pointer;
       text-align: left;
       transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
@@ -459,14 +407,14 @@
     }
 
     .feedback-opt:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 18px 30px rgba(9,28,45,0.12);
-      border-color: rgba(9, 28, 45, 0.36);
+      transform: translate(-1px, -1px);
+      box-shadow: 3px 3px 0 0 var(--ink);
+      border-color: var(--ink);
     }
 
     .feedback-opt .lbl {
       font-size: 0.88rem;
-      color: #0b1220;
+      color: var(--ink);
       line-height: 1.25;
     }
 
@@ -476,9 +424,9 @@
       text-transform: uppercase;
       padding: 6px 8px;
       border-radius: 999px;
-      border: 1px solid rgba(9,28,45,0.16);
-      background: rgba(255,255,255,0.70);
-      color: rgba(9,28,45,0.62);
+      border: var(--border);
+      background: var(--paper);
+      color: var(--muted);
       white-space: nowrap;
     }
 
@@ -497,7 +445,7 @@
     .feedback-sub {
       margin: 0 0 8px;
       font-size: 0.82rem;
-      color: rgba(9,28,45,0.68);
+      color: var(--muted);
       line-height: 1.25;
     }
 
@@ -505,14 +453,14 @@
       width: 100%;
       min-height: 88px;
       resize: vertical;
-      border-radius: 14px;
-      border: 1px solid rgba(9,28,45,0.14);
-      background: rgba(255,255,255,0.70);
+      border-radius: var(--radius-md);
+      border: var(--border);
+      background: var(--paper);
       padding: 10px 10px;
       font-size: 0.88rem;
       outline: none;
-      box-shadow: 0 12px 22px rgba(9,28,45,0.08);
-      color: #0b1220;
+      box-shadow: var(--shadow-sm);
+      color: var(--ink);
       line-height: 1.35;
     }
 
@@ -527,43 +475,42 @@
     .feedback-back {
       font-size: 0.84rem;
       border-radius: 999px;
-      border: 1px solid rgba(9, 28, 45, 0.20);
-      background: rgba(255, 255, 255, 0.62);
-      color: #0b1220;
+      border: var(--border);
+      background: var(--paper);
+      color: var(--ink);
       padding: 7px 12px;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      box-shadow: 0 10px 20px rgba(9,28,45,0.08);
+      box-shadow: var(--shadow-sm);
       transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
       white-space: nowrap;
     }
 
     .feedback-back:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 16px 28px rgba(9,28,45,0.12);
-      background: rgba(255, 255, 255, 0.78);
+      transform: translate(-1px, -1px);
+      box-shadow: 3px 3px 0 0 var(--ink);
     }
 
     .feedback-submit {
       font-size: 0.84rem;
       font-weight: 760;
       border-radius: 999px;
-      border: 1px solid rgba(9, 28, 45, 0.24);
-      background: linear-gradient(135deg, rgba(9,28,45,0.96), rgba(16,34,56,0.96));
-      color: #fefdf9;
+      border: var(--border);
+      background: var(--ink);
+      color: var(--paper);
       padding: 8px 12px;
       cursor: pointer;
-      box-shadow: 0 12px 22px rgba(9,28,45,0.16);
+      box-shadow: var(--shadow-sm);
       transition: transform .12s ease, box-shadow .12s ease, opacity .12s ease;
       white-space: nowrap;
       line-height: 1;
     }
 
     .feedback-submit:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 20px 38px rgba(9,28,45,0.22);
+      transform: translate(-1px, -1px);
+      box-shadow: 3px 3px 0 0 var(--ink);
     }
 
     .feedback-submit:disabled {
@@ -577,11 +524,11 @@
       display: none;
       margin-top: 10px;
       padding: 9px 10px;
-      border-radius: 14px;
-      border: 1px solid rgba(9,28,45,0.14);
-      background: rgba(255,255,255,0.66);
-      color: rgba(9,28,45,0.78);
-      box-shadow: 0 12px 22px rgba(9,28,45,0.08);
+      border-radius: var(--radius-md);
+      border: var(--border);
+      background: var(--paper);
+      color: var(--ink);
+      box-shadow: var(--shadow-sm);
       font-size: 0.86rem;
       line-height: 1.25;
       position: relative;
@@ -592,11 +539,11 @@
       display: inline-block;
       margin-top: 6px;
       font-size: 0.78rem;
-      color: rgba(9,28,45,0.62);
+      color: var(--muted);
     }
 
     .subtitle .feedback-hint strong {
-      color: rgba(9,28,45,0.78);
+      color: var(--ink);
     }
 
     @media (max-width: 1060px) {
@@ -613,32 +560,28 @@
       gap: 8px;
       padding: 8px 10px;
       border-radius: 999px;
-      border: 1px solid rgba(9,28,45,0.18);
-      background: rgba(255,255,255,0.66);
-      color: var(--navy);
+      border: var(--border);
+      background: var(--paper);
+      color: var(--ink);
       font-size: 0.82rem;
-      box-shadow: 0 10px 24px rgba(9,28,45,0.08);
+      box-shadow: var(--shadow-sm);
     }
 
     .chip .dot {
       width: 9px;
       height: 9px;
       border-radius: 99px;
-      background: rgba(9, 28, 45, 0.75);
-      box-shadow: 0 0 0 3px rgba(209,178,135,0.22);
+      background: var(--ink);
+      box-shadow: 0 0 0 3px rgba(var(--ink-rgb),0.08);
     }
 
     /* PRACTICE OPT-IN (slick CTA card) */
     .optin-box {
       margin-top: 10px;
       padding: 10px 12px;
-      border-radius: 16px;
-      border: 1px solid rgba(9, 28, 45, 0.14);
-      background:
-        radial-gradient(800px 180px at 10% 0%, rgba(209,178,135,0.32), rgba(255,255,255,0) 55%),
-        radial-gradient(700px 160px at 100% 40%, rgba(9,28,45,0.08), rgba(255,255,255,0) 62%),
-        linear-gradient(180deg, rgba(255,255,255,0.72), rgba(255,255,255,0.52));
-      box-shadow: 0 12px 26px rgba(9,28,45,0.10);
+      border-radius: var(--radius-lg);
+      border: var(--border);
+      background: var(--paper);
       max-width: 680px;
       width: 100%;
       position: relative;
@@ -649,15 +592,23 @@
       align-items: center;
     }
 
+    .optin-box.compact {
+      padding: 8px 10px;
+      max-width: 100%;
+      gap: 8px;
+    }
+
+    .optin-state {
+      display: none;
+      gap: 6px;
+    }
+
+    .optin-state.is-active {
+      display: grid;
+    }
+
     .optin-box::before {
-      content: "";
-      position: absolute;
-      inset: -2px;
-      background:
-        radial-gradient(520px 220px at 20% -10%, rgba(255,255,255,0.65), rgba(255,255,255,0) 60%),
-        radial-gradient(520px 220px at 95% 30%, rgba(209,178,135,0.28), rgba(255,255,255,0) 62%);
-      opacity: 0.85;
-      pointer-events: none;
+      content: none;
     }
 
     .optin-left {
@@ -676,13 +627,13 @@
       width: fit-content;
       padding: 5px 9px;
       border-radius: 999px;
-      border: 1px solid rgba(9,28,45,0.14);
-      background: rgba(255,255,255,0.58);
-      box-shadow: 0 8px 18px rgba(9,28,45,0.07);
+      border: var(--border);
+      background: var(--paper);
+      box-shadow: var(--shadow-sm);
       font-size: 0.70rem;
       letter-spacing: 0.12em;
       text-transform: uppercase;
-      color: rgba(9,28,45,0.68);
+      color: var(--muted);
       line-height: 1;
     }
 
@@ -690,14 +641,14 @@
       width: 10px;
       height: 10px;
       border-radius: 99px;
-      background: rgba(9,28,45,0.78);
-      box-shadow: 0 0 0 4px rgba(209,178,135,0.22);
+      background: var(--ink);
+      box-shadow: 0 0 0 4px rgba(var(--ink-rgb),0.08);
     }
 
     .optin-title {
-      font-size: 0.88rem;
+      font-size: 0.82rem;
       font-weight: 820;
-      color: var(--navy);
+      color: var(--ink);
       margin: 0;
       letter-spacing: 0.2px;
       line-height: 1.15;
@@ -705,10 +656,9 @@
 
     .optin-copy {
       margin: 0;
-      font-size: 0.78rem;
-      color: rgba(9,28,45,0.68);
+      font-size: 0.74rem;
+      color: var(--muted);
       line-height: 1.25;
-      max-width: 560px;
     }
 
     .optin-actions {
@@ -734,13 +684,13 @@
       align-items: center;
       gap: 8px;
       font-size: 0.80rem;
-      color: rgba(9,28,45,0.78);
+      color: var(--ink);
       user-select: none;
       padding: 7px 10px;
       border-radius: 999px;
-      border: 1px solid rgba(9,28,45,0.12);
-      background: rgba(255,255,255,0.58);
-      box-shadow: 0 8px 18px rgba(9,28,45,0.07);
+      border: var(--border);
+      background: var(--paper);
+      box-shadow: var(--shadow-sm);
       white-space: nowrap;
       line-height: 1;
     }
@@ -748,31 +698,32 @@
     .optin-check input {
       width: 16px;
       height: 16px;
-      accent-color: var(--navy);
+      accent-color: var(--ink);
     }
 
     .optin-btn {
       font-size: 0.84rem;
       font-weight: 760;
       border-radius: 999px;
-      border: 1px solid rgba(9, 28, 45, 0.24);
-      background: linear-gradient(135deg, rgba(9,28,45,0.96), rgba(16,34,56,0.96));
-      color: #fefdf9;
+      border: var(--border);
+      background: var(--ink);
+      color: var(--paper);
       padding: 8px 12px;
       cursor: pointer;
-      box-shadow: 0 12px 22px rgba(9,28,45,0.16);
+      box-shadow: var(--shadow-sm);
       transition: transform .12s ease, box-shadow .12s ease, opacity .12s ease;
       white-space: nowrap;
       line-height: 1;
     }
 
     .optin-btn:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 20px 38px rgba(9,28,45,0.22);
+      transform: translate(-1px, -1px);
+      box-shadow: 3px 3px 0 0 var(--ink);
     }
 
     .optin-btn:active {
-      transform: translateY(0px);
+      transform: translate(1px, 1px);
+      box-shadow: none;
     }
 
     .optin-btn:disabled {
@@ -784,10 +735,16 @@
 
     .optin-foot {
       margin: 0;
-      font-size: 0.70rem;
-      color: rgba(9,28,45,0.50);
+      font-size: 0.68rem;
+      color: var(--muted);
       text-align: right;
       line-height: 1.1;
+    }
+
+    .optin-note {
+      margin: 6px 0 0;
+      font-size: 0.68rem;
+      color: var(--muted);
     }
 
     .optin-success {
@@ -796,16 +753,16 @@
       gap: 10px;
       padding: 10px 12px;
       border-radius: 999px;
-      border: 1px solid rgba(9,28,45,0.18);
-      background: rgba(255,255,255,0.66);
-      color: var(--navy);
+      border: var(--border);
+      background: var(--paper);
+      color: var(--ink);
       font-size: 0.84rem;
-      box-shadow: 0 12px 26px rgba(9,28,45,0.10);
+      box-shadow: var(--shadow-sm);
       white-space: nowrap;
     }
     .optin-success:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 18px 32px rgba(9,28,45,0.14);
+      transform: translate(-1px, -1px);
+      box-shadow: 3px 3px 0 0 var(--ink);
     }
 
     @media (max-width: 860px) {
@@ -820,9 +777,15 @@
     .phase-toolbar {
       display: flex;
       align-items: center;
-      justify-content: flex-end;
+      justify-content: flex-start;
+      flex-wrap: wrap;
       gap: 8px;
-      margin: 6px 0 8px;
+      margin: 6px 0 10px;
+      padding: 6px;
+      border-radius: var(--radius-md);
+      border: var(--border);
+      background: var(--card);
+      box-shadow: var(--shadow-sm);
     }
 
     .phase-toolbar .shortcut-chip {
@@ -831,11 +794,11 @@
       gap: 10px;
       padding: 6px 8px;
       border-radius: 999px;
-      border: 1px solid rgba(9,28,45,0.18);
-      background: rgba(255,255,255,0.66);
-      color: var(--navy);
+      border: var(--border);
+      background: var(--paper);
+      color: var(--ink);
       font-size: 0.72rem;
-      box-shadow: 0 10px 24px rgba(9, 28, 45, 0.08);
+      box-shadow: var(--shadow-sm);
       white-space: nowrap;
     }
 
@@ -843,35 +806,39 @@
       width: 9px;
       height: 9px;
       border-radius: 99px;
-      background: rgba(9, 28, 45, 0.75);
-      box-shadow: 0 0 0 3px rgba(209,178,135,0.22);
+      background: var(--ink);
+      box-shadow: 0 0 0 3px rgba(var(--ink-rgb),0.08);
     }
 
     .phase-toolbar .toolbar-btn {
       font-size: 0.78rem;
       border-radius: 999px;
-      border: 1px solid rgba(9, 28, 45, 0.20);
-      background: rgba(255, 255, 255, 0.62);
-      color: #0b1220;
+      border: var(--border);
+      background: var(--paper);
+      color: var(--ink);
       padding: 6px 10px;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      box-shadow: 0 10px 20px rgba(9,28,45,0.08);
+      box-shadow: var(--shadow-sm);
       transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
       white-space: nowrap;
     }
 
     .phase-toolbar .toolbar-btn:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 16px 28px rgba(9,28,45,0.12);
-      background: rgba(255, 255, 255, 0.78);
+      transform: translate(-1px, -1px);
+      box-shadow: 3px 3px 0 0 var(--ink);
+    }
+
+    .phase-toolbar .toolbar-btn:active {
+      transform: translate(1px, 1px);
+      box-shadow: none;
     }
 
     .phase-toolbar .toolbar-btn.active {
-      border-color: rgba(9,28,45,0.4);
-      background: rgba(209,178,135,0.2);
+      background: rgba(var(--ink-rgb),0.06);
+      border-color: var(--ink);
     }
 
     .phase-toolbar {
@@ -882,7 +849,7 @@
       opacity: 0.45;
       cursor: default;
       transform: none;
-      box-shadow: none;
+      box-shadow: var(--shadow-sm);
     }
 
     @media (max-width: 860px) {
@@ -895,19 +862,20 @@
 
     /* MAIN LAYOUT */
     .main {
-      flex: 1 1 auto;
+      grid-column: 2;
       min-height: 0;
-      overflow: auto;
+      overflow: visible;
       display: flex;
       flex-direction: column;
+      padding: 12px;
     }
 
     .views {
-      padding: var(--pad);
+      padding: 0;
       position: relative;
-      flex: 1;
+      flex: 1 1 auto;
       min-height: 0;
-      overflow: hidden;
+      overflow: visible;
       display: flex;
       flex-direction: column;
     }
@@ -920,7 +888,6 @@
       flex: 1;
     }
 
-    body.mode-problem-lab .tabs,
     body.mode-dashboard .tabs {
       opacity: 0.4;
       pointer-events: none;
@@ -937,8 +904,9 @@
       flex-direction: column;
       min-height: 0;
       height: 100%;
-      overflow: auto;
+      overflow: visible;
       -webkit-overflow-scrolling: touch;
+      flex: 1 1 auto;
     }
 
     @keyframes viewIn {
@@ -956,18 +924,19 @@
     }
 
     .stack {
-      display: grid;
-      grid-template-rows: minmax(180px, 1.15fr) minmax(180px, 0.85fr);
+      display: flex;
+      flex-direction: column;
       gap: var(--gap);
       min-height: 0;
-      flex: 1;
+      flex: 1 1 auto;
+      overflow: visible;
     }
 
     .panel {
-      background: rgba(252, 248, 240, 0.92);
-      border-radius: var(--radius);
-      border: 1px solid rgba(9, 28, 45, 0.09);
-      box-shadow: var(--shadow-soft);
+      background: var(--card);
+      border-radius: var(--radius-lg);
+      border: var(--border);
+      box-shadow: var(--shadow-sm);
       padding: var(--pad);
       display: flex;
       flex-direction: column;
@@ -976,18 +945,20 @@
       overflow: visible;
     }
 
-    /* glossy highlight */
-    .panel::before {
-      content:"";
-      position:absolute;
-      inset:-1px;
-      background: radial-gradient(1000px 420px at 30% 0%, rgba(255,255,255,0.65), rgba(255,255,255,0) 55%);
-      opacity: 0.55;
-      pointer-events:none;
+    .panel .panel-body,
+    .panel .panel-content,
+    .panel .shell,
+    .panel .messages,
+    .panel .options,
+    .panel .current-line {
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow: auto;
+      -webkit-overflow-scrolling: touch;
     }
 
     .panel.focus {
-      box-shadow: var(--shadow-soft), var(--glow);
+      box-shadow: var(--shadow-lg);
     }
 
     .panel-title {
@@ -995,7 +966,7 @@
       text-transform: uppercase;
       letter-spacing: 0.12em;
       color: var(--muted);
-      margin-bottom: 8px;
+      margin-bottom: 10px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -1004,8 +975,9 @@
       z-index: 1;
       position: sticky;
       top: 0;
-      background: rgba(253,247,237,0.92);
-      padding-bottom: 6px;
+      background: transparent;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--ink);
     }
 
     .panel-chip {
@@ -1017,9 +989,10 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      border: 1px solid rgba(9,28,45,0.2);
-      background: rgba(255,255,255,0.75);
-      color: rgba(9,28,45,0.75);
+      border: var(--border);
+      background: var(--paper);
+      color: var(--ink);
+      box-shadow: var(--shadow-sm);
     }
 
     .panel-chip::before {
@@ -1029,40 +1002,40 @@
     }
 
     .panel-chip.you {
-      background: rgba(209,178,135,0.25);
-      border-color: rgba(9,28,45,0.28);
-      color: rgba(9,28,45,0.85);
+      background: rgba(var(--ink-rgb),0.06);
+      border-color: var(--ink);
+      color: var(--ink);
     }
 
     .panel-chip.prospect {
-      background: rgba(9,28,45,0.08);
-      border-color: rgba(9,28,45,0.18);
-      color: rgba(9,28,45,0.75);
+      background: var(--paper);
+      border-color: var(--ink);
+      color: var(--ink);
     }
 
     .panel-title .meta {
       font-size: 0.74rem;
       letter-spacing: 0.08em;
       text-transform: none;
-      color: var(--muted-2);
+      color: var(--muted);
     }
 
     .panel-title .meta-note {
       font-size: 0.7rem;
       letter-spacing: 0.04em;
       text-transform: none;
-      color: rgba(9,28,45,0.55);
+      color: var(--muted);
       margin-left: 8px;
     }
 
     .you-panel {
-      background: rgba(248, 241, 230, 0.96);
-      border-left: 5px solid rgba(9,28,45,0.55);
+      background: var(--card);
+      border-left: 4px solid var(--ink);
     }
 
     .prospect-panel {
-      background: rgba(252, 250, 246, 0.94);
-      border-left: 4px solid rgba(209,178,135,0.55);
+      background: var(--card);
+      border-left: 4px solid var(--accent);
     }
 
     .speaker-pill {
@@ -1071,32 +1044,33 @@
       letter-spacing: 0.12em;
       padding: 5px 9px;
       border-radius: 999px;
-      border: 1px solid rgba(9, 28, 45, 0.22);
-      color: var(--navy);
+      border: var(--border);
+      color: var(--ink);
       align-self: flex-start;
-      background: rgba(255, 255, 255, 0.72);
+      background: var(--paper);
       position: relative;
       z-index: 1;
+      box-shadow: var(--shadow-sm);
     }
 
     .speaker-pill.you {
-      background: linear-gradient(135deg, rgba(209,178,135,0.40), rgba(255,255,255,0.78));
-      border-color: rgba(9,28,45,0.22);
+      background: rgba(var(--ink-rgb),0.06);
+      border-color: var(--ink);
     }
 
     .speaker-pill.prospect {
-      background: rgba(255,255,255,0.78);
+      background: var(--paper);
     }
 
     .speaker-pill.action {
-      background: rgba(9,28,45,0.06);
+      background: rgba(var(--ink-rgb),0.08);
       border-style: dashed;
     }
 
     .current-line {
       font-size: 1.28rem;
-      line-height: 1.7;
-      color: #0b1220;
+      line-height: 1.65;
+      color: var(--ink);
       font-weight: 520;
       margin: 8px 0 6px;
       flex: 1;
@@ -1117,14 +1091,15 @@
 
     .helper {
       font-size: 0.86rem;
-      color: rgba(9,28,45,0.68);
-      background: rgba(209, 178, 135, 0.22);
-      border: 1px solid rgba(9,28,45,0.10);
-      border-radius: 14px;
+      color: var(--muted);
+      background: var(--paper);
+      border: var(--border);
+      border-radius: var(--radius-md);
       padding: 10px 10px;
       margin-top: 8px;
       position: relative;
       z-index: 1;
+      box-shadow: var(--shadow-sm);
     }
 
     .controls-row {
@@ -1141,22 +1116,26 @@
     .small-btn {
       font-size: 0.84rem;
       border-radius: 999px;
-      border: 1px solid rgba(9, 28, 45, 0.20);
-      background: rgba(255, 255, 255, 0.62);
-      color: #0b1220;
+      border: var(--border);
+      background: var(--paper);
+      color: var(--ink);
       padding: 7px 12px;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      box-shadow: 0 10px 20px rgba(9,28,45,0.08);
+      box-shadow: var(--shadow-sm);
       transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
     }
 
     .small-btn:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 16px 28px rgba(9,28,45,0.12);
-      background: rgba(255, 255, 255, 0.78);
+      transform: translate(-1px, -1px);
+      box-shadow: 3px 3px 0 0 var(--ink);
+    }
+
+    .small-btn:active {
+      transform: translate(1px, 1px);
+      box-shadow: none;
     }
 
     .small-btn:disabled {
@@ -1169,8 +1148,9 @@
     /* OPTIONS */
     .options {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: 1fr;
       gap: 10px;
+      counter-reset: option;
       flex: 1;
       min-height: 0;
       overflow: auto;
@@ -1181,10 +1161,10 @@
     }
 
     .option-btn {
-      border-radius: 16px;
-      padding: 10px 12px;
-      border: 1px solid rgba(9, 28, 45, 0.12);
-      background: rgba(255,255,255,0.8);
+      border-radius: var(--radius-md);
+      padding: 10px 12px 10px 44px;
+      border: var(--border);
+      background: var(--card);
       font-size: 0.9rem;
       text-align: left;
       cursor: pointer;
@@ -1192,7 +1172,7 @@
       display: grid;
       grid-template-columns: 1fr auto;
       gap: 10px;
-      box-shadow: 0 8px 16px rgba(9,28,45,0.08);
+      box-shadow: var(--shadow-sm);
       position: relative;
       overflow: visible;
       min-width: 0;
@@ -1203,24 +1183,39 @@
     }
 
     .option-btn::before {
-      content:"";
-      position:absolute;
-      inset:0;
-      background: radial-gradient(600px 180px at 0% 0%, rgba(209,178,135,0.22), rgba(255,255,255,0) 60%);
-      opacity: .35;
-      pointer-events:none;
+      content: counter(option);
+      counter-increment: option;
+      position: absolute;
+      left: 12px;
+      top: 12px;
+      width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      background: var(--ink);
+      color: var(--paper);
+      font-size: 0.72rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow-sm);
     }
 
     .option-btn:hover {
-      border-color: rgba(9, 28, 45, 0.28);
-      box-shadow: 0 14px 24px rgba(9, 28, 45, 0.12);
-      transform: translateY(-1px);
+      transform: translate(-1px, -1px);
+      box-shadow: 3px 3px 0 0 var(--ink);
+    }
+
+    .option-btn:active {
+      transform: translate(1px, 1px);
+      box-shadow: none;
     }
 
     .option-btn.selected,
     .option-btn.is-selected {
-      border-color: rgba(9, 28, 45, 0.45);
-      box-shadow: inset 0 0 0 2px rgba(9,28,45,0.7), 0 12px 24px rgba(9,28,45,0.12);
+      border-color: var(--ink);
+      background: rgba(var(--ink-rgb),0.06);
+      box-shadow: inset 0 0 0 2px var(--ink), var(--shadow-sm);
     }
 
     .option-btn.locked {
@@ -1229,21 +1224,21 @@
     }
     .option-btn.locked:hover {
       transform: none;
-      box-shadow: 0 14px 26px rgba(9,28,45,0.08);
-      border-color: rgba(9, 28, 45, 0.16);
+      box-shadow: var(--shadow-sm);
+      border-color: var(--ink);
     }
 
     .option-label {
-      font-size: 0.66rem;
+      font-size: 0.64rem;
       text-transform: uppercase;
       letter-spacing: 0.12em;
-      color: rgba(9,28,45,0.45);
+      color: var(--muted);
       margin-bottom: 4px;
     }
 
     .option-text {
-      font-size: 0.94rem;
-      color: #0b1220;
+      font-size: 0.95rem;
+      color: var(--ink);
       line-height: 1.5;
       white-space: normal;
       overflow-wrap: anywhere;
@@ -1274,13 +1269,14 @@
       bottom: 18px;
       left: 50%;
       transform: translateX(-50%);
-      background: rgba(9,28,45,0.88);
-      color: #fefdf9;
+      background: var(--ink);
+      color: var(--paper);
+      border: var(--border);
       padding: 10px 14px;
       border-radius: 999px;
       font-size: 0.86rem;
       letter-spacing: 0.02em;
-      box-shadow: 0 18px 32px rgba(9,28,45,0.25);
+      box-shadow: var(--shadow-sm);
       opacity: 0;
       pointer-events: none;
       transition: opacity .18s ease, transform .18s ease;
@@ -1297,17 +1293,17 @@
       align-items: center;
       gap: 10px;
       justify-content: flex-end;
-      color: rgba(9,28,45,0.60);
+      color: var(--muted);
     }
 
     .option-pill {
-      font-size: 0.66rem;
+      font-size: 0.64rem;
       letter-spacing: 0.1em;
       text-transform: uppercase;
       padding: 4px 7px;
-      border-radius: 999px;
-      border: 1px solid rgba(9,28,45,0.16);
-      background: rgba(255,255,255,0.68);
+      border-radius: var(--radius-md);
+      border: var(--border);
+      background: var(--paper);
     }
 
     .option-arrow {
@@ -1326,7 +1322,7 @@
       grid-column: 1 / -1;
     }
 
-    /* HISTORY: timeline */
+    /* HISTORY: panel list */
     .history-list {
       margin-top: 6px;
       flex: 1;
@@ -1341,128 +1337,117 @@
       width: 10px;
     }
     .history-list::-webkit-scrollbar-thumb {
-      background: rgba(9,28,45,0.18);
+      background: rgba(var(--ink-rgb),0.28);
       border-radius: 999px;
-      border: 3px solid rgba(253,247,237,0.6);
+      border: 3px solid var(--paper);
     }
 
     .timeline {
       position: relative;
-      padding-left: 14px;
+      padding-left: 0;
+      display: grid;
+      gap: 10px;
     }
     .timeline::before {
-      content:"";
-      position:absolute;
-      left: 5px;
-      top: 0;
-      bottom: 0;
-      width: 2px;
-      background: linear-gradient(180deg, rgba(9,28,45,0.0), rgba(9,28,45,0.22), rgba(9,28,45,0.0));
-      opacity: 0.6;
+      content: none;
     }
 
     .history-item {
       display: grid;
-      grid-template-columns: 14px 1fr;
+      grid-template-columns: 22px 1fr;
       gap: 10px;
-      margin-bottom: 12px;
+      margin-bottom: 0;
+      align-items: start;
     }
 
     .dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 99px;
+      width: 16px;
+      height: 16px;
+      border-radius: 999px;
       margin-top: 6px;
-      border: 2px solid rgba(9,28,45,0.22);
-      background: rgba(255,255,255,0.72);
-      box-shadow: 0 10px 18px rgba(9,28,45,0.10);
+      border: 2px solid var(--ink);
+      background: var(--paper);
+      box-shadow: var(--shadow-sm);
     }
 
-    .dot.you { background: rgba(209,178,135,0.65); border-color: rgba(9,28,45,0.28); }
-    .dot.prospect { background: rgba(255,255,255,0.82); }
-    .dot.action { background: rgba(9,28,45,0.08); border-style: dashed; }
+    .dot.you { background: rgba(var(--ink-rgb),0.06); border-color: var(--ink); }
+    .dot.prospect { background: var(--paper); }
+    .dot.action { background: rgba(var(--ink-rgb),0.08); border-style: dashed; }
 
     .history-label {
       font-size: 0.70rem;
       text-transform: uppercase;
       letter-spacing: 0.14em;
-      color: rgba(9,28,45,0.55);
+      color: var(--muted);
       margin-bottom: 4px;
     }
 
     .bubble {
-      border-radius: 14px;
+      border-radius: var(--radius-md);
       padding: 9px 10px;
-      background: rgba(255,255,255,0.70);
-      border: 1px solid rgba(9, 28, 45, 0.10);
-      box-shadow: 0 14px 22px rgba(9,28,45,0.07);
+      background: var(--card);
+      border: 2px solid var(--ink);
+      box-shadow: var(--shadow-sm);
       line-height: 1.35;
     }
 
     .bubble.you {
-      background: rgba(241, 226, 201, 0.72);
-      border-color: rgba(9, 28, 45, 0.22);
+      background: rgba(var(--ink-rgb),0.06);
+      border-color: var(--ink);
     }
 
     .bubble.prospect {
-      background: rgba(255,253,248,0.78);
+      background: var(--card);
     }
 
     .bubble.action {
       font-style: italic;
-      color: rgba(9,28,45,0.68);
+      color: var(--muted);
       border-style: dashed;
-      background: rgba(9,28,45,0.05);
+      background: rgba(var(--ink-rgb),0.05);
     }
 
     /* MODAL */
     .modal-backdrop {
       position: fixed;
       inset: 0;
-      background: rgba(9,28,45,0.40);
+      background: rgba(41,40,39,0.35);
       display: none;
       align-items: center;
       justify-content: center;
       padding: 18px;
       z-index: 999;
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
     }
     .modal-backdrop.show { display: flex; }
 
     .modal {
       width: min(540px, 100%);
-      border-radius: 20px;
-      background: rgba(252,248,240,0.96);
-      border: 1px solid rgba(9,28,45,0.12);
-      box-shadow: 0 22px 64px rgba(6,17,26,0.32);
+      border-radius: var(--radius-lg);
+      background: var(--card);
+      border: var(--border);
+      box-shadow: var(--shadow-lg);
       overflow: hidden;
       position: relative;
     }
-    .modal::before {
-      content:"";
-      position:absolute;
-      inset:-1px;
-      background: radial-gradient(800px 260px at 20% 0%, rgba(209,178,135,0.40), rgba(255,255,255,0) 60%);
-      opacity: 0.65;
-      pointer-events:none;
-    }
+    .modal::before { content: ""; }
 
     .modal-head {
       padding: 14px 16px 8px;
-      border-bottom: 1px solid rgba(9,28,45,0.10);
+      border-bottom: var(--border);
       position: relative;
       z-index: 1;
     }
     .modal-title {
       margin: 0;
       font-size: 1.05rem;
-      color: var(--navy);
+      color: var(--ink);
       letter-spacing: 0.2px;
     }
     .modal-body {
       padding: 10px 16px 14px;
-      color: rgba(9,28,45,0.78);
+      color: var(--muted);
       line-height: 1.45;
       position: relative;
       z-index: 1;
@@ -1478,12 +1463,12 @@
     .btn {
       border-radius: 999px;
       padding: 9px 12px;
-      border: 1px solid rgba(9,28,45,0.20);
-      background: rgba(255,255,255,0.72);
+      border: var(--border);
+      background: var(--paper);
       cursor: pointer;
       font-size: 0.9rem;
-      color: var(--navy);
-      box-shadow: 0 14px 26px rgba(9,28,45,0.10);
+      color: var(--ink);
+      box-shadow: var(--shadow-sm);
       transition: transform .12s ease, box-shadow .12s ease;
       text-decoration: none;
       display: inline-flex;
@@ -1491,19 +1476,23 @@
       gap: 8px;
     }
     .btn:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 18px 32px rgba(9,28,45,0.14);
+      transform: translate(-1px, -1px);
+      box-shadow: 3px 3px 0 0 var(--ink);
+    }
+    .btn:active {
+      transform: translate(1px, 1px);
+      box-shadow: none;
     }
     .btn.primary {
-      background: var(--navy);
-      color: #fefdf9;
-      border-color: rgba(9,28,45,0.55);
+      background: var(--ink);
+      color: var(--paper);
+      border-color: var(--ink);
     }
 
     .link-btn {
       border: none;
       background: none;
-      color: var(--navy);
+      color: var(--ink);
       text-decoration: underline;
       padding: 0;
       cursor: pointer;
@@ -1516,7 +1505,7 @@
 
     .call-ended-label {
       font-size: 0.82rem;
-      color: rgba(9,28,45,0.72);
+      color: var(--muted);
       margin: 0 0 8px;
     }
 
@@ -1525,7 +1514,7 @@
       gap: 10px;
       align-items: flex-start;
       font-size: 0.92rem;
-      color: #0b1220;
+      color: var(--ink);
       margin-bottom: 8px;
     }
 
@@ -1537,18 +1526,19 @@
       width: 100%;
       min-height: 110px;
       resize: vertical;
-      border-radius: 14px;
-      border: 1px solid rgba(9,28,45,0.16);
+      border-radius: var(--radius-md);
+      border: var(--border);
       padding: 10px 12px;
       font-size: 0.92rem;
       font-family: inherit;
-      background: rgba(255,255,255,0.78);
-      color: #0b1220;
+      background: var(--paper);
+      color: var(--ink);
+      box-shadow: var(--shadow-sm);
     }
 
     .call-ended-count {
       font-size: 0.74rem;
-      color: rgba(9,28,45,0.55);
+      color: var(--muted);
       text-align: right;
       margin-top: 6px;
     }
@@ -1565,161 +1555,14 @@
       overflow-y: auto;
     }
 
-    .context-box {
-      margin-top: 10px;
-      border-radius: 16px;
-      border: 1px solid rgba(9,28,45,0.14);
-      background: rgba(255,255,255,0.6);
-      padding: 10px 12px;
-      box-shadow: 0 10px 22px rgba(9,28,45,0.06);
-    }
-
-    .context-box summary {
-      cursor: pointer;
-      font-size: 0.8rem;
-      color: rgba(9,28,45,0.7);
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-      list-style: none;
-    }
-
-    .context-box summary::-webkit-details-marker {
-      display: none;
-    }
-
-    .context-row {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      margin-top: 12px;
-    }
-
-    .context-row label {
-      font-size: 0.72rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: rgba(9,28,45,0.6);
-    }
-
-    .context-input {
-      width: 100%;
-      border-radius: 12px;
-      border: 1px solid rgba(9,28,45,0.18);
-      padding: 10px 12px;
-      font-size: 0.9rem;
-      background: #fbf7ef;
-      color: #0b1220;
-      height: 40px;
-      transition: border-color .12s ease, box-shadow .12s ease;
-    }
-
-    .context-input::placeholder {
-      color: rgba(9,28,45,0.4);
-    }
-
-    .context-input:focus {
-      outline: none;
-      border-color: rgba(9,28,45,0.35);
-      box-shadow: 0 0 0 3px rgba(209,178,135,0.25);
-    }
-
-    .context-field {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .context-popover {
-      position: absolute;
-      width: min(380px, 92vw);
-      border-radius: 20px;
-      border: 1px solid rgba(9, 28, 45, 0.22);
-      background: #fbf7ef;
-      box-shadow: 0 20px 45px rgba(9,28,45,0.16);
-      padding: 14px 14px 12px;
-      opacity: 0;
-      pointer-events: none;
-      transform: translateY(10px);
-      transition: transform .22s ease, opacity .22s ease;
-      z-index: 90;
-    }
-
-    .context-popover.open {
-      opacity: 1;
-      pointer-events: auto;
-      transform: translateY(0);
-    }
-
-    .context-popover .helper-text {
-      font-size: 0.8rem;
-      color: rgba(9,28,45,0.62);
-      margin: 6px 0 8px;
-      position: relative;
-      z-index: 1;
-      line-height: 1.3;
-      max-width: 320px;
-    }
-
-    .context-popover .context-row {
-      position: relative;
-      z-index: 1;
-    }
-
-    .context-popover .context-row .context-input {
-      flex: 1;
-    }
-
-    .context-popover .context-row .context-save {
-      min-width: 140px;
-      height: 40px;
-      justify-content: center;
-      padding: 8px 12px;
-    }
-
-    .context-popover .context-row .context-line {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 10px;
-      align-items: center;
-    }
-
-    .context-popover-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      position: relative;
-      z-index: 1;
-      margin-bottom: 4px;
-    }
-
-    .context-popover-title {
-      font-size: 0.76rem;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: rgba(9,28,45,0.6);
-      margin: 0;
-    }
-
-    .context-pill {
-      font-size: 0.68rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      padding: 4px 8px;
-      border-radius: 999px;
-      border: 1px solid rgba(9,28,45,0.18);
-      background: rgba(255,255,255,0.7);
-      color: rgba(9,28,45,0.55);
-      white-space: nowrap;
-    }
 
     .conversation-popover {
       position: absolute;
       width: min(420px, 94vw);
-      border-radius: 20px;
-      border: 1px solid rgba(9, 28, 45, 0.2);
-      background: #fbf7ef;
-      box-shadow: 0 20px 45px rgba(9,28,45,0.16);
+      border-radius: var(--radius-lg);
+      border: var(--border);
+      background: var(--paper);
+      box-shadow: var(--shadow-lg);
       padding: 12px 12px 10px;
       opacity: 0;
       pointer-events: none;
@@ -1746,16 +1589,18 @@
       font-size: 0.76rem;
       letter-spacing: 0.14em;
       text-transform: uppercase;
-      color: rgba(9,28,45,0.6);
+      color: var(--muted);
     }
 
     .conversation-popover-meta {
       font-size: 0.72rem;
-      color: rgba(9,28,45,0.6);
-      background: rgba(9,28,45,0.08);
+      color: var(--muted);
+      background: var(--paper);
       padding: 4px 8px;
       border-radius: 999px;
       margin-left: auto;
+      border: var(--border);
+      box-shadow: var(--shadow-sm);
     }
 
     .conversation-list {
@@ -1770,58 +1615,44 @@
     }
 
     @media (max-width: 900px) {
-      .options { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .options { grid-template-columns: 1fr; }
     }
 
     @media (max-width: 640px) {
       .options { grid-template-columns: 1fr; }
     }
 
-    @media (max-height: 800px) {
-      :root { --base-font: 12.5px; --pad: 8px; --gap: 8px; }
-    }
-
-    @media (max-height: 700px) {
-      :root { --base-font: 12px; --pad: 6px; --gap: 6px; }
-    }
 /* STRIPE EMBEDDED CHECKOUT MODAL */
 .checkout-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(9,28,45,0.40);
+  background: rgba(var(--ink-rgb),0.35);
   display: none;
   align-items: center;
   justify-content: center;
   padding: 18px;
   z-index: 1000;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
 }
 .checkout-backdrop.show { display: flex; }
 
 .checkout-modal {
   width: min(920px, 100%);
   max-height: min(86vh, 860px);
-  border-radius: 22px;
-  background: rgba(253,247,237,0.94);
-  border: 1px solid rgba(255,255,255,0.55);
-  box-shadow: 0 30px 90px rgba(6,17,26,0.42);
+  border-radius: var(--radius-lg);
+  background: var(--paper);
+  border: var(--border);
+  box-shadow: var(--shadow-lg);
   overflow: hidden;
   position: relative;
   display: flex;
   flex-direction: column;
 }
-.checkout-modal::before {
-  content:"";
-  position:absolute;
-  inset:-1px;
-  background: radial-gradient(800px 260px at 20% 0%, rgba(209,178,135,0.40), rgba(255,255,255,0) 60%);
-  opacity: 0.65;
-  pointer-events:none;
-}
+.checkout-modal::before { content: ""; }
 .checkout-head {
   padding: 14px 16px;
-  border-bottom: 1px solid rgba(9,28,45,0.10);
+  border-bottom: var(--border);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1832,22 +1663,22 @@
 .checkout-title {
   margin: 0;
   font-size: 1.05rem;
-  color: var(--navy);
+  color: var(--ink);
   letter-spacing: 0.2px;
   font-weight: 720;
 }
 .checkout-close {
   border-radius: 999px;
   padding: 8px 10px;
-  border: 1px solid rgba(9,28,45,0.20);
-  background: rgba(255,255,255,0.72);
+  border: var(--border);
+  background: var(--paper);
   cursor: pointer;
   font-size: 0.9rem;
-  color: var(--navy);
-  box-shadow: 0 14px 26px rgba(9,28,45,0.10);
+  color: var(--ink);
+  box-shadow: var(--shadow-sm);
   transition: transform .12s ease, box-shadow .12s ease;
 }
-.checkout-close:hover { transform: translateY(-1px); box-shadow: 0 18px 32px rgba(9,28,45,0.14); }
+.checkout-close:hover { transform: translate(-1px, -1px); box-shadow: 3px 3px 0 0 var(--ink); }
 
 .checkout-body {
   padding: 12px 16px 16px;
@@ -1859,60 +1690,1128 @@
 #stripe-embedded-checkout {
   min-height: 520px;
 }
+
+  /* Prompt Cowboy v15 overrides */
+  :root {
+    --paper: #faf6f1;
+    --ink: #292827;
+    --muted: #5c5b59;
+    --accent: #6b4d3c;
+    --shadow-lg: 4px 4px 0 var(--ink);
+    --shadow-sm: 2px 2px 0 var(--ink);
+    --radius-lg: 16px;
+    --radius-md: 12px;
+    --mid-max: 920px;
+    --you-panel-h: clamp(220px, 28vh, 320px);
+    --top-controls-h: 0px;
+    --mid-gap: 0px;
+    --right-gap: 12px;
+    --history-h: calc(var(--top-controls-h) + var(--mid-gap) + var(--you-panel-h));
+  }
+
+  body {
+    background: #ffffff;
+    color: var(--ink);
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  }
+
+  body::before,
+  body::after {
+    content: none !important;
+  }
+
+  .app-shell {
+    padding: 12px;
+  }
+
+  .app {
+    display: grid;
+    grid-template-columns: 260px minmax(0, 1fr) 420px;
+    gap: 16px;
+    height: 100%;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    transition: grid-template-columns 260ms ease;
+    align-items: stretch;
+  }
+
+  .app::before {
+    content: none !important;
+  }
+
+  .app-shell {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+  }
+
+  .card {
+    background: var(--paper);
+    border: 2px solid var(--ink);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+  }
+
+  body.history-hidden .app {
+    grid-template-columns: 260px minmax(0, 1fr) 420px;
+  }
+
+  .sidebar-left {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-height: 0;
+    overflow: hidden;
+    padding: 6px;
+    transition: transform 260ms ease;
+  }
+
+  .sidebar-right {
+    height: 100%;
+    display: grid;
+    grid-template-rows: var(--history-h) 1fr;
+    gap: var(--right-gap);
+    min-height: 0;
+    overflow: hidden;
+    padding: 6px;
+    transition: transform 260ms ease, opacity 240ms ease;
+  }
+
+  .sidebar-left {
+    transform: translateX(0);
+  }
+
+  .sidebar-right {
+    transform: translateX(0);
+  }
+
+  body.focus-mode .sidebar-left {
+    transform: translateX(-110%);
+    pointer-events: none;
+  }
+
+  body.focus-mode .app {
+    grid-template-columns: 0 minmax(0, 1fr) 420px;
+  }
+
+  body.focus-mode.history-hidden .app {
+    grid-template-columns: 0 minmax(0, 1fr) 420px;
+  }
+
+  body.history-hidden #conversation-popover {
+    transform: translateX(110%);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  body.problem-lab-hidden #problem-lab-card {
+    transform: translateX(110%);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  body.layout-call .sidebar-left {
+    transform: translateX(-110%);
+    pointer-events: none;
+    display: none;
+  }
+
+  body.layout-call .app {
+    grid-template-columns: 0 minmax(0, 1fr) 420px;
+  }
+
+  body.layout-call.layout-call-right-none .app {
+    grid-template-columns: 0 minmax(0, 1fr) 0;
+  }
+
+  body.layout-call.layout-call-right-none .sidebar-right {
+    transform: translateX(110%);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  body.layout-call .stack,
+  body.layout-call .shortcuts-bar {
+    max-width: none;
+    width: 100%;
+  }
+
+  body.layout-call .views {
+    align-items: stretch;
+  }
+
+  body.layout-call .view.active {
+    width: 100%;
+  }
+
+  body.layout-call .stack {
+    align-self: stretch;
+  }
+
+  .history-card {
+    display: flex;
+    flex-direction: column;
+    flex: 0 0 var(--history-h);
+    min-height: 0;
+    transition: transform 240ms ease, opacity 240ms ease;
+  }
+
+  .conversation-popover {
+    position: relative;
+    width: 100%;
+    max-width: none;
+    opacity: 1;
+    pointer-events: auto;
+    transform: none;
+    transition: transform 240ms ease, opacity 240ms ease;
+  }
+
+  .branding {
+    padding: 14px;
+  }
+
+  .brand-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .brand-title {
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .brand-sub {
+    font-size: 0.78rem;
+    color: var(--muted);
+  }
+
+  .sidebar-block {
+    padding: 12px;
+  }
+
+  .left-header,
+  .right-header {
+    border: 2px solid var(--ink);
+    background: var(--paper);
+    box-shadow: var(--shadow-lg);
+    border-radius: var(--radius-lg);
+  }
+
+  #right-header {
+    border: none;
+    box-shadow: none;
+    background: transparent;
+    padding: 0;
+  }
+
+  .brand-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 2px 4px;
+  }
+
+  .brand-text {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  #right-header .brand-row {
+    padding: 4px 2px 0;
+  }
+
+  #right-header .brand-title {
+    font-size: 0.9rem;
+  }
+
+  #right-header .brand-sub {
+    font-size: 0.76rem;
+  }
+
+  #trix-logo {
+    width: 65px;
+    height: auto;
+  }
+
+  #trix-logo {
+    cursor: default !important;
+    pointer-events: none;
+  }
+
+  .feedback-panel {
+    border: 2px solid var(--ink);
+    background: var(--paper);
+    box-shadow: var(--shadow-sm);
+    opacity: 1 !important;
+    transform: none !important;
+    pointer-events: auto !important;
+  }
+
+  .coaching-card {
+    margin-top: auto;
+  }
+
+  .weekly-panel {
+    display: grid;
+    gap: 8px;
+  }
+
+  .weekly-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--ink);
+  }
+
+  .weekly-list {
+    margin: 0;
+    padding-left: 16px;
+    display: grid;
+    gap: 6px;
+    color: var(--muted);
+    font-size: 0.86rem;
+  }
+
+  .weekly-cta {
+    justify-self: flex-start;
+  }
+
+  .section-title {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+
+  body:not(.is-admin) .mode-panel {
+    display: none;
+  }
+
+  .tabs,
+  .mode-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 0;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+  }
+
+  .tab,
+  .mode-tab {
+    border: 2px solid var(--ink);
+    border-radius: 999px;
+    padding: 6px 10px;
+    font-size: 0.74rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    background: var(--paper);
+    color: var(--ink);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .tab.active,
+  .mode-tab.active {
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  .btn {
+    border: 2px solid var(--ink);
+    border-radius: var(--radius-md);
+    padding: 7px 11px;
+    background: var(--paper);
+    color: var(--ink);
+    box-shadow: var(--shadow-sm);
+    font-weight: 600;
+    transition: transform 120ms ease, box-shadow 120ms ease;
+  }
+
+  .btn:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 3px 3px 0 var(--ink);
+  }
+
+  .btn:active {
+    transform: translate(1px, 1px);
+    box-shadow: none;
+  }
+
+  .btn-primary {
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  .btn-outline {
+    background: var(--paper);
+  }
+
+  .start-call {
+    margin: 0 6px;
+  }
+
+  .optin-box {
+    border: 2px solid var(--ink);
+    box-shadow: var(--shadow-sm);
+    background: var(--paper);
+  }
+
+  .shortcuts-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 10px;
+    flex-wrap: wrap;
+
+    /* Must match .stack sizing exactly */
+    max-width: var(--mid-max);
+    width: 100%;
+    box-sizing: border-box;
+
+    /* Keep it left-anchored and stable */
+    align-self: flex-start;
+    margin: 0 0 12px 0;
+    flex: 0 0 auto;
+  }
+
+  .shortcut-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    border: 2px solid var(--ink);
+    background: var(--paper);
+    box-shadow: var(--shadow-sm);
+    font-size: 0.72rem;
+    color: var(--ink);
+  }
+
+  .shortcuts-bar .btn {
+    border-radius: var(--radius-md);
+    padding: 6px 10px;
+  }
+
+  .shortcut-chip .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: var(--ink);
+  }
+
+  .shortcut-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .controls-left,
+  .controls-right {
+    display: inline-flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .toolbar-set {
+    display: none;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  body[data-active-phase="phase1"] .toolbar-set[data-phase="phase1"] {
+    display: inline-flex;
+  }
+
+  body[data-active-phase="phase2"] .toolbar-set[data-phase="phase2"] {
+    display: inline-flex;
+  }
+
+
+  .main {
+    /* Prevent right-edge clipping of middle-column panels/shadows */
+    overflow: visible;
+    padding: 0 18px 0 0;
+    align-items: flex-start;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .views {
+    gap: 16px;
+    padding-top: 0;
+    /* Give panels/shadows breathing room so nothing gets cut off on the far right */
+    padding-right: 0;
+    overflow: visible;
+    align-items: flex-start;
+    flex: 1 1 auto;
+    height: 100%;
+  }
+
+
+
+
+  .stack {
+    display: grid;
+    grid-template-rows: var(--you-panel-h) 1fr;
+    gap: 12px;
+    max-width: var(--mid-max);
+    width: 100%;
+    margin: 0;
+    align-self: flex-start;
+    box-sizing: border-box;
+    min-height: 0;
+    height: 100%;
+  }
+
+
+  /* Allow the middle stack (You Say / Prospect Says) to expand when the right column is hidden */
+  body.layout-call .stack,
+  body.layout-call-right-none .stack,
+  body.layout-call.layout-call-right-none .stack {
+    max-width: none;
+    width: 100%;
+    align-self: stretch;
+  }
+
+  /* When the right column is collapsed, ensure the middle view stretches full width (not content-width) */
+  body.layout-call.layout-call-right-none .main,
+  body.layout-call.layout-call-right-none .views,
+  body.layout-call.layout-call-right-none .view.active {
+    width: 100%;
+  }
+
+  body.layout-call.layout-call-right-none .views {
+    align-items: stretch;
+  }
+
+  .panel {
+    background: var(--paper);
+    border: 2px solid var(--ink);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .panel::before {
+    content: none !important;
+  }
+
+  .you-panel {
+    border-color: var(--ink);
+  }
+
+  #conversation-popover {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    max-height: none;
+    margin: 0;
+    transform: none;
+  }
+
+  .conversation-list {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: auto;
+    max-height: none;
+  }
+
+  /* ===== Prompt Cowboy Problem Lab (overrides) ===== */
+  #problem-lab-card {
+    background: #faf6f1;
+    border: 2px solid #292827;
+    border-radius: var(--radius-lg);
+    box-shadow: 4px 4px 0 #292827;
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+    align-self: stretch;
+  }
+
+  #problem-lab-card .pl-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  #problem-lab-card .pl-title {
+    font-weight: 800;
+    font-size: 1.08rem;
+    letter-spacing: 0.04em;
+    color: var(--ink);
+    text-transform: uppercase;
+  }
+
+  #problem-lab-card .pl-sub {
+    font-size: 0.84rem;
+    color: var(--muted);
+    margin-top: 6px;
+  }
+
+  #problem-lab-card .pl-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+  }
+
+  #problem-lab-card .pl-pill {
+    padding: 4px 8px;
+    border: 2px solid #292827;
+    border-radius: 8px;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #292827;
+    box-shadow: 2px 2px 0 #292827;
+    background: #faf6f1;
+  }
+
+  #problem-lab-card .pl-divider {
+    border-top: 2px solid #292827;
+    margin: 14px 0;
+  }
+
+  #problem-lab-card .pl-btn {
+    border: 2px solid #292827;
+    border-radius: 10px;
+    background: #faf6f1;
+    color: #292827;
+    padding: 6px 12px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    box-shadow: 2px 2px 0 #292827;
+    cursor: pointer;
+  }
+
+  #problem-lab-card .pl-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 4px 4px 0 #292827;
+  }
+
+  #problem-lab-card .pl-btn:active {
+    transform: translateY(1px);
+    box-shadow: 2px 2px 0 #292827;
+  }
+
+  #problem-lab-card .pl-btn--primary {
+    background: #292827;
+    color: #faf6f1;
+  }
+
+  #problem-lab-card .pl-btn--ghost {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    color: #292827;
+    text-decoration: underline;
+  }
+
+  #problem-lab-card .pl-body {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
+    padding-right: 6px;
+  }
+
+  #problem-lab-card .pl-info-grid {
+    display: grid;
+    gap: 12px;
+  }
+
+  #problem-lab-card .pl-info-card {
+    background: #fff;
+    border: 2px solid #292827;
+    border-radius: 12px;
+    box-shadow: 2px 2px 0 #292827;
+    padding: 10px 12px;
+  }
+
+  #problem-lab-card .pl-info-title {
+    font-weight: 700;
+    color: #292827;
+    margin-bottom: 4px;
+  }
+
+  #problem-lab-card .pl-info-text {
+    font-size: 0.82rem;
+    color: #5c5b59;
+  }
+
+  #problem-lab-card .pl-input,
+  #problem-lab-card .pl-textarea {
+    width: 100%;
+    border: 2px solid #292827;
+    border-radius: 12px;
+    padding: 8px 10px;
+    box-shadow: 2px 2px 0 #292827;
+    background: #fff;
+    font-size: 0.86rem;
+    font-family: inherit;
+  }
+
+  #problem-lab-card .pl-input:focus,
+  #problem-lab-card .pl-textarea:focus {
+    outline: 2px solid #292827;
+    outline-offset: 2px;
+  }
+
+  #problem-lab-card .pl-accordion {
+    display: grid;
+    gap: 12px;
+  }
+
+  #problem-lab-card .pl-row {
+    border: 2px solid #292827;
+    border-radius: 12px;
+    box-shadow: 2px 2px 0 #292827;
+    background: #fff;
+    overflow: hidden;
+  }
+
+  #problem-lab-card .pl-row:hover {
+    transform: translateY(-2px);
+    box-shadow: 4px 4px 0 #292827;
+  }
+
+  #problem-lab-card .pl-row__header {
+    width: 100%;
+    border: none;
+    background: transparent;
+    padding: 10px 12px;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 10px;
+    cursor: pointer;
+    text-align: left;
+    align-items: center;
+  }
+
+  #problem-lab-card .pl-index {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #292827;
+    color: #faf6f1;
+    font-size: 0.72rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+  }
+
+  #problem-lab-card .pl-row__title {
+    font-weight: 700;
+    font-size: 0.92rem;
+    color: #292827;
+  }
+
+  #problem-lab-card .pl-row__sub {
+    font-size: 0.78rem;
+    color: #5c5b59;
+    margin-top: 4px;
+  }
+
+  #problem-lab-card .pl-chevron {
+    transition: transform 0.2s ease;
+  }
+
+  #problem-lab-card .pl-row.is-open .pl-chevron {
+    transform: rotate(180deg);
+  }
+
+  #problem-lab-card .pl-row__body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.25s ease, opacity 0.25s ease;
+    opacity: 0;
+    padding: 0 14px;
+  }
+
+  #problem-lab-card .pl-row.is-open .pl-row__body {
+    opacity: 1;
+    padding: 2px 14px 14px;
+    max-height: 1200px;
+  }
+
+  /* Premium spacing inside expanded problem cards */
+  #problem-lab-card .pl-row__body-inner {
+    display: grid;
+    gap: 12px;
+    padding-top: 10px;
+  }
+
+  #problem-lab-card .pl-box {
+    border: 2px solid #292827;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 2px 2px 0 #292827;
+    padding: 12px 12px;
+    display: grid;
+    gap: 8px;
+  }
+
+  #problem-lab-card .pl-box-title {
+    font-size: 0.74rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #5c5b59;
+    margin: 0;
+  }
+
+  #problem-lab-card .pl-box-body {
+    font-size: 0.9rem;
+    color: #292827;
+    line-height: 1.55;
+  }
+
+  #problem-lab-card .pl-bullets {
+    margin: 0;
+    padding-left: 18px;
+    display: grid;
+    gap: 6px;
+    color: #292827;
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+
+  #problem-lab-card .pl-bullets li {
+    margin: 0;
+  }
+
+  /* Keep action bars clean and consistent */
+  #problem-lab-card .pl-action-bar {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding-top: 6px;
+    border-top: 2px solid #292827;
+    margin-top: 2px;
+  }
+
+  #problem-lab-card .pl-section {
+    margin-top: 10px;
+  }
+
+  #problem-lab-card .pl-section-title {
+    font-size: 0.76rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #5c5b59;
+    margin-bottom: 6px;
+  }
+
+  #problem-lab-card .pl-section-text {
+    font-size: 0.82rem;
+    color: #292827;
+    margin: 0;
+  }
+
+  #problem-lab-card .pl-section-text li {
+    margin-bottom: 4px;
+  }
+
+  #problem-lab-card .pl-symptom-list {
+    display: grid;
+    gap: 8px;
+  }
+
+  #problem-lab-card .pl-symptom-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    border: 2px solid #292827;
+    border-radius: 12px;
+    background: #fff;
+    padding: 6px 8px;
+    box-shadow: 2px 2px 0 #292827;
+  }
+
+  #problem-lab-card .pl-symptom-actions {
+    display: flex;
+    gap: 6px;
+  }
+
+  #problem-lab-card .pl-action-bar {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+
+  #problem-lab-card .pl-box {
+    border: 2px solid #292827;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 2px 2px 0 #292827;
+    padding: 10px 12px;
+    display: grid;
+    gap: 6px;
+  }
+
+  #problem-lab-card .pl-box-title {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #5c5b59;
+  }
+
+  #problem-lab-card .pl-box-body {
+    font-size: 0.86rem;
+    color: #292827;
+  }
+
+  #problem-lab-card .pl-bullets {
+    margin: 0;
+    padding-left: 16px;
+    display: grid;
+    gap: 4px;
+    color: #292827;
+    font-size: 0.86rem;
+  }
+
+  /* Left column branding: restore original left-aligned row layout */
+  #right-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    text-align: left;
+  }
+
+  #right-header .brand-text {
+    align-items: flex-start;
+  }
+
+  .prospect-panel {
+    border-color: var(--accent);
+  }
+
+  /* Tiny bottom alignment nudge for Prospect Says panels */
+  #p1-prospect-panel,
+  #p2-prospect-panel {
+    margin-bottom: 6px;
+  }
+
+  .current-line {
+    font-size: 1.3rem;
+  }
+
+  .options {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .option-btn {
+    border: 2px solid var(--ink);
+    box-shadow: var(--shadow-sm);
+    border-radius: var(--radius-md);
+    background: var(--paper);
+  }
+
+  .option-btn:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 4px 4px 0 var(--ink);
+  }
+
+  .option-btn.is-selected {
+    background: rgba(41,40,39,0.08);
+    box-shadow: inset 0 0 0 2px var(--ink), var(--shadow-sm);
+  }
+
+  .history-card {
+    padding: 12px;
+  }
+
+  .conversation-popover {
+    position: static;
+    width: 100%;
+    display: block;
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: auto;
+    border: 2px solid var(--ink);
+    box-shadow: var(--shadow-lg);
+    background: var(--paper);
+    border-radius: var(--radius-lg);
+    transition: transform 240ms ease, opacity 240ms ease;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    max-height: none;
+    margin: 0;
+    transform: none;
+  }
+
+  body.history-hidden .conversation-popover {
+    transform: translateX(110%);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .conversation-popover-header {
+    border-bottom: 2px solid var(--ink);
+    padding-bottom: 8px;
+    margin-bottom: 10px;
+  }
+
+  .conversation-sub {
+    font-size: 0.78rem;
+    color: var(--muted);
+  }
+
+  .muted {
+    color: var(--muted);
+  }
+
+  .visually-hidden {
+    position: absolute !important;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  @media (max-width: 1100px) {
+    .app {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto 1fr auto;
+    }
+    .sidebar-left,
+    .sidebar-right {
+      transform: none !important;
+    }
+  }
+
+  @media (max-width: 850px) {
+    .shortcuts-bar {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .shortcut-actions {
+      margin-left: 0;
+    }
+  }
+
+  /* =========================
+     FINAL OVERRIDE — Start Call middle column width
+     Ensure YOU SAY / PROSPECT SAYS panels expand like #top-controls
+     even when right sidebar panels are visible.
+     This MUST be at the end of the stylesheet to win the cascade.
+     ========================= */
+  body.layout-call .main {
+    align-items: stretch !important;
+  }
+
+  body.layout-call .views {
+    align-items: stretch !important;
+    width: 100% !important;
+  }
+
+  body.layout-call .view.active {
+    width: 100% !important;
+  }
+
+  body.layout-call .stack {
+    max-width: none !important;
+    width: 100% !important;
+    align-self: stretch !important;
+    justify-self: stretch !important;
+  }
+
+  body.layout-call .stack > .panel {
+    width: 100% !important;
+  }
   </style>
   <script src="https://js.stripe.com/v3/"></script>
   <script src="https://cdn.posthog.com/posthog.js"></script>
 </head>
 <body>
   <div class="app-shell">
-  <div class="app">
-    <div class="topbar">
-      <div class="left-header">
-        <div class="title-row">
-          <div class="title">Cold Call Navigator</div>
-          <div class="badge "id="account-badge">Free preview</div>
+  <div class="app" id="app-root">
+    <aside class="sidebar-left" id="sidebar-left">
+      <div class="brand-top" id="right-header">
+        <img src="SALESTRIX.png" alt="TRIX logo" class="logo" id="trix-logo" />
+        <div class="brand-text">
+          <div class="brand-title">CALL NAVIGATOR</div>
+          <div class="badge" id="account-badge">  Free preview</div>
         </div>
-        <div class="subtitle">
-          Have the GPT on audio mode, the navigator on screen. Click what the prospect said,
-          and it reveals exactly what you say next.
-          <span class="feedback-hint">Want <strong> free personalised coaching tips</strong>? Click the <strong>briefcase</strong> top right.</span>
+      </div>
+
+      <div class="card sidebar-block mode-panel">
+        <div class="section-title">Modes</div>
+        <div class="mode-tabs" id="mode-tabs" role="tablist" aria-label="Modes">
+          <button class="mode-tab active" data-mode="trainer" role="tab" aria-selected="true" type="button">Trainer</button>
+          <button class="mode-tab admin-only" data-mode="dashboard" role="tab" aria-selected="false" type="button">Dashboard</button>
         </div>
+      </div>
+
+      <div class="card sidebar-block phase-panel">
+        <div class="section-title">Phases</div>
         <div class="tabs" role="tablist" aria-label="Phases">
           <div class="tab active" data-tab="phase1" role="tab" aria-selected="true">Phase 1 — Permission</div>
           <div class="tab" data-tab="phase2" role="tab" aria-selected="false">Phase 2 — Problem</div>
         </div>
-        <div class="optin-box" id="practice-optin">
+      </div>
+
+      <div class="optin-box card compact" id="practice-optin">
+        <div class="optin-state optin-state-optin" id="weekly-tips-optin">
           <div class="optin-left">
             <div class="optin-kicker"><span class="spark"></span> Free practice bundle</div>
-            <p class="optin-title">Get the Prospect GPT (audio mode) + weekly cold call tips</p>
-            <p class="optin-copy">The GPT will act like your prospect. Put it on audio mode, and practice a real cold call with this trainer.</p>
+            <p class="optin-title">Prospect GPT + weekly tips</p>
+            <p class="optin-copy">Get the audio GPT and one short tip each week.</p>
           </div>
 
           <div class="optin-actions">
             <div class="optin-row">
               <label class="optin-check">
                 <input id="marketing-optin" type="checkbox" />
-                Yes — email me the GPT + tips
+                I want the GPT + tips
               </label>
               <button class="optin-btn" id="optin-btn" type="button">Send me access →</button>
             </div>
-            <div class="optin-foot">By opting in, you agree to receive emails from TRIX. Unsubscribe anytime.</div>
+            <div class="optin-foot">Unsubscribe anytime.</div>
           </div>
         </div>
 
+        <div class="optin-state optin-state-latest" id="weekly-tips-latest" aria-hidden="true">
+          <div class="optin-left">
+            <div class="optin-kicker"><span class="spark"></span> Weekly tips</div>
+            <p class="optin-title" id="weekly-subject">Loading latest…</p>
+            <p class="optin-note" id="weekly-preview">Latest tip is ready.</p>
+            <p class="optin-note" id="weekly-empty" hidden>No archive link available yet.</p>
+          </div>
+          <div class="optin-actions">
+            <button class="btn btn-outline weekly-cta" id="weekly-cta" type="button">Read latest →</button>
+          </div>
+        </div>
       </div>
 
-      <div class="right-header" id="right-header">
-        <img src="SALESTRIX.png" alt="TRIX logo" class="logo" id="trix-logo" style="cursor:pointer" />
-        <div class="mode-tabs" id="mode-tabs" role="tablist" aria-label="Modes">
-          <button class="mode-tab active" data-mode="trainer" role="tab" aria-selected="true" type="button">Trainer</button>
-          <button class="mode-tab" data-mode="problem-lab" role="tab" aria-selected="false" type="button">Problem Lab</button>
-          <button class="mode-tab admin-only" data-mode="dashboard" role="tab" aria-selected="false" type="button">Dashboard</button>
-        </div>
+      <div class="card coaching-card">
         <div class="feedback-panel" id="feedback-panel" aria-label="Feedback panel">
           <div class="feedback-head">
             <p class="feedback-title">Coaching tips</p>
-            <div class="feedback-mini" id="feedback-mini">Hover to peek · click to pin</div>
+            <div class="feedback-mini" id="feedback-mini"></div>
           </div>
 
           <p class="feedback-q">Which part of the cold call do you find hardest?</p>
@@ -1947,23 +2846,37 @@
           </div>
         </div>
       </div>
-    </div>
+    </aside>
 
-    <div class="main">
-    <div class="views">
+    <main class="main">
+      <div class="shortcuts-bar card" id="top-controls">
+        <div class="shortcut-actions">
+          <div class="controls-left">
+            <div class="toolbar-set" data-phase="phase1">
+              <button class="btn btn-outline" id="p1-back-top" data-action="back" data-phase="phase1" type="button" title="Shortcut: B">← Back</button>
+              <button class="btn btn-outline" id="p1-restart-top" data-action="restart" data-phase="phase1" type="button" title="Shortcut: R">⟲ Restart</button>
+              <button class="btn btn-outline visually-hidden" id="p1-ended-top" data-action="ended" data-phase="phase1" type="button">Prospect ended call</button>
+            </div>
+            <div class="toolbar-set" data-phase="phase2">
+              <button class="btn btn-outline" id="p2-back-top" data-action="back" data-phase="phase2" type="button" title="Shortcut: B">← Back</button>
+              <button class="btn btn-outline" id="p2-restart-top" data-action="restart" data-phase="phase2" type="button" title="Shortcut: R">⟲ Restart</button>
+              <button class="btn btn-outline visually-hidden" id="p2-ended-top" data-action="ended" data-phase="phase2" type="button">Prospect ended call</button>
+            </div>
+          </div>
+          <div class="controls-right">
+            <button class="btn btn-primary" id="start-call-btn" type="button">Start Call</button>
+            <button class="btn btn-outline" id="problem-lab-toggle" type="button" aria-pressed="true">Problem Lab</button>
+            <button class="btn btn-outline" id="history-toggle" type="button" aria-pressed="true">Conversation History</button>
+            <button class="btn btn-outline visually-hidden" id="exit-focus-btn" type="button">Exit Focus Mode</button>
+            <button class="btn btn-outline visually-hidden" id="p1-history-top" data-action="history" data-phase="phase1" type="button">Conversation path</button>
+            <button class="btn btn-outline visually-hidden" id="p2-history-top" data-action="history" data-phase="phase2" type="button">Conversation path</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="views">
       <!-- Phase 1 -->
       <div class="view active" id="view-phase1">
-        <div class="phase-toolbar">
-          <div class="shortcut-chip" title="Keyboard shortcuts">
-            <span class="dot"></span>
-            <span><strong>Shortcuts:</strong> <span style="color: rgba(9,28,45,0.65)">↑↓</span> select · <span style="color: rgba(9,28,45,0.65)">Enter</span> choose · <span style="color: rgba(9,28,45,0.65)">B</span> back · <span style="color: rgba(9,28,45,0.65)">R</span> restart</span>
-          </div>
-          <button class="toolbar-btn" id="p1-back-top" data-action="back" data-phase="phase1" type="button" title="Shortcut: B">← Back</button>
-          <button class="toolbar-btn" id="p1-restart-top" data-action="restart" data-phase="phase1" type="button" title="Shortcut: R">⟲ Restart</button>
-          <button class="toolbar-btn" id="p1-ended-top" data-action="ended" data-phase="phase1" type="button">Prospect ended call</button>
-          <button class="toolbar-btn" id="p1-context-top" data-action="context" data-phase="phase1" type="button">Add context</button>
-          <button class="toolbar-btn" id="p1-history-top" data-action="history" data-phase="phase1" type="button">Conversation path</button>
-        </div>
         <div class="stack">
           <div class="panel focus you-panel" id="p1-you-panel">
             <div class="panel-title">
@@ -1986,17 +2899,6 @@
 
       <!-- Phase 2 -->
       <div class="view" id="view-phase2">
-        <div class="phase-toolbar">
-          <div class="shortcut-chip" title="Keyboard shortcuts">
-            <span class="dot"></span>
-            <span><strong>Shortcuts:</strong> <span style="color: rgba(9,28,45,0.65)">↑↓</span> select · <span style="color: rgba(9,28,45,0.65)">Enter</span> choose · <span style="color: rgba(9,28,45,0.65)">B</span> back · <span style="color: rgba(9,28,45,0.65)">R</span> restart</span>
-          </div>
-          <button class="toolbar-btn" id="p2-back-top" data-action="back" data-phase="phase2" type="button" title="Shortcut: B">← Back</button>
-          <button class="toolbar-btn" id="p2-restart-top" data-action="restart" data-phase="phase2" type="button" title="Shortcut: R">⟲ Restart</button>
-          <button class="toolbar-btn" id="p2-ended-top" data-action="ended" data-phase="phase2" type="button">Prospect ended call</button>
-          <button class="toolbar-btn" id="p2-context-top" data-action="context" data-phase="phase2" type="button">Add context</button>
-          <button class="toolbar-btn" id="p2-history-top" data-action="history" data-phase="phase2" type="button">Conversation path</button>
-        </div>
         <div class="stack">
           <div class="panel focus you-panel" id="p2-you-panel">
             <div class="panel-title">
@@ -2022,15 +2924,6 @@
         </div>
       </div>
 
-      <div class="view" id="view-problem-lab">
-        <iframe
-          id="problem-lab-frame"
-          class="embed-frame"
-          title="Problem Lab"
-          src="/problem-lab?embed=1"
-        ></iframe>
-      </div>
-
       <div class="view" id="view-dashboard">
         <iframe
           id="dashboard-frame"
@@ -2039,54 +2932,101 @@
           src="/admin?embed=1"
         ></iframe>
       </div>
-    </div>
-    </div>
+      </div>
+    </main>
 
-    <div class="context-popover" id="context-popover" aria-hidden="true">
-      <div class="context-popover-header">
-        <p class="context-popover-title">Context</p>
-        <span class="context-pill">Optional</span>
-      </div>
-      <p class="helper-text">Add details as you uncover the problem/impact during the call — we’ll auto-populate them into your lines so it’s easier to read.</p>
-      <div class="context-row">
-        <div class="context-field">
-          <label for="context-problem">Prospect problem</label>
-          <div class="context-line">
-            <input class="context-input" id="context-problem" type="text" placeholder="e.g., slow follow-up on inbound leads" />
-            <button class="small-btn context-save" type="button" data-field="problem">Save for this call</button>
+    <aside class="sidebar-right" id="sidebar-right">
+      <div class="card history-card conversation-popover open" id="conversation-popover" aria-hidden="false">
+        <div class="conversation-popover-header">
+          <div>
+            <div class="conversation-popover-title">CONVERSATION HISTORY</div>
+            <div class="conversation-sub">Review what’s happened so far.</div>
           </div>
+          <div class="conversation-popover-meta" id="conversation-count">Step 1</div>
+          <button class="btn btn-outline small-btn" id="conversation-close" type="button" aria-label="Close">✕</button>
+        </div>
+        <div class="conversation-list history-list" id="conversation-list">
+          <div class="timeline"></div>
         </div>
       </div>
-      <div class="context-row">
-        <div class="context-field">
-          <label for="context-impact">Impact</label>
-          <div class="context-line">
-            <input class="context-input" id="context-impact" type="text" placeholder="e.g., pipeline misses targets by 20%" />
-            <button class="small-btn context-save" type="button" data-field="impact">Save for this call</button>
-          </div>
-        </div>
-      </div>
-      <div class="context-row">
-        <div class="context-field">
-          <label for="context-competitors">Competitors</label>
-          <div class="context-line">
-            <input class="context-input" id="context-competitors" type="text" placeholder="e.g., Apollo and ZoomInfo" />
-            <button class="small-btn context-save" type="button" data-field="competitors">Save for this call</button>
-          </div>
-        </div>
-      </div>
-    </div>
 
-    <div class="conversation-popover" id="conversation-popover" aria-hidden="true">
-      <div class="conversation-popover-header">
-        <div class="conversation-popover-title">Conversation path</div>
-        <div class="conversation-popover-meta" id="conversation-count">Step 1</div>
-        <button class="small-btn" id="conversation-close" type="button" aria-label="Close">✕</button>
+      <div class="problem-lab-card" id="problem-lab-card">
+        <div class="pl-header">
+          <div>
+            <div class="pl-title">Problem Lab</div>
+            <div class="pl-sub">Reference your saved problems during calls.</div>
+          </div>
+          <div class="pl-actions">
+            <span class="pl-pill" id="problem-lab-saved-pill">Saved</span>
+            <button class="pl-btn" id="problem-lab-add" type="button">Add problem</button>
+          </div>
+        </div>
+        <div class="pl-divider"></div>
+
+        <div class="pl-body" id="problem-lab-body">
+          <div class="problem-lab-empty" id="problem-lab-empty">
+            <div class="pl-info-grid">
+              <div class="pl-info-card">
+                <div class="pl-info-title">Capture symptoms</div>
+                <div class="pl-info-text">Store the problems and signals you hear most often.</div>
+              </div>
+              <div class="pl-info-card">
+                <div class="pl-info-title">Reuse on calls</div>
+                <div class="pl-info-text">Open the one you need and stay consistent mid-call.</div>
+              </div>
+            </div>
+            <button class="pl-btn pl-btn--primary" id="problem-lab-start" type="button">Get Started</button>
+            <div class="pl-sub">You can add multiple problems and reuse them anytime.</div>
+          </div>
+
+          <div class="problem-lab-editor" id="problem-lab-editor" aria-hidden="true">
+            <div style="display:grid; gap:12px;">
+              <div>
+                <label class="pl-section-title" for="pl-title">Problem title (required)</label>
+                <input class="pl-input" id="pl-title" type="text" placeholder="e.g., Slow outbound response rate" />
+              </div>
+              <div>
+                <label class="pl-section-title" for="pl-symptom-input">Symptoms (add at least one)</label>
+                <div style="display:flex; gap:8px;">
+                  <input class="pl-input" id="pl-symptom-input" type="text" placeholder="e.g., SDRs stall after intro" />
+                  <button class="pl-btn" id="pl-symptom-add" type="button">Add</button>
+                </div>
+                <div class="pl-symptom-list" id="pl-symptom-list"></div>
+              </div>
+              <div>
+                <label class="pl-section-title" for="pl-impact">Impact</label>
+                <textarea class="pl-textarea" id="pl-impact" rows="2" placeholder="Impact on the org"></textarea>
+              </div>
+              <div>
+                <label class="pl-section-title" for="pl-root">Root cause</label>
+                <textarea class="pl-textarea" id="pl-root" rows="2" placeholder="Root cause"></textarea>
+              </div>
+              <div>
+                <label class="pl-section-title" for="pl-proof">Proof / Evidence</label>
+                <textarea class="pl-textarea" id="pl-proof" rows="2" placeholder="Proof / evidence"></textarea>
+              </div>
+              <div>
+                <label class="pl-section-title" for="pl-case">Case study (one per line)</label>
+                <textarea class="pl-textarea" id="pl-case" rows="2" placeholder="Case studies (one per line)"></textarea>
+              </div>
+              <div>
+                <label class="pl-section-title" for="pl-notes">Notes</label>
+                <textarea class="pl-textarea" id="pl-notes" rows="2" placeholder="Notes"></textarea>
+              </div>
+
+            </div>
+
+            <div class="pl-divider"></div>
+            <div class="pl-action-bar">
+              <button class="pl-btn" id="pl-cancel" type="button">Cancel</button>
+              <button class="pl-btn pl-btn--primary" id="pl-save" type="button">Save</button>
+            </div>
+          </div>
+
+          <div class="pl-accordion" id="problem-lab-accordion" aria-hidden="true"></div>
+        </div>
       </div>
-      <div class="conversation-list history-list" id="conversation-list">
-        <div class="timeline"></div>
-      </div>
-    </div>
+    </aside>
 
   <!-- modal -->
   <div class="modal-backdrop" id="modal">
@@ -2130,7 +3070,7 @@
           </div>
         </form>
         <div id="call-ended-success" style="display:none;">
-          <p style="margin: 0; font-size: 0.98rem; color: rgba(9,28,45,0.82);">Saved.</p>
+          <p style="margin: 0; font-size: 0.98rem; color: rgba(var(--ink-rgb),0.82);">Saved.</p>
         </div>
       </div>
       <div class="modal-actions" id="call-ended-actions">
@@ -2160,6 +3100,26 @@
   const MIRROR_PRACTICE_GPT_URL = "https://chatgpt.com/g/g-6949b991e590819182262bb9087d96c2-trix-mirroring-gpt";
   const POSTHOG_KEY = "phc_xj2ayZ9QQPbLqRt1xMg9s5Pax7va0kkyYUDM3Z591qq";
   const POSTHOG_HOST = "https://eu.posthog.com";
+
+  function syncTopControlsHeight() {
+    try {
+      const controls = document.getElementById("top-controls");
+      const stack = document.querySelector(".views .stack");
+      if (!controls) return;
+
+      const cr = controls.getBoundingClientRect();
+      const controlsH = Math.round(cr.height);
+      document.documentElement.style.setProperty("--top-controls-h", `${controlsH}px`);
+
+      if (stack) {
+        const sr = stack.getBoundingClientRect();
+        const gapPx = Math.max(0, Math.round(sr.top - cr.bottom));
+        document.documentElement.style.setProperty("--mid-gap", `${gapPx}px`);
+      } else {
+        document.documentElement.style.setProperty("--mid-gap", `0px`);
+      }
+    } catch (_) {}
+  }
 
   function initPostHog() {
     try {
@@ -2254,6 +3214,17 @@
   let __TRIX_CHECKOUT_STARTED__ = false;
   let IS_ADMIN = false;
   let CURRENT_USER_ID = null;
+  let latestNewsletterCache = { loading: false, data: null };
+  const PROBLEM_LAB_RECORDS_KEY = "trix_problem_lab_records";
+  const PROBLEM_LAB_STARTED_KEY = "trix_problem_lab_started";
+  const PROBLEM_LAB_HIDDEN_KEY = "trix_problem_lab_hidden";
+  let problemLabRecords = [];
+  let problemLabEditingId = null;
+  let problemLabOpenId = null;
+  const layoutState = {
+    isCallActive: false,
+    rightPanels: { history: true, problemLab: true }
+  };
 
   // ========= UTIL =========
   const $ = (id) => document.getElementById(id);
@@ -2261,7 +3232,7 @@
   function applyPremiumUI() {
     const badge = $("account-badge");
     if (badge) {
-      badge.textContent = IS_PREMIUM ? "Premium" : "Free preview";
+      badge.textContent = IS_PREMIUM ? "  Premium" : "Free preview";
       badge.classList.toggle("premium", IS_PREMIUM);
     }
     const freeNote = $("p2-free-note");
@@ -2271,9 +3242,15 @@
     document.body.classList.toggle("is-premium", IS_PREMIUM);
   }
 
-  async function syncOptInPanel() {
+  async function syncWeeklyTipsPanel() {
     const box = document.getElementById("practice-optin");
-    if (!box) return;
+    const optinState = document.getElementById("weekly-tips-optin");
+    const latestState = document.getElementById("weekly-tips-latest");
+    const subjectEl = document.getElementById("weekly-subject");
+    const previewEl = document.getElementById("weekly-preview");
+    const cta = document.getElementById("weekly-cta");
+    const emptyNote = document.getElementById("weekly-empty");
+    if (!box || !optinState || !latestState) return;
 
     if (!CURRENT_USER_ID) {
       box.style.display = "none";
@@ -2282,7 +3259,7 @@
 
     // Hide until we know server truth (prevents flicker)
     box.style.display = "none";
-    let shouldShow = true;
+    let optedIn = false;
     let statusJson = null;
     try {
       const res = await fetch("/api/marketing/status", {
@@ -2291,15 +3268,83 @@
       });
       if (res.ok) {
         statusJson = await res.json();
-        const optedIn = !!(statusJson?.opted_in || statusJson?.optedIn);
-        shouldShow = !optedIn;
+        optedIn = !!(statusJson?.opted_in || statusJson?.optedIn);
       }
     } catch (_) {
-      shouldShow = true;
+      optedIn = false;
     }
 
-    console.log("[optin] user", CURRENT_USER_ID, "localFlag", null, "status", statusJson);
-    box.style.display = shouldShow ? "" : "none";
+    if (!optedIn) {
+      optinState.classList.add("is-active");
+      latestState.classList.remove("is-active");
+      optinState.setAttribute("aria-hidden", "false");
+      latestState.setAttribute("aria-hidden", "true");
+      box.style.display = "";
+      return;
+    }
+
+    optinState.classList.remove("is-active");
+    latestState.classList.add("is-active");
+    optinState.setAttribute("aria-hidden", "true");
+    latestState.setAttribute("aria-hidden", "false");
+    box.style.display = "";
+
+    if (subjectEl) subjectEl.textContent = "Loading latest…";
+    if (previewEl) previewEl.textContent = "Latest tip is ready.";
+    if (emptyNote) emptyNote.hidden = true;
+    if (cta) {
+      cta.disabled = true;
+      cta.removeAttribute("data-url");
+    }
+
+    if (latestNewsletterCache.data) {
+      applyLatestNewsletter(latestNewsletterCache.data);
+      return;
+    }
+
+    if (latestNewsletterCache.loading) return;
+    latestNewsletterCache.loading = true;
+    try {
+      const res = await fetch("/api/marketing/latest", {
+        credentials: "same-origin",
+        cache: "no-store"
+      });
+      if (res.ok) {
+        const data = await res.json();
+        latestNewsletterCache.data = data;
+        applyLatestNewsletter(data);
+      } else {
+        applyLatestNewsletter({ subject: null, preview: null, url: null });
+      }
+    } catch (_) {
+      applyLatestNewsletter({ subject: null, preview: null, url: null });
+    } finally {
+      latestNewsletterCache.loading = false;
+    }
+  }
+
+  function applyLatestNewsletter(data) {
+    const subjectEl = document.getElementById("weekly-subject");
+    const previewEl = document.getElementById("weekly-preview");
+    const cta = document.getElementById("weekly-cta");
+    const emptyNote = document.getElementById("weekly-empty");
+    const subject = data?.subject || "Weekly tips";
+      const preview = data?.preview || "Latest tip is ready.";
+    const url = data?.url || "";
+
+    if (subjectEl) subjectEl.textContent = subject;
+    if (previewEl) previewEl.textContent = preview;
+    if (cta) {
+      if (url) {
+        cta.disabled = false;
+        cta.setAttribute("data-url", url);
+        if (emptyNote) emptyNote.hidden = true;
+      } else {
+        cta.disabled = true;
+        cta.removeAttribute("data-url");
+        if (emptyNote) emptyNote.hidden = false;
+      }
+    }
   }
 
   function setActiveView(viewId) {
@@ -2316,20 +3361,12 @@
     });
     document.body.classList.toggle("is-admin", IS_ADMIN);
     document.body.classList.toggle("mode-trainer", activeMode === "trainer");
-    document.body.classList.toggle("mode-problem-lab", activeMode === "problem-lab");
     document.body.classList.toggle("mode-dashboard", activeMode === "dashboard");
     positionModeTabs();
   }
 
   function positionModeTabs() {
-    const modeTabs = document.querySelector(".mode-tabs");
-    const phaseTabs = document.querySelector(".tabs");
-    const rightHeader = document.getElementById("right-header");
-    if (!modeTabs || !phaseTabs || !rightHeader) return;
-    const rightRect = rightHeader.getBoundingClientRect();
-    const tabsRect = phaseTabs.getBoundingClientRect();
-    const top = tabsRect.top - rightRect.top;
-    modeTabs.style.top = `${Math.max(0, top)}px`;
+    return;
   }
 
   function getDashboardSrc() {
@@ -2339,15 +3376,6 @@
       return `/admin/users/${encodeURIComponent(userId)}?embed=1`;
     }
     return "/admin?embed=1";
-  }
-
-  function ensureProblemLabFrame() {
-    const frame = document.getElementById("problem-lab-frame");
-    if (!frame) return;
-    const expected = "/problem-lab?embed=1";
-    if (frame.getAttribute("src") !== expected) {
-      frame.setAttribute("src", expected);
-    }
   }
 
   function ensureDashboardFrame() {
@@ -2376,176 +3404,10 @@
     updateModeUrl();
     if (activeMode === "trainer") {
       setActiveView(activePhase === "phase2" ? "view-phase2" : "view-phase1");
-    } else if (activeMode === "problem-lab") {
-      if (conversationPopoverState.open) closeConversationPopover();
-      ensureProblemLabFrame();
-      setActiveView("view-problem-lab");
     } else if (activeMode === "dashboard") {
-      if (conversationPopoverState.open) closeConversationPopover();
       ensureDashboardFrame();
       setActiveView("view-dashboard");
     }
-  }
-
-  function loadCallContext() {
-    try {
-      const raw = sessionStorage.getItem("trix_call_context");
-      if (!raw) return;
-      const data = JSON.parse(raw);
-      if (!data || typeof data !== "object") return;
-      callContext.problem = String(data.problem || "");
-      callContext.impact = String(data.impact || "");
-      callContext.competitors = String(data.competitors || "");
-    } catch (_) {}
-  }
-
-  function persistCallContext() {
-    try {
-      sessionStorage.setItem("trix_call_context", JSON.stringify(callContext));
-    } catch (_) {}
-  }
-
-  function clearCallContext() {
-    callContext.problem = "";
-    callContext.impact = "";
-    callContext.competitors = "";
-    try { sessionStorage.removeItem("trix_call_context"); } catch (_) {}
-    const problemInput = $("context-problem");
-    const impactInput = $("context-impact");
-    const competitorsInput = $("context-competitors");
-    if (problemInput) problemInput.value = "";
-    if (impactInput) impactInput.value = "";
-    if (competitorsInput) competitorsInput.value = "";
-  }
-
-  function wireCallContext() {
-    const problemInput = $("context-problem");
-    const impactInput = $("context-impact");
-    const competitorsInput = $("context-competitors");
-    if (problemInput) problemInput.value = callContext.problem || "";
-    if (impactInput) impactInput.value = callContext.impact || "";
-    if (competitorsInput) competitorsInput.value = callContext.competitors || "";
-
-    document.querySelectorAll(".context-save").forEach((btn) => {
-      if (btn.dataset.wired) return;
-      btn.dataset.wired = "1";
-      btn.addEventListener("click", () => {
-        const field = btn.dataset.field || "";
-        let value = "";
-        if (field === "problem") value = (problemInput?.value || "").trim();
-        if (field === "impact") value = (impactInput?.value || "").trim();
-        if (field === "competitors") value = (competitorsInput?.value || "").trim();
-        if (!["problem", "impact", "competitors"].includes(field)) return;
-        callContext[field] = value;
-        persistCallContext();
-        capturePostHog("context_saved", { field, hasValue: !!value });
-        renderPhase(activePhase);
-      });
-    });
-  }
-
-  const contextPopover = document.getElementById("context-popover");
-  const contextPopoverState = { open: false, pinned: false, hovering: false };
-
-  function positionContextPopover(anchorBtn, phaseKey) {
-    if (!contextPopover || !anchorBtn) return;
-    const viewEl = document.getElementById(`view-${phaseKey}`);
-    const appEl = document.querySelector(".app");
-    if (!viewEl || !appEl) return;
-
-    const appRect = appEl.getBoundingClientRect();
-    const panelRect = viewEl.getBoundingClientRect();
-    const btnRect = anchorBtn.getBoundingClientRect();
-
-    contextPopover.style.maxWidth = `${Math.max(220, panelRect.width - 16)}px`;
-    contextPopover.style.maxHeight = `${Math.max(220, panelRect.height - 16)}px`;
-
-    const popRect = contextPopover.getBoundingClientRect();
-    let left = btnRect.left;
-    let top = btnRect.bottom + 8;
-
-    const minLeft = panelRect.left + 8;
-    const maxLeft = panelRect.right - popRect.width - 8;
-    const minTop = panelRect.top + 8;
-    const maxTop = panelRect.bottom - popRect.height - 8;
-
-    left = Math.min(Math.max(left, minLeft), Math.max(minLeft, maxLeft));
-    top = Math.min(Math.max(top, minTop), Math.max(minTop, maxTop));
-
-    contextPopover.style.left = `${left - appRect.left}px`;
-    contextPopover.style.top = `${top - appRect.top}px`;
-  }
-
-  function openContextPopover(anchorBtn, phaseKey, pin) {
-    if (!contextPopover) return;
-    contextPopoverState.open = true;
-    if (typeof pin === "boolean") contextPopoverState.pinned = pin;
-    contextPopover.classList.add("open");
-    contextPopover.setAttribute("aria-hidden", "false");
-    if (anchorBtn) anchorBtn.classList.toggle("active", contextPopoverState.pinned);
-    requestAnimationFrame(() => {
-      positionContextPopover(anchorBtn, phaseKey);
-    });
-  }
-
-  function closeContextPopover() {
-    if (!contextPopover) return;
-    contextPopoverState.open = false;
-    contextPopoverState.pinned = false;
-    contextPopover.classList.remove("open");
-    contextPopover.setAttribute("aria-hidden", "true");
-    const btn1 = document.getElementById("p1-context-top");
-    const btn2 = document.getElementById("p2-context-top");
-    if (btn1) btn1.classList.remove("active");
-    if (btn2) btn2.classList.remove("active");
-  }
-
-  const conversationPopover = document.getElementById("conversation-popover");
-  const conversationPopoverState = { open: false, phase: null, anchor: null };
-
-  function positionConversationPopover(anchorBtn, phaseKey) {
-    if (!conversationPopover || !anchorBtn) return;
-    const viewEl = document.getElementById(`view-${phaseKey}`);
-    const appEl = document.querySelector(".app");
-    if (!viewEl || !appEl) return;
-
-    const appRect = appEl.getBoundingClientRect();
-    const panelRect = viewEl.getBoundingClientRect();
-    const btnRect = anchorBtn.getBoundingClientRect();
-
-    const popRect = conversationPopover.getBoundingClientRect();
-    let left = btnRect.left;
-    let top = btnRect.bottom + 8;
-
-    const minLeft = panelRect.left + 8;
-    const maxLeft = panelRect.right - popRect.width - 8;
-    const minTop = panelRect.top + 8;
-    const maxTop = panelRect.bottom - popRect.height - 8;
-
-    left = Math.min(Math.max(left, minLeft), Math.max(minLeft, maxLeft));
-    top = Math.min(Math.max(top, minTop), Math.max(minTop, maxTop));
-
-    conversationPopover.style.left = `${left - appRect.left}px`;
-    conversationPopover.style.top = `${top - appRect.top}px`;
-  }
-
-  function openConversationPopover(anchorBtn, phaseKey) {
-    if (!conversationPopover) return;
-    conversationPopoverState.open = true;
-    conversationPopoverState.phase = phaseKey;
-    conversationPopoverState.anchor = anchorBtn;
-    conversationPopover.classList.add("open");
-    conversationPopover.setAttribute("aria-hidden", "false");
-    requestAnimationFrame(() => positionConversationPopover(anchorBtn, phaseKey));
-  }
-
-  function closeConversationPopover() {
-    if (!conversationPopover) return;
-    conversationPopoverState.open = false;
-    conversationPopoverState.phase = null;
-    conversationPopoverState.anchor = null;
-    conversationPopover.classList.remove("open");
-    conversationPopover.setAttribute("aria-hidden", "true");
   }
 
   function applyContext(text) {
@@ -2588,6 +3450,370 @@
     }
 
     return out;
+  }
+
+  // ========= PROBLEM LAB (Prompt Cowboy) =========
+  let problemLabEditingSymptoms = [];
+
+  function loadProblemLabRecords() {
+    try {
+      const raw = localStorage.getItem(PROBLEM_LAB_RECORDS_KEY);
+      if (!raw) return [];
+      const data = JSON.parse(raw);
+      if (!Array.isArray(data)) return [];
+      return data.map(r => ({ ...r }));
+    } catch (_) {
+      return [];
+    }
+  }
+
+  function saveProblemLabRecords(records) {
+    try {
+      localStorage.setItem(PROBLEM_LAB_RECORDS_KEY, JSON.stringify(records || []));
+    } catch (_) {}
+  }
+
+  function setProblemLabStarted(val) {
+    try {
+      localStorage.setItem(PROBLEM_LAB_STARTED_KEY, val ? "1" : "0");
+    } catch (_) {}
+  }
+
+  function isProblemLabStarted() {
+    try { return localStorage.getItem(PROBLEM_LAB_STARTED_KEY) === "1"; } catch (_) { return false; }
+  }
+
+  function renderProblemLab() {
+    const empty = document.getElementById("problem-lab-empty");
+    const editor = document.getElementById("problem-lab-editor");
+    const accordion = document.getElementById("problem-lab-accordion");
+    const pill = document.getElementById("problem-lab-saved-pill");
+    if (!empty || !editor || !accordion) return;
+
+    problemLabRecords = loadProblemLabRecords();
+    const hasRecords = problemLabRecords.length > 0;
+    const started = isProblemLabStarted();
+    if (!problemLabRecords.some(r => r.id === problemLabOpenId)) problemLabOpenId = null;
+
+    if (pill) pill.textContent = hasRecords ? `Saved (${problemLabRecords.length})` : "Saved";
+
+    if (!started && !hasRecords && !problemLabEditingId) {
+      empty.style.display = "";
+      editor.style.display = "none";
+      accordion.style.display = "none";
+      empty.setAttribute("aria-hidden", "false");
+      editor.setAttribute("aria-hidden", "true");
+      accordion.setAttribute("aria-hidden", "true");
+      return;
+    }
+
+    if (problemLabEditingId) {
+      empty.style.display = "none";
+      accordion.style.display = "none";
+      editor.style.display = "";
+      editor.setAttribute("aria-hidden", "false");
+      empty.setAttribute("aria-hidden", "true");
+      accordion.setAttribute("aria-hidden", "true");
+      const record = problemLabRecords.find(r => r.id === problemLabEditingId) || null;
+      fillProblemLabEditor(record);
+      return;
+    }
+
+    if (!hasRecords) {
+      empty.style.display = "";
+      editor.style.display = "none";
+      accordion.style.display = "none";
+      return;
+    }
+
+    empty.style.display = "none";
+    editor.style.display = "none";
+    accordion.style.display = "";
+    accordion.setAttribute("aria-hidden", "false");
+    renderSavedList(problemLabRecords);
+  }
+
+  function fillProblemLabEditor(record) {
+    const setVal = (id, val) => {
+      const el = document.getElementById(id);
+      if (el) el.value = val || "";
+    };
+    setVal("pl-title", record?.title || "");
+    setVal("pl-root", record?.rootCause || "");
+    setVal("pl-impact", record?.impact || "");
+    setVal("pl-proof", record?.proof || "");
+    setVal("pl-case", record?.caseStudies || "");
+    setVal("pl-notes", record?.notes || "");
+    problemLabEditingSymptoms = Array.isArray(record?.symptoms) ? [...record.symptoms] : [];
+    renderSymptomList();
+  }
+
+  function readProblemLabForm() {
+    const getVal = (id) => (document.getElementById(id)?.value || "").trim();
+    return {
+      title: getVal("pl-title"),
+      symptoms: [...problemLabEditingSymptoms],
+      rootCause: getVal("pl-root"),
+      impact: getVal("pl-impact"),
+      proof: getVal("pl-proof"),
+      caseStudies: getVal("pl-case"),
+      notes: getVal("pl-notes")
+    };
+  }
+
+  function renderSymptomList() {
+    const wrap = document.getElementById("pl-symptom-list");
+    if (!wrap) return;
+    wrap.innerHTML = "";
+    problemLabEditingSymptoms.forEach((symptom, idx) => {
+      const row = document.createElement("div");
+      row.className = "pl-symptom-row";
+      const text = document.createElement("div");
+      text.textContent = symptom;
+      const actions = document.createElement("div");
+      actions.className = "pl-symptom-actions";
+      const edit = document.createElement("button");
+      edit.className = "pl-btn pl-btn--ghost";
+      edit.type = "button";
+      edit.textContent = "Edit";
+      edit.addEventListener("click", () => {
+        const input = document.getElementById("pl-symptom-input");
+        if (input) input.value = symptom;
+        problemLabEditingSymptoms = problemLabEditingSymptoms.filter((_, i) => i !== idx);
+        renderSymptomList();
+        updateEditorPreview();
+      });
+      const remove = document.createElement("button");
+      remove.className = "pl-btn pl-btn--ghost";
+      remove.type = "button";
+      remove.textContent = "Remove";
+      remove.addEventListener("click", () => {
+        problemLabEditingSymptoms = problemLabEditingSymptoms.filter((_, i) => i !== idx);
+        renderSymptomList();
+        updateEditorPreview();
+      });
+      actions.appendChild(edit);
+      actions.appendChild(remove);
+      row.appendChild(text);
+      row.appendChild(actions);
+      wrap.appendChild(row);
+    });
+  }
+
+  function renderSavedList(records) {
+    const wrap = document.getElementById("problem-lab-accordion");
+    if (!wrap) return;
+    wrap.innerHTML = "";
+    records.forEach((record, idx) => {
+      const row = document.createElement("div");
+      const isOpen = record.id === problemLabOpenId;
+      row.className = "pl-row" + (isOpen ? " is-open" : "");
+      row.dataset.id = record.id;
+
+      const header = document.createElement("button");
+      header.type = "button";
+      header.className = "pl-row__header";
+      header.setAttribute("aria-expanded", isOpen ? "true" : "false");
+
+      const index = document.createElement("span");
+      index.className = "pl-index";
+      index.textContent = String(idx + 1);
+
+      const textWrap = document.createElement("div");
+      const title = document.createElement("div");
+      title.className = "pl-row__title";
+      title.textContent = record.title || "Untitled problem";
+      const sub = document.createElement("div");
+      sub.className = "pl-row__sub";
+      const symptomPreview = (record.symptoms || []).slice(0, 2);
+      sub.textContent = symptomPreview.length ? `${symptomPreview.length} symptom${symptomPreview.length > 1 ? "s" : ""}` : "Add a symptom";
+
+      textWrap.appendChild(title);
+      textWrap.appendChild(sub);
+
+      const chev = document.createElement("span");
+      chev.className = "pl-chevron";
+      chev.textContent = "▾";
+
+      header.appendChild(index);
+      header.appendChild(textWrap);
+      header.appendChild(chev);
+
+      const body = document.createElement("div");
+      body.className = "pl-row__body";
+      const bodyInner = document.createElement("div");
+      bodyInner.className = "pl-row__body-inner";
+
+      const box = (label, content, list = false) => {
+        if (!content || (Array.isArray(content) && !content.length)) return null;
+        const wrapBox = document.createElement("div");
+        wrapBox.className = "pl-box";
+        const titleEl = document.createElement("div");
+        titleEl.className = "pl-box-title";
+        titleEl.textContent = label;
+        wrapBox.appendChild(titleEl);
+        if (list) {
+          const ul = document.createElement("ul");
+          ul.className = "pl-bullets";
+          content.forEach(v => {
+            const li = document.createElement("li");
+            li.textContent = v;
+            ul.appendChild(li);
+          });
+          wrapBox.appendChild(ul);
+        } else {
+          const text = document.createElement("div");
+          text.className = "pl-box-body";
+          text.textContent = content;
+          wrapBox.appendChild(text);
+        }
+        return wrapBox;
+      };
+
+      const sections = [
+        box("Symptoms", record.symptoms || [], true),
+        box("Impact", record.impact),
+        box("Root cause", record.rootCause),
+        box("Proof / Evidence", record.proof),
+        box("Case study", (record.caseStudies || "").split("\n").map(v => v.trim()).filter(Boolean), true),
+        box("Notes", record.notes)
+      ].filter(Boolean);
+
+      sections.forEach(sec => bodyInner.appendChild(sec));
+
+      const actionBar = document.createElement("div");
+      actionBar.className = "pl-action-bar";
+      const editBtn = document.createElement("button");
+      editBtn.className = "pl-btn";
+      editBtn.type = "button";
+      editBtn.textContent = "Edit";
+      editBtn.setAttribute("data-action", "edit");
+      const delBtn = document.createElement("button");
+      delBtn.className = "pl-btn pl-btn--ghost";
+      delBtn.type = "button";
+      delBtn.textContent = "Delete";
+      delBtn.setAttribute("data-action", "delete");
+      actionBar.appendChild(editBtn);
+      actionBar.appendChild(delBtn);
+      bodyInner.appendChild(actionBar);
+      body.appendChild(bodyInner);
+
+      row.appendChild(header);
+      row.appendChild(body);
+      wrap.appendChild(row);
+    });
+
+  }
+
+  function wireProblemLabControls() {
+    const startBtn = document.getElementById("problem-lab-start");
+    const addBtn = document.getElementById("problem-lab-add");
+    const cancelBtn = document.getElementById("pl-cancel");
+    const saveBtn = document.getElementById("pl-save");
+    const symptomAdd = document.getElementById("pl-symptom-add");
+    const accordion = document.getElementById("problem-lab-accordion");
+
+    if (startBtn && !startBtn.dataset.wired) {
+      startBtn.dataset.wired = "1";
+      startBtn.addEventListener("click", () => {
+        setProblemLabStarted(true);
+        problemLabEditingId = "new";
+        renderProblemLab();
+      });
+    }
+
+    if (addBtn && !addBtn.dataset.wired) {
+      addBtn.dataset.wired = "1";
+      addBtn.addEventListener("click", () => {
+        problemLabEditingId = "new";
+        renderProblemLab();
+      });
+    }
+
+    if (symptomAdd && !symptomAdd.dataset.wired) {
+      symptomAdd.dataset.wired = "1";
+      symptomAdd.addEventListener("click", () => {
+        const input = document.getElementById("pl-symptom-input");
+        const val = (input?.value || "").trim();
+        if (!val) return;
+        problemLabEditingSymptoms.push(val);
+        if (input) input.value = "";
+        renderSymptomList();
+      });
+    }
+
+    if (cancelBtn && !cancelBtn.dataset.wired) {
+      cancelBtn.dataset.wired = "1";
+      cancelBtn.addEventListener("click", () => {
+        problemLabEditingId = null;
+        renderProblemLab();
+      });
+    }
+
+    if (saveBtn && !saveBtn.dataset.wired) {
+      saveBtn.dataset.wired = "1";
+      saveBtn.addEventListener("click", () => {
+        const data = readProblemLabForm();
+        if (!data.title || !data.symptoms.length) {
+          showToast("Add a title and symptom");
+          return;
+        }
+        const now = Date.now();
+        if (problemLabEditingId && problemLabRecords.some(r => r.id === problemLabEditingId)) {
+          problemLabRecords = problemLabRecords.map(r => r.id === problemLabEditingId ? {
+            ...r,
+            ...data,
+            updatedAt: now
+          } : r);
+        } else {
+          const id = (window.crypto && window.crypto.randomUUID) ? window.crypto.randomUUID() : String(Date.now());
+          problemLabRecords = [...problemLabRecords, {
+            id,
+            ...data,
+            createdAt: now,
+            updatedAt: now
+          }];
+        }
+        saveProblemLabRecords(problemLabRecords);
+        setProblemLabStarted(true);
+        problemLabEditingId = null;
+        renderProblemLab();
+        showToast("Saved");
+      });
+    }
+
+    if (accordion && !accordion.dataset.wired) {
+      accordion.dataset.wired = "1";
+      accordion.addEventListener("click", (e) => {
+        const actionBtn = e.target.closest("[data-action]");
+        const row = e.target.closest(".pl-row");
+        if (!row) return;
+        const recordId = row.dataset.id;
+        const record = problemLabRecords.find(r => r.id === recordId);
+        if (!record) return;
+
+        if (actionBtn) {
+          const action = actionBtn.getAttribute("data-action");
+          if (action === "edit") {
+            problemLabEditingId = record.id;
+            renderProblemLab();
+            return;
+          }
+          if (action === "delete") {
+            problemLabRecords = problemLabRecords.filter(r => r.id !== record.id);
+            saveProblemLabRecords(problemLabRecords);
+            if (problemLabOpenId === record.id) problemLabOpenId = null;
+            renderProblemLab();
+            return;
+          }
+        }
+
+        problemLabOpenId = problemLabOpenId === record.id ? null : record.id;
+        renderProblemLab();
+      });
+    }
+
+    renderProblemLab();
   }
 
 // ========= FEEDBACK PANEL (briefcase) =========
@@ -2729,47 +3955,12 @@
   }
 
   function wireFeedbackPanel() {
-    const logo = document.getElementById("trix-logo");
     const panel = document.getElementById("feedback-panel");
-    const header = document.getElementById("right-header");
     const back = document.getElementById("feedback-back");
     const submit = document.getElementById("feedback-submit");
-
-    // The logo IS the briefcase trigger
-    const toggle = logo;
-
-    if (!toggle || !panel || !header) return;
-
-    // Debug + make sure the element is definitely interactive
-    try {
-      toggle.style.cursor = "pointer";
-      toggle.style.pointerEvents = "auto";
-      toggle.title = "Click for coaching panel";
-      toggle.dataset.feedbackWired = "1";
-      console.log("[TRIX] Feedback wired", { toggle: !!toggle, panel: !!panel, header: !!header });
-    } catch (_) {}
-
-    // Hover-to-peek: only the logo (briefcase) should trigger the panel.
-    toggle.addEventListener("mouseenter", () => openFeedbackPanel());
-    toggle.addEventListener("mouseleave", () => {
-      if (feedback.pinned) return;
-      setTimeout(() => {
-        if (!panel.matches(":hover")) closeFeedbackPanel();
-      }, 60);
-    });
-    panel.addEventListener("mouseenter", () => {
-      if (!feedback.pinned) openFeedbackPanel();
-    });
-    panel.addEventListener("mouseleave", () => {
-      if (!feedback.pinned) closeFeedbackPanel();
-    });
-
-    // Click pins/unpins (click the briefcase image)
-    toggle.addEventListener("click", (e) => {
-      // prevent the click from immediately triggering a mouseleave close edge-case
-      e.preventDefault();
-      setFeedbackPinned(!feedback.pinned);
-    });
+    if (!panel) return;
+    feedback.pinned = true;
+    feedback.open = true;
 
     // Option select -> reveal details
     panel.querySelectorAll(".feedback-opt").forEach(btn => {
@@ -2806,9 +3997,9 @@
       submit.addEventListener("click", submitFeedback);
     }
 
-    // Start closed
+    // Start open (always visible in sidebar)
     resetFeedbackFlow();
-    closeFeedbackPanel();
+    openFeedbackPanel();
   }
 
   function setCookie(name, value, days) {
@@ -2833,7 +4024,6 @@
   async function submitPracticeOptIn() {
     const checkbox = document.getElementById("marketing-optin");
     const btn = document.getElementById("optin-btn");
-    const box = document.getElementById("practice-optin");
     const ok = document.getElementById("optin-success");
 
     if (!checkbox || !btn) return;
@@ -2877,8 +4067,6 @@
 
       capturePostHog("opt_in_success");
 
-      // Hide the opt-in box after success
-      if (box) box.style.display = "none";
       if (ok) ok.style.display = "none";
 
       // analytics removed
@@ -2891,13 +4079,7 @@
         body: "<p>Done — we’ll email your Prospect GPT access shortly (plus weekly cold call tips).</p>",
         actions: [{ label: "Close", primary: true }]
       });
-      // Re-check once in the background to confirm server truth
-      try {
-        fetch("/api/marketing/status", {
-          credentials: "same-origin",
-          cache: "no-store"
-        }).catch(() => {});
-      } catch (_) {}
+      try { await syncWeeklyTipsPanel(); } catch (_) {}
     } catch (e) {
       console.error(e);
       capturePostHog("opt_in_failed");
@@ -3023,7 +4205,7 @@ function showPaywallModal() {
         <li>Realistic objections, deflections, and redirects</li>
         <li>Weekly cold-call tips + examples</li>
       </ul>
-      <p style="margin-top:10px;font-size:0.86rem;color:rgba(9,28,45,0.6);">
+      <p style="margin-top:10px;font-size:0.86rem;color:rgba(var(--ink-rgb),0.6);">
         Already subscribed? <button class="link-btn" id="manage-billing-btn" type="button">Manage billing</button>
       </p>
     `,
@@ -3434,31 +4616,6 @@ function closeCheckoutModal() {
     });
   }
 
-  if (contextPopover) {
-    contextPopover.addEventListener("mouseenter", () => {
-      contextPopoverState.hovering = true;
-    });
-    contextPopover.addEventListener("mouseleave", () => {
-      contextPopoverState.hovering = false;
-      if (!contextPopoverState.pinned) closeContextPopover();
-    });
-  }
-
-  document.addEventListener("click", (e) => {
-    if (!contextPopoverState.open) return;
-    const target = e.target;
-    if (contextPopover && contextPopover.contains(target)) return;
-    if (target && (target.closest("#p1-context-top") || target.closest("#p2-context-top"))) return;
-    closeContextPopover();
-  });
-
-  window.addEventListener("resize", () => {
-    if (!contextPopoverState.open) return;
-    const anchor = document.getElementById(activePhase === "phase1" ? "p1-context-top" : "p2-context-top");
-    if (anchor) positionContextPopover(anchor, activePhase);
-  });
-
-
 
 // Stripe checkout modal close handlers
 const checkoutBackdrop = document.getElementById("checkout-modal");
@@ -3545,7 +4702,7 @@ if (checkoutBackdrop) {
     IS_ADMIN = isAdmin;
     applyPremiumUI();
     updateModeTabs();
-    try { await syncOptInPanel(); } catch (_) {}
+    try { await syncWeeklyTipsPanel(); } catch (_) {}
     try {
       graphs.phase2 = await loadGraph("phase2", IS_PREMIUM ? "/api/phase2" : "/api/phase2-preview");
     } catch (_) {
@@ -3573,10 +4730,6 @@ if (checkoutBackdrop) {
 
     if (activeMode === "trainer") {
       setActiveView("view-" + targetPhase);
-    }
-
-    if (conversationPopoverState.open && conversationPopoverState.phase !== targetPhase) {
-      closeConversationPopover();
     }
 
     renderPhase(targetPhase);
@@ -3703,40 +4856,10 @@ if (checkoutBackdrop) {
         if (action === "back") return goBack(phase);
         if (action === "restart") return restartPhase(phase);
         if (action === "ended") return openCallEndedModal(phase);
-        if (action === "context") {
-          const nextPinned = !contextPopoverState.pinned;
-          openContextPopover(btn, phase, nextPinned);
-          btn.classList.toggle("active", contextPopoverState.pinned);
-          return;
-        }
-        if (action === "history") {
-          if (conversationPopoverState.open && conversationPopoverState.phase === phase) {
-            closeConversationPopover();
-          } else {
-            openConversationPopover(btn, phase);
-          }
-          return;
-        }
         if (action === "copy_you") return copyCurrentLine(phase);
         if (action === "next") {
           if (chooseSelectedOption(phase)) showToast("Moved to next");
           return;
-        }
-      });
-
-      document.addEventListener("mouseover", (e) => {
-        const btn = e.target && e.target.closest ? e.target.closest('[data-action="context"]') : null;
-        if (!btn) return;
-        if (!contextPopoverState.pinned) {
-          openContextPopover(btn, btn.getAttribute("data-phase") || activePhase);
-        }
-      });
-
-      document.addEventListener("mouseout", (e) => {
-        const btn = e.target && e.target.closest ? e.target.closest('[data-action="context"]') : null;
-        if (!btn) return;
-        if (!contextPopoverState.pinned && !contextPopoverState.hovering) {
-          closeContextPopover();
         }
       });
 
@@ -3894,7 +5017,6 @@ if (checkoutBackdrop) {
   function restartPhase(phaseKey) {
     const g = graphs[phaseKey];
     if (!g) return;
-    clearCallContext();
     g.currentId = g.root;
     g.history = [g.root];
     selectedIndex[phaseKey] = 0;
@@ -3908,6 +5030,7 @@ if (checkoutBackdrop) {
   function renderPhase(phaseKey) {
     const g = graphs[phaseKey];
     if (!g) return;
+    document.body.dataset.activePhase = phaseKey;
 
     const isP1 = phaseKey === "phase1";
 
@@ -3949,6 +5072,7 @@ if (checkoutBackdrop) {
     // Controls
     if (backBtn) backBtn.disabled = g.history.length <= 1;
     if (restartBtn) restartBtn.disabled = false;
+    updateFocusCallButton();
 
     // Options
     if (optionsEl) optionsEl.innerHTML = "";
@@ -4058,10 +5182,6 @@ if (checkoutBackdrop) {
   async function boot() {
     // Wire UI extras
     try { wireFeedbackPanel(); } catch (_) {}
-    try {
-      loadCallContext();
-      wireCallContext();
-    } catch (_) {}
     try { applyPremiumUI(); } catch (_) {}
 
     // Wire opt-in CTA
@@ -4072,26 +5192,31 @@ if (checkoutBackdrop) {
         optBtn.addEventListener("click", submitPracticeOptIn);
       }
 
-      // Visibility is handled after /api/me resolves via syncOptInPanel()
+      const weeklyBtn = document.getElementById("weekly-cta");
+      if (weeklyBtn && !weeklyBtn.dataset.wired) {
+        weeklyBtn.dataset.wired = "1";
+        weeklyBtn.addEventListener("click", () => {
+          const url = weeklyBtn.getAttribute("data-url") || "";
+          if (!url) return;
+          capturePostHog("weekly_tips_opened", {
+            subject: document.getElementById("weekly-subject")?.textContent || ""
+          });
+          window.open(url, "_blank", "noopener");
+        });
+      }
+
+      // Visibility is handled after /api/me resolves via syncWeeklyTipsPanel()
     } catch (_) {}
 
     // Wire navigation controls
     try { wireNavControls(); } catch (_) {}
+    try { wireProblemLabControls(); } catch (_) {}
     try {
       const convoClose = $("conversation-close");
       if (convoClose && !convoClose.dataset.wired) {
         convoClose.dataset.wired = "1";
-        convoClose.addEventListener("click", () => closeConversationPopover());
-      }
-      if (!document.body.dataset.trixConversationOutside) {
-        document.body.dataset.trixConversationOutside = "1";
-        document.addEventListener("mousedown", (e) => {
-          if (!conversationPopoverState.open) return;
-          const pop = $("conversation-popover");
-          if (!pop) return;
-          if (pop.contains(e.target)) return;
-          if (conversationPopoverState.anchor && conversationPopoverState.anchor.contains(e.target)) return;
-          closeConversationPopover();
+        convoClose.addEventListener("click", () => {
+          try { setHistoryVisible(false); } catch (_) {}
         });
       }
     } catch (_) {}
@@ -4123,12 +5248,120 @@ if (checkoutBackdrop) {
     try {
       const params = new URLSearchParams(window.location.search || "");
       const mode = params.get("mode");
-      if (mode === "problem-lab" || mode === "dashboard") {
+      if (mode === "dashboard") {
         switchMode(mode);
       } else {
         switchMode("trainer");
       }
     } catch (_) {}
+  }
+
+  // ===== Layout controls (history toggle + focus mode) =====
+  function setHistoryVisible(visible) {
+    document.body.classList.toggle("history-hidden", !visible);
+    const btn = document.getElementById("history-toggle");
+    if (btn) btn.setAttribute("aria-pressed", String(visible));
+    updateLayout();
+    try { syncTopControlsHeight(); } catch (_) {}
+  }
+
+  function setProblemLabVisible(visible) {
+    document.body.classList.toggle("problem-lab-hidden", !visible);
+    const btn = document.getElementById("problem-lab-toggle");
+    if (btn) btn.setAttribute("aria-pressed", String(visible));
+    try {
+      localStorage.setItem(PROBLEM_LAB_HIDDEN_KEY, visible ? "0" : "1");
+    } catch (_) {}
+    updateLayout();
+    try { syncTopControlsHeight(); } catch (_) {}
+  }
+
+  function updateFocusCallButton() {
+    const btn = document.getElementById("start-call-btn");
+    if (!btn) return;
+    const inFocus = document.body.classList.contains("focus-mode");
+    btn.textContent = inFocus ? "Call Ended" : "Start Call";
+    btn.classList.toggle("btn-primary", !inFocus);
+    btn.classList.toggle("btn-outline", inFocus);
+  }
+
+  function updateLayout() {
+    layoutState.rightPanels.history = !document.body.classList.contains("history-hidden");
+    layoutState.rightPanels.problemLab = !document.body.classList.contains("problem-lab-hidden");
+    const anyRight = layoutState.rightPanels.history || layoutState.rightPanels.problemLab;
+    document.body.classList.toggle("layout-call", layoutState.isCallActive);
+    document.body.classList.toggle("layout-idle", !layoutState.isCallActive);
+    document.body.classList.toggle("layout-call-right-none", layoutState.isCallActive && !anyRight);
+    document.body.classList.toggle("layout-call-right-some", layoutState.isCallActive && anyRight);
+  }
+
+  function enterFocusMode() {
+    layoutState.isCallActive = true;
+    document.body.classList.add("focus-mode");
+    setHistoryVisible(false);
+    setProblemLabVisible(false);
+    updateFocusCallButton();
+    updateLayout();
+    try { syncTopControlsHeight(); } catch (_) {}
+  }
+
+  function exitFocusMode() {
+    layoutState.isCallActive = false;
+    document.body.classList.remove("focus-mode");
+    updateFocusCallButton();
+    updateLayout();
+    try { syncTopControlsHeight(); } catch (_) {}
+  }
+
+  function wireLayoutControls() {
+    const historyToggle = document.getElementById("history-toggle");
+    const historyClose = document.getElementById("conversation-close");
+    const startCall = document.getElementById("start-call-btn");
+    const exitFocus = document.getElementById("exit-focus-btn");
+    const problemLabToggle = document.getElementById("problem-lab-toggle");
+
+    if (historyToggle) {
+      historyToggle.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const isHidden = document.body.classList.contains("history-hidden");
+        setHistoryVisible(isHidden);
+      });
+    }
+
+    if (historyClose) {
+      historyClose.addEventListener("click", (e) => {
+        e.preventDefault();
+        setHistoryVisible(false);
+      });
+    }
+
+    if (problemLabToggle) {
+      problemLabToggle.addEventListener("click", (e) => {
+        e.preventDefault();
+        const isHidden = document.body.classList.contains("problem-lab-hidden");
+        setProblemLabVisible(isHidden);
+      });
+    }
+
+    if (startCall) {
+      startCall.addEventListener("click", (e) => {
+        e.preventDefault();
+        if (document.body.classList.contains("focus-mode")) {
+          exitFocusMode();
+          openCallEndedModal(activePhase);
+        } else {
+          enterFocusMode();
+        }
+      });
+    }
+
+    if (exitFocus) {
+      exitFocus.addEventListener("click", (e) => {
+        e.preventDefault();
+        exitFocusMode();
+      });
+    }
   }
 
   let __TRIX_BOOTED__ = false;
@@ -4141,6 +5374,20 @@ if (checkoutBackdrop) {
     } catch (_) {
       // swallow so the UI doesn't die silently
     }
+    try { wireLayoutControls(); } catch (_) {}
+    try { exitFocusMode(); } catch (_) {}
+    try { setHistoryVisible(true); } catch (_) {}
+    try {
+      const hidden = localStorage.getItem(PROBLEM_LAB_HIDDEN_KEY) === "1";
+      setProblemLabVisible(!hidden);
+    } catch (_) {}
+    try { updateLayout(); } catch (_) {}
+    try {
+      requestAnimationFrame(() => {
+        syncTopControlsHeight();
+        requestAnimationFrame(syncTopControlsHeight);
+      });
+    } catch (_) {}
   }
 
   // Run it multiple ways so it never misses the event in an iframe
@@ -4149,17 +5396,7 @@ if (checkoutBackdrop) {
   window.addEventListener("load", bootOnce);
   window.addEventListener("resize", () => {
     try { positionModeTabs(); } catch (_) {}
-    try {
-      if (contextPopoverState.open && contextPopoverState.pinned) {
-        const btn = contextPopoverState.pinned ? (document.getElementById("p1-context-top") || document.getElementById("p2-context-top")) : null;
-        if (btn) positionContextPopover(btn, activePhase);
-      }
-    } catch (_) {}
-    try {
-      if (conversationPopoverState.open && conversationPopoverState.anchor) {
-        positionConversationPopover(conversationPopoverState.anchor, conversationPopoverState.phase || activePhase);
-      }
-    } catch (_) {}
+    try { syncTopControlsHeight(); } catch (_) {}
   });
 </script>
 </body>

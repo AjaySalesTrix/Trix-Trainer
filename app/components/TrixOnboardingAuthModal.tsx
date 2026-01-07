@@ -173,24 +173,24 @@ export default function TrixOnboardingAuthModal({
 
   const appearance = {
     variables: {
-      colorPrimary: "#f1d3a2",
-      colorBackground: "#0e141b",
-      colorText: "#f5f1e8",
-      colorTextSecondary: "rgba(245, 241, 232, 0.7)",
+      colorPrimary: "#292827",
+      colorBackground: "#faf6f1",
+      colorText: "#292827",
+      colorTextSecondary: "#5c5b59",
       borderRadius: "16px",
-      fontFamily: "var(--font-geist-sans, ui-sans-serif, system-ui)",
+      fontFamily: "system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif",
     },
     elements: {
       card: "background: transparent; box-shadow: none; padding: 0;",
-      headerTitle: "color: #f5f1e8;",
-      headerSubtitle: "color: rgba(245, 241, 232, 0.7);",
+      headerTitle: "color: #292827;",
+      headerSubtitle: "color: #5c5b59;",
       socialButtonsBlockButton:
-        "border-radius: 999px; border-color: rgba(255,255,255,0.2);",
+        "border-radius: 12px; border: 2px solid #292827; box-shadow: 2px 2px 0 #292827;",
       formButtonPrimary:
-        "border-radius: 999px; background: #f1d3a2; color: #1a1a1a; font-weight: 700;",
+        "border-radius: 12px; background: #292827; color: #faf6f1; font-weight: 700; border: 2px solid #292827; box-shadow: 2px 2px 0 #292827;",
       formFieldInput:
-        "border-radius: 12px; background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.16); color: #f5f1e8;",
-      footerActionLink: "color: #f1d3a2;",
+        "border-radius: 12px; background: #faf6f1; border: 2px solid #292827; color: #292827;",
+      footerActionLink: "color: #292827;",
     },
   };
 
